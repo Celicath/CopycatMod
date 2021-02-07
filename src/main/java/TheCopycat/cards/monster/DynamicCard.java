@@ -1,0 +1,644 @@
+package TheCopycat.cards.monster;
+
+import TheCopycat.CopycatModMain;
+import basemod.AutoAdd;
+import com.badlogic.gdx.graphics.Color;
+import com.megacrit.cardcrawl.actions.AbstractGameAction;
+import com.megacrit.cardcrawl.actions.animations.VFXAction;
+import com.megacrit.cardcrawl.actions.common.*;
+import com.megacrit.cardcrawl.actions.unique.VampireDamageAction;
+import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.DamageInfo;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.GameDictionary;
+import com.megacrit.cardcrawl.helpers.TipHelper;
+import com.megacrit.cardcrawl.localization.CardStrings;
+import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.powers.*;
+import com.megacrit.cardcrawl.vfx.GainPennyEffect;
+import com.megacrit.cardcrawl.vfx.RainingGoldEffect;
+import com.megacrit.cardcrawl.vfx.combat.BiteEffect;
+import com.megacrit.cardcrawl.vfx.combat.WeightyImpactEffect;
+
+import java.util.ArrayList;
+
+@AutoAdd.Seen
+public class DynamicCard extends AbstractMonsterCard {
+	private static final String RAW_ID = "DynamicCard";
+	public static final String ID = CopycatModMain.makeID(RAW_ID);
+	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
+	public static final String NAME = cardStrings.NAME;
+	private static final int COST = -2;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
+	public static final String[] EXTENDED_DESCRIPTION = cardStrings.EXTENDED_DESCRIPTION;
+	private static final CardType TYPE = CardType.SKILL;
+	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardTarget TARGET = CardTarget.NONE;
+	public static String
+			blockDesc, damageDesc, multiDesc, drawDesc, buffPrefix, buffSuffix, debuffPrefix, debuffSuffix,
+			gainEDesc, nextGainEDesc, exhaustOtherDesc, vampireDesc, goldDesc, strengthDownDesc, exhaustDesc,
+			metallicizeDesc, shackleDesc;
+
+	/* parameters */
+	public int baseCost;
+	public int hits = 0;
+	public boolean isDraw = false;
+	public boolean exhaustOther = false;
+	public boolean gainEnergy = false;
+	public boolean nextTurnEnergy = false;
+	public boolean isVampire = false;
+	public boolean stealGold = false;
+	public String buffs = "";
+	public String debuffs = "";
+
+	/* automatic set fields */
+	boolean shouldUpgradeCost = false;
+	// public boolean exhaust;
+
+	public boolean initialized = false;
+	public boolean invalid = false;
+	public boolean empty = false;
+
+	public static void initializeDescriptionParts() {
+		blockDesc = CardCrawlGame.languagePack.getCardStrings("Defend_B").DESCRIPTION;
+		damageDesc = CardCrawlGame.languagePack.getCardStrings("Strike_B").DESCRIPTION;
+		multiDesc = CardCrawlGame.languagePack.getCardStrings("Expunger").EXTENDED_DESCRIPTION[0];
+		drawDesc = CardCrawlGame.languagePack.getCardStrings("Skim").DESCRIPTION;
+		strengthDownDesc = CardCrawlGame.languagePack.getCardStrings("Disarm").DESCRIPTION;
+		exhaustDesc = CardCrawlGame.languagePack.getCardStrings("Slimed").DESCRIPTION;
+		goldDesc = CardCrawlGame.languagePack.getCardStrings("FameAndFortune").DESCRIPTION;
+		shackleDesc = CardCrawlGame.languagePack.getCardStrings("Dark Shackles").DESCRIPTION;
+		buffPrefix = EXTENDED_DESCRIPTION[0];
+		buffSuffix = EXTENDED_DESCRIPTION[1];
+		debuffPrefix = EXTENDED_DESCRIPTION[2];
+		debuffSuffix = EXTENDED_DESCRIPTION[3];
+		gainEDesc = EXTENDED_DESCRIPTION[4];
+		nextGainEDesc = EXTENDED_DESCRIPTION[5];
+		exhaustOtherDesc = EXTENDED_DESCRIPTION[6];
+		vampireDesc = EXTENDED_DESCRIPTION[7];
+		metallicizeDesc = EXTENDED_DESCRIPTION[8];
+	}
+
+	public DynamicCard() {
+		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
+	}
+
+	public void setType() {
+		if (baseDamage > 0) {
+			this.type = CardType.ATTACK;
+			this.target = CardTarget.ENEMY;
+		} else if (isDraw || baseBlock > 0 || !debuffs.isEmpty() || !getModifierString().isEmpty()) {
+			this.type = CardType.SKILL;
+			if (debuffs.isEmpty()) {
+				this.target = CardTarget.SELF;
+			} else {
+				this.target = CardTarget.ENEMY;
+			}
+		} else if (!buffs.isEmpty()) {
+			this.type = CardType.POWER;
+			this.target = CardTarget.SELF;
+		} else {
+			this.type = CardType.SKILL;
+			this.baseCost = this.cost = this.costForTurn = -2;
+			this.target = CardTarget.NONE;
+			empty = true;
+		}
+	}
+
+	void setModifiers(String modifiers) {
+		shouldUpgradeCost = modifiers.indexOf('C') != -1;
+		isDraw = modifiers.indexOf('D') != -1;
+		exhaust = modifiers.indexOf('T') != -1;
+		exhaustOther = modifiers.indexOf('O') != -1;
+		gainEnergy = modifiers.indexOf('E') != -1;
+		nextTurnEnergy = modifiers.indexOf('N') != -1;
+		isVampire = modifiers.indexOf('V') != -1;
+		stealGold = modifiers.indexOf('G') != -1;
+	}
+
+	String getModifierString() {
+		StringBuilder result = new StringBuilder();
+		if (shouldUpgradeCost) result.append('C');
+		if (isDraw) result.append('D');
+		if (exhaust) result.append('T');
+		if (exhaustOther) result.append('O');
+		if (gainEnergy) result.append('E');
+		if (nextTurnEnergy) result.append('N');
+		if (isVampire) result.append('V');
+		if (stealGold) result.append('G');
+		return result.toString();
+	}
+
+	public void setMagicNumber(int amount) {
+		amount = Math.abs(amount);
+		if (baseMagicNumber < amount) {
+			baseMagicNumber = magicNumber = amount;
+		}
+	}
+
+	public void calculateCost() {
+		if (empty) {
+			return;
+		}
+		float tmp = 0;
+		int forceCost = 0;
+		for (int i = 0, len = buffs.length(); i < len; i++) {
+			switch (buffs.charAt(i)) {
+				case 'S':
+				case 'D':
+					tmp += baseMagicNumber * 4;
+					break;
+				case 'P':
+				case 'T':
+					tmp += baseMagicNumber * 3.2f;
+					exhaust = true;
+					break;
+				case 'M':
+					tmp += baseMagicNumber * 3.5f;
+					exhaust = true;
+					break;
+				case 'R':
+					tmp += baseMagicNumber * 12;
+					forceCost = baseMagicNumber;
+					exhaust = true;
+					break;
+			}
+		}
+		for (int i = 0, len = debuffs.length(); i < len; i++) {
+			switch (debuffs.charAt(i)) {
+				case 'V':
+				case 'W':
+					tmp += baseMagicNumber * 3.5f;
+					break;
+				case 'P':
+					tmp += baseMagicNumber * 1.5f;
+					break;
+				case 'S':
+					tmp += baseMagicNumber * 4;
+					exhaust = true;
+					break;
+				case 'E':
+					tmp += baseMagicNumber * 2;
+					exhaust = true;
+					break;
+			}
+		}
+
+		if (isDraw && baseDamage <= 0 && baseBlock <= 0 && buffs.isEmpty() && debuffs.isEmpty() && !gainEnergy && !nextTurnEnergy && !stealGold) {
+			if (baseMagicNumber < 2) {
+				baseMagicNumber = magicNumber = 2;
+			}
+			if (baseMagicNumber == 2) {
+				cost = 0;
+				exhaust = true;
+			} else if (baseMagicNumber <= 4) {
+				cost = 1;
+			} else {
+				cost = 1;
+				exhaust = true;
+				shouldUpgradeCost = true;
+			}
+		}
+		tmp += Math.max(baseBlock * 1.18f, 0) + (Math.max(baseDamage, 0) * Math.max(hits, 1) + (hits > 1 ? hits - 1 : 0));
+		if (hits >= 5) exhaust = true;
+		tmp += (isDraw ? baseMagicNumber * 3 : 0) + (exhaustOther ? 2 : 0) + (nextTurnEnergy ? 2 : 0);
+		if (isVampire) {
+			tmp += baseDamage;
+			forceCost = 2;
+			exhaust = true;
+		}
+		if (stealGold) {
+			if (baseDamage >= 12) {
+				forceCost = 2;
+			}
+			exhaust = true;
+		}
+		switch (AbstractDungeon.actNum) {
+			case 1:
+				if (tmp < 4) {
+					cost = 0;
+					gainEnergy = true;
+				} else if (tmp < 8) {
+					cost = 0;
+				} else if (tmp < 10) {
+					cost = 0;
+					exhaust = true;
+				} else if (tmp < 13) {
+					cost = 1;
+				} else if (tmp < 16) {
+					cost = 1;
+					exhaust = true;
+				} else if (tmp < 25) {
+					cost = 2;
+				} else if (tmp < 31) {
+					cost = 2;
+					exhaust = true;
+				} else if (tmp < 41) {
+					cost = 3;
+				} else {
+					cost = 3;
+					exhaust = true;
+				}
+				break;
+			case 2:
+				if (tmp < 4) {
+					cost = 0;
+					gainEnergy = true;
+				} else if (tmp < 9) {
+					cost = 0;
+				} else if (tmp < 11) {
+					cost = 0;
+					exhaust = true;
+				} else if (tmp < 14) {
+					cost = 1;
+				} else if (tmp < 18) {
+					cost = 1;
+					exhaust = true;
+				} else if (tmp < 26) {
+					cost = 2;
+				} else if (tmp < 32) {
+					cost = 2;
+					exhaust = true;
+				} else if (tmp < 43) {
+					cost = 3;
+					exhaust = true;
+				} else {
+					cost = 3;
+					exhaust = true;
+				}
+				break;
+			default:
+				if (tmp <= 4) {
+					cost = 0;
+					gainEnergy = true;
+				} else if (tmp <= 10) {
+					cost = 0;
+				} else if (tmp <= 16) {
+					cost = 1;
+				} else if (tmp <= 32) {
+					cost = 2;
+				} else if (tmp <= 48) {
+					cost = 3;
+				} else {
+					cost = 3;
+					exhaust = true;
+				}
+		}
+		if (forceCost > cost) {
+			cost = forceCost;
+		}
+		baseCost = costForTurn = cost;
+		if (cost == 1 && magicNumber >= 10) {
+			exhaust = true;
+		}
+		if (exhaust && type == CardType.POWER) {
+			exhaust = false;
+		}
+	}
+
+	public void setCard(String name, int cost, int block, int damage, int hits, int magicNumber, String modifiers, String buffs, String debuffs) {
+		this.originalName = this.name = name;
+		if (upgraded) {
+			this.name = this.name + "+";
+		}
+		this.baseCost = this.cost = this.costForTurn = cost;
+		this.buffs = buffs;
+		this.debuffs = debuffs;
+		this.baseBlock = this.block = block;
+		this.baseDamage = this.damage = damage;
+		this.hits = hits;
+		this.baseMagicNumber = this.magicNumber = magicNumber;
+		setModifiers(modifiers);
+		setType();
+		updateDescription();
+	}
+
+	@Override
+	public void use(AbstractPlayer p, AbstractMonster m) {
+		if (!initialized || invalid || empty) {
+			return;
+		}
+		if (baseBlock > 0) {
+			addToBot(new GainBlockAction(p, p, block));
+		}
+		if (baseDamage > 0) {
+			AbstractGameAction.AttackEffect effect;
+			switch (cost) {
+				case 0:
+				case 1:
+					effect = AbstractGameAction.AttackEffect.SLASH_DIAGONAL;
+					break;
+				case 2:
+					effect = AbstractGameAction.AttackEffect.BLUNT_LIGHT;
+					break;
+				default:
+					effect = AbstractGameAction.AttackEffect.BLUNT_HEAVY;
+					break;
+			}
+			if (isVampire) {
+				effect = AbstractGameAction.AttackEffect.NONE;
+				addToBot(new VFXAction(new BiteEffect(m.hb.cX, m.hb.cY, Color.GOLD.cpy()), 0.0F));
+			} else if (cost >= 3 && hits <= 1) {
+				addToBot(new VFXAction(new WeightyImpactEffect(m.hb.cX, m.hb.cY)));
+			}
+			for (int i = 0; i < Math.max(hits, 1); i++) {
+				if (isVampire) {
+					addToBot(new VampireDamageAction(m, new DamageInfo(p, damage, damageTypeForTurn), effect));
+				} else {
+					addToBot(new DamageAction(m, new DamageInfo(p, damage, damageTypeForTurn), effect));
+				}
+			}
+		}
+		if (stealGold) {
+			if (m != null) {
+				for (int i = 0; i < magicNumber; i++) {
+					addToBot(new VFXAction(new GainPennyEffect(p, m.hb.cX, m.hb.cY, p.hb.cX, p.hb.cY, true), 0.0F));
+				}
+			} else {
+				addToBot(new VFXAction(new RainingGoldEffect(magicNumber * 2, true), 0.0F));
+			}
+			addToBot(new GainGoldAction(magicNumber));
+		}
+		if (isDraw) {
+			addToBot(new DrawCardAction(p, magicNumber));
+		}
+		for (int i = 0, len = buffs.length(); i < len; i++) {
+			switch (buffs.charAt(i)) {
+				case 'S':
+					addToBot(new ApplyPowerAction(p, p, new StrengthPower(p, magicNumber)));
+					break;
+				case 'D':
+					addToBot(new ApplyPowerAction(p, p, new DexterityPower(p, magicNumber)));
+					break;
+				case 'P':
+					addToBot(new ApplyPowerAction(p, p, new PlatedArmorPower(p, magicNumber)));
+					break;
+				case 'T':
+					addToBot(new ApplyPowerAction(p, p, new ThornsPower(p, magicNumber)));
+					break;
+				case 'R':
+					addToBot(new ApplyPowerAction(p, p, new RitualPower(p, magicNumber, true)));
+					break;
+				case 'M':
+					addToBot(new ApplyPowerAction(p, p, new MetallicizePower(p, magicNumber)));
+					break;
+			}
+		}
+
+		if (gainEnergy) {
+			addToBot(new GainEnergyAction(1));
+		}
+
+		if (nextTurnEnergy) {
+			if (type == CardType.ATTACK) {
+				addToBot(new ApplyPowerAction(p, p, new EnergizedPower(p, 1)));
+			} else {
+				addToBot(new ApplyPowerAction(p, p, new EnergizedBluePower(p, 1)));
+			}
+		}
+
+		for (int i = 0, len = debuffs.length(); i < len; i++) {
+			switch (debuffs.charAt(i)) {
+				case 'P':
+					addToBot(new ApplyPowerAction(m, p, new PoisonPower(m, p, magicNumber)));
+					break;
+				case 'V':
+					addToBot(new ApplyPowerAction(m, p, new VulnerablePower(m, magicNumber, false)));
+					break;
+				case 'W':
+					addToBot(new ApplyPowerAction(m, p, new WeakPower(m, magicNumber, false)));
+					break;
+				case 'E':
+					addToBot(new ApplyPowerAction(m, p, new StrengthPower(m, -magicNumber), -magicNumber));
+					if (m != null && !m.hasPower(ArtifactPower.POWER_ID)) {
+						addToBot(new ApplyPowerAction(m, p, new GainStrengthPower(m, magicNumber), magicNumber));
+					}
+					break;
+				case 'S':
+					addToBot(new ApplyPowerAction(m, p, new StrengthPower(m, -magicNumber), -magicNumber));
+					break;
+			}
+		}
+
+		if (exhaustOther) {
+			addToBot(new ExhaustAction(1, false));
+		}
+	}
+
+	String buffDesc(String name, boolean capitalize) {
+		if (capitalize) {
+			return buffPrefix + TipHelper.capitalize(name) + buffSuffix;
+		} else {
+			return buffPrefix + name + buffSuffix;
+		}
+	}
+
+	String debuffDesc(String name) {
+		return debuffPrefix + TipHelper.capitalize(name) + debuffSuffix;
+	}
+
+	public void updateDescription() {
+		ArrayList<String> desc = new ArrayList<>();
+		if (baseBlock > 0) {
+			desc.add(blockDesc);
+		}
+		if (baseDamage > 0) {
+			String result = hits > 1 ? multiDesc.replace("!M!", String.valueOf(hits)) : damageDesc;
+			if (isVampire) {
+				result += " " + vampireDesc;
+			}
+			desc.add(result);
+		}
+		if (isDraw) {
+			desc.add(drawDesc);
+		}
+
+		for (int i = 0, len = buffs.length(); i < len; i++) {
+			switch (buffs.charAt(i)) {
+				case 'S':
+					desc.add(buffDesc(GameDictionary.STRENGTH.NAMES[0], true));
+					break;
+				case 'D':
+					desc.add(buffDesc(GameDictionary.DEXTERITY.NAMES[0], true));
+					break;
+				case 'P':
+					desc.add(buffDesc(PlatedArmorPower.NAME, false));
+					break;
+				case 'T':
+					desc.add(buffDesc(GameDictionary.THORNS.NAMES[0], true));
+					break;
+				case 'R':
+					desc.add(buffDesc(GameDictionary.RITUAL.NAMES[0], true));
+					break;
+				case 'M':
+					desc.add(buffDesc(MetallicizePower.NAME, false));
+					break;
+			}
+		}
+
+		boolean disarm = false;
+		boolean shackles = false;
+		for (int i = 0, len = debuffs.length(); i < len; i++) {
+			switch (debuffs.charAt(i)) {
+				case 'P':
+					desc.add(debuffDesc(GameDictionary.POISON.NAMES[0]));
+					break;
+				case 'V':
+					desc.add(debuffDesc(GameDictionary.VULNERABLE.NAMES[0]));
+					break;
+				case 'W':
+					desc.add(debuffDesc(GameDictionary.WEAK.NAMES[0]));
+					break;
+				case 'E':
+					shackles = true;
+					break;
+				case 'S':
+					disarm = true;
+					break;
+			}
+		}
+
+		if (gainEnergy) {
+			desc.add(gainEDesc);
+		}
+		if (nextTurnEnergy) {
+			desc.add(nextGainEDesc);
+		}
+		if (exhaustOther) {
+			desc.add(exhaustOtherDesc);
+		}
+		if (stealGold) {
+			desc.add(goldDesc);
+		}
+		if (disarm) {
+			desc.add(strengthDownDesc);
+		} else if (shackles) {
+			desc.add(shackleDesc);
+		} else if (exhaust) {
+			desc.add(exhaustDesc);
+		}
+		rawDescription = String.join(" NL ", desc);
+		initializeDescription();
+		initialized = true;
+	}
+
+	@Override
+	public void upgrade() {
+		if (!upgraded) {
+			upgradeName();
+			if (shouldUpgradeCost) {
+				upgradeBaseCost(baseCost - 1);
+			} else {
+				int level = baseCost + (exhaust ? 3 : 2);
+				if (level < 3) level = 3;
+				if (level >= 6) level = 20;
+				else {
+					if (baseDamage > 0 && baseBlock > 0) level--;
+					if (magicNumber > 0) level--;
+					if (level == 5) level++;
+				}
+				if (baseDamage > 0) {
+					int up = level;
+					if (level > 10) {
+						up = baseDamage * level / 100;
+					} else if (hits > 1) {
+						up = (up + hits - 1) / hits;
+					}
+					if (isVampire) {
+						up = (up + 1) / 2;
+					}
+					if (up < 1) up = 1;
+					upgradeDamage(up);
+				}
+				if (baseBlock > 0) {
+					upgradeBlock(level > 10 ? baseBlock * level / 100 : level);
+				}
+				if (baseMagicNumber > 0) {
+					if (debuffs.equals("P")) {
+						upgradeMagicNumber(baseCost + (exhaust ? 3 : 2));
+					} else {
+						upgradeMagicNumber(baseMagicNumber >= 5 ? 2 : 1);
+					}
+				}
+			}
+		}
+	}
+
+	public void calculateMonsterCardID() {
+		ArrayList<String> result = new ArrayList<>();
+		result.add(ID);
+		result.add(originalName);
+		result.add(String.valueOf(baseCost));
+		result.add(String.valueOf(baseBlock));
+		result.add(String.valueOf(baseDamage));
+		result.add(String.valueOf(hits));
+		result.add(String.valueOf(baseMagicNumber));
+		result.add(getModifierString());
+		result.add(buffs);
+		result.add(debuffs);
+
+		monsterCardID = String.join(idSeparator, result);
+	}
+
+	public void loadFromMonsterCardID(String id) {
+		monsterCardID = id;
+		loadFromTokens(id.split(idSeparator, -1));
+	}
+
+	@Override
+	public void loadFromTokens(String[] tokens) {
+		if (tokens.length < 10) {
+			invalid = true;
+		} else {
+			try {
+				setCard(tokens[1],
+						Integer.parseInt(tokens[2]),
+						Integer.parseInt(tokens[3]),
+						Integer.parseInt(tokens[4]),
+						Integer.parseInt(tokens[5]),
+						Integer.parseInt(tokens[6]),
+						tokens[7],
+						tokens[8],
+						tokens[9]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				invalid = true;
+			}
+		}
+	}
+
+	@Override
+	public void onLoad(String id) {
+		loadFromTokens(id.split(idSeparator, -1));
+		monsterCardID = id;
+
+		super.onLoad(id);
+	}
+
+	public void addBuff(char c) {
+		if (buffs.indexOf(c) == -1) {
+			buffs += c;
+		}
+	}
+
+	public boolean addDebuff(char c) {
+		if (debuffs.indexOf(c) == -1) {
+			debuffs += c;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public AbstractCard makeCopy() {
+		DynamicCard c = new DynamicCard();
+		if (initialized) {
+			c.loadFromMonsterCardID(monsterCardID);
+			c.loadTexture(monsterModelID);
+		}
+		return c;
+	}
+}

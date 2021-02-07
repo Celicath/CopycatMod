@@ -1,0 +1,23 @@
+[
+  {
+    "PROPER_NAME": "Summon",
+    "NAMES": [
+      "summon"
+    ],
+    "DESCRIPTION": "Summon a specified monster as a friendly minion. At the end of your turn, it will perform moves of that monster. NL [NOT IMPLEMENTED YET.]"
+  },
+  {
+    "PROPER_NAME": "T",
+    "NAMES": [
+      "t"
+    ],
+    "DESCRIPTION": "A variable equal to current turn number."
+  },
+  {
+    "PROPER_NAME": "Metallicize",
+    "NAMES": [
+      "metallicize"
+    ],
+    "DESCRIPTION": "Gain Block at the end of your turn."
+  }
+]

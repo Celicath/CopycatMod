@@ -1,0 +1,16 @@
+{
+  "CopycatMod:Spiredex": {
+    "NAME": "Spiredex",
+    "FLAVOR": "It's a high-tech encyclopedia!",
+    "DESCRIPTIONS": [
+      "Card rewards have #b1 additional card containing an enemy move performed in this combat."
+    ]
+  },
+  "CopycatMod:XCard": {
+    "NAME": "X card",
+    "FLAVOR": "Allows you to focus on Monster behavior. (Monster Only Mod)",
+    "DESCRIPTIONS": [
+      "Card rewards contain #b3 less cards."
+    ]
+  }
+}

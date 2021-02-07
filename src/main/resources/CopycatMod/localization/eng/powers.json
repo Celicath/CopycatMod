@@ -1,0 +1,17 @@
+{
+  "CopycatMod:TurnFlightPower": {
+    "NAME": "Flight",
+    "DESCRIPTIONS": [
+      "Receive 50% less attack damage for this turn.",
+      "Receive 50% less attack damage for #b",
+      " turns."
+    ]
+  },
+  "CopycatMod:EnemyHexPower": {
+    "NAME": "Hex",
+    "DESCRIPTIONS": [
+      "At the end of its turn, if it didn't attack, loses #b",
+      " HP."
+    ]
+  }
+}

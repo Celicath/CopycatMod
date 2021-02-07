@@ -1,0 +1,16 @@
+{
+  "CopycatMod:Config": {
+    "TEXT": [
+    ]
+  },
+  "CopycatMod:Minion": {
+    "TEXT": [
+      "I can only have up to 4 minions."
+    ]
+  },
+  "CopycatMod:Descriptors": {
+    "TEXT": [
+      "Monster"
+    ]
+  }
+}

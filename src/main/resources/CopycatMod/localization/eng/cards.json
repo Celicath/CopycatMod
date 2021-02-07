@@ -1,0 +1,189 @@
+{
+  "CopycatMod:DynamicCard": {
+    "NAME": "Simple Effects",
+    "DESCRIPTION": "This card's effect becomes the copy of an enemy move.",
+    "EXTENDED_DESCRIPTION": [
+      "Gain !M! ",
+      ".",
+      "Apply !M! ",
+      ".",
+      "Gain [E].",
+      "Next turn, gain [E].",
+      "Exhaust 1 card.",
+      " Heal HP equal to unblocked damage.",
+      "Gain !M! copycatmod:Metallicize.",
+      " #"
+    ]
+  },
+  "CopycatMod:Strike": {
+    "NAME": "Strike",
+    "DESCRIPTION": "Deal !D! damage."
+  },
+  "CopycatMod:Defend": {
+    "NAME": "Defend",
+    "DESCRIPTION": "Gain !B! Block."
+  },
+  "CopycatMod:Mimic": {
+    "NAME": "Mimic",
+    "DESCRIPTION": "Add a card containing enemy's last move into your hand. NL Exhaust.",
+    "UPGRADE_DESCRIPTION": "Retain. NL Add a card containing enemy's last move into your hand. NL Exhaust."
+  },
+  "CopycatMod:NoMove": {
+    "NAME": "(No Move)",
+    "DESCRIPTION": "Apply !M! Vulnerable. NL Apply !M! Weak."
+  },
+  "CopycatMod:MirrorMove": {
+    "NAME": "Mirror Move",
+    "DESCRIPTION": "Copy the enemy's last move. NL Exhaust."
+  },
+  "CopycatMod:Metronome": {
+    "NAME": "Metronome",
+    "DESCRIPTION": "Choose 1 of 3 cards of any color. Play it.",
+    "UPGRADE_DESCRIPTION": "Choose 1 of 3 Upgraded cards of any color. Play it."
+  },
+  "CopycatMod:BeatUp": {
+    "NAME": "Beat Up",
+    "DESCRIPTION": "ALL allies attack the enemy for !D! damage.",
+    "EXTENDED_DESCRIPTION": [
+      "(Total: ",
+      " damage)"
+    ]
+  },
+  "CopycatMod:AreaMetallicize": {
+    "NAME": "Area Metallicize",
+    "DESCRIPTION": "ALL allies gain !M! copycatmod:Metallicize."
+  },
+  "CopycatMod:MeFirst": {
+    "NAME": "Me First",
+    "DESCRIPTION": "If the enemy intends to... NL Block: Gain !B! Block. NL Attack: Deal !D! damage. NL Buff: Gain !M! Strength. NL Debuff: Apply !M! Weak."
+  },
+  "CopycatMod:Transform": {
+    "NAME": "Transform",
+    "DESCRIPTION": "Change your appearance to an enemy. NL At the start of your turn, perform moves of that enemy. NL Exhaust."
+  },
+  "CopycatMod:Sketch": {
+    "NAME": "Sketch",
+    "DESCRIPTION": "Permanently replace this with the card containing enemy's last move.",
+    "UPGRADE_DESCRIPTION": "Retain. NL Permanently replace this with the card containing enemy's last move."
+  },
+  "CopycatMod:Substitute": {
+    "NAME": "Substitute",
+    "DESCRIPTION": "Spend 1/4 of your Max HP to create a Substitute with that much HP. NL Exhaust."
+  },
+  "CopycatMod:Charging": {
+    "NAME": "Charging",
+    "DESCRIPTION": "After playing \"Charging\" twice, add an *Ultimate *Blast on top of your draw pile. It costs 0 and doesn't Exhaust.",
+    "UPGRADE_DESCRIPTION": "After playing \"Charging\" twice, add an *Ultimate *Blast+ on top of your draw pile. It costs 0 and doesn't Exhaust."
+  },
+  "CopycatMod:UltimateBlast": {
+    "NAME": "Ultimate Blast",
+    "DESCRIPTION": "Deal !D! damage. NL Exhaust.",
+    "EXTENDED_DESCRIPTION": [
+      "Deal !D! damage."
+    ]
+  },
+  "CopycatMod:Enrage": {
+    "NAME": "Enrage",
+    "DESCRIPTION": "Whenever you play a Skill, gain 1 Strength."
+  },
+  "CopycatMod:Fly": {
+    "NAME": "Fly",
+    "DESCRIPTION": "For this turn, you take half damage from attacks."
+  },
+  "CopycatMod:SummonCard": {
+    "NAME": "Summon",
+    "DESCRIPTION": "copycatmod:Summon a monster.",
+    "EXTENDED_DESCRIPTION": [
+      "Summon: ",
+      "copycatmod:Summon a ",
+      " with !M! HP. NL Exhaust."
+    ]
+  },
+  "CopycatMod:AreaHeal": {
+    "NAME": "Area Heal",
+    "DESCRIPTION": "ALL allies heal !M! HP. NL Exhaust."
+  },
+  "CopycatMod:Escape": {
+    "NAME": "Escape",
+    "DESCRIPTION": "Obtain a Smoke Bomb. NL Fleeting.",
+    "UPGRADE_DESCRIPTION": "Obtain !M! Smoke Bombs. NL Fleeting."
+  },
+  "CopycatMod:Reincarnate": {
+    "NAME": "Reincarnate",
+    "DESCRIPTION": "Obtain a Fairy in a Bottle. NL Fleeting.",
+    "UPGRADE_DESCRIPTION": "Obtain !M! Fairies in a Bottle. NL Fleeting."
+  },
+  "CopycatMod:Hex": {
+    "NAME": "Hex",
+    "DESCRIPTION": "Enemy loses !M! HP at the end of each of its turns without attacking. NL Exhaust."
+  },
+  "CopycatMod:PerplexingEye": {
+    "NAME": "Perplexing Eye",
+    "DESCRIPTION": "Become Confused. NL At the start of your turn, draw 2 additional cards.",
+    "UPGRADE_DESCRIPTION": "Innate. NL Become Confused. NL At the start of your turn, draw 2 additional cards."
+  },
+  "CopycatMod:Nom": {
+    "NAME": "Nom",
+    "DESCRIPTION": "Deal !D! damage copycatmod:T / 2 times (rounded up).",
+    "EXTENDED_DESCRIPTION": [
+      " NL (Hits !M! times.)"
+    ]
+  },
+  "CopycatMod:Implant": {
+    "NAME": "Implant",
+    "DESCRIPTION": "Steal !M! Max HP from the enemy. NL Exhaust."
+  },
+  "CopycatMod:FadingAttack": {
+    "NAME": "FadingAttack",
+    "DESCRIPTION": "Deal !M! + 10 copycatmod:T damage. NL Exhaust.",
+    "EXTENDED_DESCRIPTION": [
+      " NL (Deals !D! damage.)"
+    ]
+  },
+  "CopycatMod:MultiStabbing": {
+    "NAME": "Multi Stabbing",
+    "DESCRIPTION": "Deal !D! damage !M! time(s). NL Increase the number of hits of this card by 1 this combat."
+  },
+  "CopycatMod:MultiStabbing2": {
+    "NAME": "Multi Stabbing",
+    "DESCRIPTION": "Innate. NL Deal !D! damage copycatmod:T + 1 times.",
+    "EXTENDED_DESCRIPTION": [
+      " NL (Hits !M! times.)"
+    ]
+  },
+  "CopycatMod:ItIsTime": {
+    "NAME": "It is Time",
+    "DESCRIPTION": "Cannot play on the first 3 turns. NL Deal !M! + 5 copycatmod:T damage.",
+    "EXTENDED_DESCRIPTION": [
+      " NL (Deals !D! damage.)",
+      "It's too early to use this!"
+    ]
+  },
+  "CopycatMod:Divider": {
+    "NAME": "Divider",
+    "DESCRIPTION": "Deal H damage 6 times. ( H = Enemy's HP / 12 + !M! ) NL Exhaust.",
+    "EXTENDED_DESCRIPTION": [
+      "Deal !D! damage 6 times. ( H = Enemy's HP / 12 + !M! ) NL Exhaust."
+    ]
+  },
+  "CopycatMod:Inferno": {
+    "NAME": "Inferno",
+    "DESCRIPTION": "Deal !D! damage 6 times and apply !M! Poison to ALL enemies. NL Upgrade ALL your cards. NL Exhaust."
+  },
+  "CopycatMod:ChampsAnger": {
+    "NAME": "Champ's Anger",
+    "DESCRIPTION": "Remove all of your debuffs. NL Gain !M! Strength. NL Exhaust."
+  },
+  "CopycatMod:Haste": {
+    "NAME": "Haste",
+    "DESCRIPTION": "Heal !M! % of your NL Max HP. NL Remove all of your debuffs. NL Exhaust."
+  },
+  "CopycatMod:Haste2": {
+    "NAME": "Haste",
+    "DESCRIPTION": "Heal !M! % of your NL Max HP. NL Gain !B! Block. NL Remove all of your debuffs. NL Exhaust."
+  },
+  "CopycatMod:Debilitate": {
+    "NAME": "Debilitate",
+    "DESCRIPTION": "Gain !M! Strength. NL Gain !M! Dexterity. NL Apply !M! Poison. NL Apply !M! Vulnerable. NL Apply !M! Weak. NL Exhaust."
+  }
+}
