@@ -1,14 +1,12 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
-import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
+import com.megacrit.cardcrawl.actions.common.GainEnergyAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
-import com.megacrit.cardcrawl.powers.VulnerablePower;
-import com.megacrit.cardcrawl.powers.WeakPower;
 
 public class NoMove extends AbstractMonsterCard {
 	private static final String RAW_ID = "NoMove";
@@ -20,7 +18,7 @@ public class NoMove extends AbstractMonsterCard {
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
-	private static final CardTarget TARGET = CardTarget.ENEMY;
+	private static final CardTarget TARGET = CardTarget.NONE;
 
 	private static final int POWER = 1;
 	private static final int UPGRADE_BONUS = 1;
@@ -35,12 +33,12 @@ public class NoMove extends AbstractMonsterCard {
 	public NoMove() {
 		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
 		baseMagicNumber = magicNumber = POWER;
+		exhaust = true;
 	}
 
 	@Override
 	public void use(AbstractPlayer p, AbstractMonster m) {
-		addToBot(new ApplyPowerAction(m, p, new VulnerablePower(m, magicNumber, false)));
-		addToBot(new ApplyPowerAction(m, p, new WeakPower(m, magicNumber, false)));
+		addToBot(new GainEnergyAction(magicNumber));
 	}
 
 	@Override
@@ -53,6 +51,8 @@ public class NoMove extends AbstractMonsterCard {
 		if (!upgraded) {
 			upgradeName();
 			upgradeMagicNumber(UPGRADE_BONUS);
+			rawDescription = cardStrings.UPGRADE_DESCRIPTION;
+			initializeDescription();
 		}
 	}
 }

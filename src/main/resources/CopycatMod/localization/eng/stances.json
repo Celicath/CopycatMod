@@ -1,0 +1,8 @@
+{
+  "CopycatMod:Protective": {
+    "NAME": "Protective",
+    "DESCRIPTION": [
+      "Upon entering or exiting this #yStance, all enemies change their target to you."
+    ]
+  }
+}

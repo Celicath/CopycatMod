@@ -5,14 +5,15 @@ import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.actions.animations.TalkAction;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
-import com.megacrit.cardcrawl.actions.unique.RemoveDebuffsAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.city.Champ;
 import com.megacrit.cardcrawl.powers.StrengthPower;
+import com.megacrit.cardcrawl.powers.watcher.WrathNextTurnPower;
 import com.megacrit.cardcrawl.vfx.combat.InflameEffect;
 
 public class ChampsAnger extends AbstractMonsterCard {
@@ -28,10 +29,17 @@ public class ChampsAnger extends AbstractMonsterCard {
 
 	private static final int POWER = 6;
 	private static final int UPGRADE_BONUS = 2;
+	private static final int A18_MULTIPLIER = 2;
 
 	public ChampsAnger() {
 		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET, Champ.ID, 7);
-		baseMagicNumber = magicNumber = POWER;
+
+		if (AbstractDungeon.ascensionLevel >= 18) {
+			cost = costForTurn = COST * A18_MULTIPLIER;
+			baseMagicNumber = magicNumber = POWER * A18_MULTIPLIER;
+		} else {
+			baseMagicNumber = magicNumber = POWER;
+		}
 		exhaust = true;
 	}
 
@@ -41,8 +49,8 @@ public class ChampsAnger extends AbstractMonsterCard {
 		addToBot(new VFXAction(p, new InflameEffect(p), 0.25F));
 		addToBot(new VFXAction(p, new InflameEffect(p), 0.25F));
 		addToBot(new VFXAction(p, new InflameEffect(p), 0.25F));
-		addToBot(new RemoveDebuffsAction(p));
 		addToBot(new ApplyPowerAction(p, p, new StrengthPower(p, magicNumber)));
+		addToBot(new ApplyPowerAction(p, p, new WrathNextTurnPower(p)));
 	}
 
 	@Override
@@ -54,7 +62,7 @@ public class ChampsAnger extends AbstractMonsterCard {
 	public void upgrade() {
 		if (!upgraded) {
 			upgradeName();
-			upgradeMagicNumber(UPGRADE_BONUS);
+			upgradeMagicNumber(UPGRADE_BONUS * (AbstractDungeon.ascensionLevel >= 18 ? A18_MULTIPLIER : 1));
 		}
 	}
 }

@@ -92,8 +92,8 @@ public abstract class AbstractMonsterCard extends CustomCard implements CustomSa
 
 		if (upgraded) {
 			id = id + "+";
-			if (this.timesUpgraded > 0) {
-				id = id + this.timesUpgraded;
+			if (timesUpgraded > 0) {
+				id = id + timesUpgraded;
 			}
 		}
 

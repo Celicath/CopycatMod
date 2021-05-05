@@ -36,6 +36,7 @@ public class MultiStabbing extends AbstractMonsterCard {
 			baseDamage += ASC3_BONUS;
 		}
 		baseMagicNumber = magicNumber = 1;
+		isInnate = true;
 	}
 
 	@Override

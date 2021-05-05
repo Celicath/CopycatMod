@@ -1,6 +1,7 @@
 package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.interfaces.HoverMonsterCard;
 import TheCopycat.patches.CharacterEnum;
 import basemod.abstracts.CustomCard;
 import com.evacipated.cardcrawl.mod.stslib.StSLib;
@@ -15,7 +16,7 @@ import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.vfx.cardManip.ShowCardAndObtainEffect;
 
-public class Sketch extends CustomCard {
+public class Sketch extends CustomCard implements HoverMonsterCard {
 	private static final String RAW_ID = "Sketch";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
@@ -28,6 +29,8 @@ public class Sketch extends CustomCard {
 	private static final CardRarity RARITY = CardRarity.RARE;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
+	private static final int NEW_COST = 0;
+
 	public Sketch() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
 		exhaust = true;
@@ -38,11 +41,10 @@ public class Sketch extends CustomCard {
 	@Override
 	public void use(AbstractPlayer p, AbstractMonster m) {
 		addToBot(new MakeTempCardInHandAction(CopycatModMain.getEnemyLastMoveCard(m).makeCopy(), true));
-		AbstractCard thisCard = this;
 		addToBot(new AbstractGameAction() {
 			@Override
 			public void update() {
-				AbstractCard card = StSLib.getMasterDeckEquivalent(thisCard);
+				AbstractCard card = StSLib.getMasterDeckEquivalent(Sketch.this);
 				if (card != null) {
 					AbstractDungeon.player.masterDeck.removeCard(card);
 					AbstractDungeon.topLevelEffects.add(new ShowCardAndObtainEffect(CopycatModMain.getEnemyLastMoveCard(m).makeCopy(), Settings.WIDTH / 2.0F, Settings.HEIGHT / 2.0F));
@@ -53,9 +55,8 @@ public class Sketch extends CustomCard {
 	}
 
 	@Override
-	public void calculateCardDamage(AbstractMonster mo) {
-		super.calculateCardDamage(mo);
-		CopycatModMain.getEnemyLastMoveCard(mo).resetAttributes();
+	public void onHoverMonster(AbstractMonster m) {
+		CopycatModMain.getEnemyLastMoveCard(m).resetAttributes();
 	}
 
 	@Override
@@ -67,6 +68,7 @@ public class Sketch extends CustomCard {
 	public void upgrade() {
 		if (!upgraded) {
 			upgradeName();
+			upgradeBaseCost(NEW_COST);
 			selfRetain = true;
 			rawDescription = cardStrings.UPGRADE_DESCRIPTION;
 			initializeDescription();

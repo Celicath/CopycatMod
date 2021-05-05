@@ -1,6 +1,7 @@
 package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.interfaces.HoverMonsterCard;
 import TheCopycat.patches.CharacterEnum;
 import basemod.abstracts.CustomCard;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInHandAction;
@@ -10,7 +11,7 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
-public class Mimic extends CustomCard {
+public class Mimic extends CustomCard implements HoverMonsterCard {
 	private static final String RAW_ID = "Mimic";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
@@ -36,9 +37,8 @@ public class Mimic extends CustomCard {
 	}
 
 	@Override
-	public void calculateCardDamage(AbstractMonster mo) {
-		super.calculateCardDamage(mo);
-		CopycatModMain.getEnemyLastMoveCard(mo).resetAttributes();
+	public void onHoverMonster(AbstractMonster m) {
+		CopycatModMain.getEnemyLastMoveCard(m).resetAttributes();
 	}
 
 	@Override

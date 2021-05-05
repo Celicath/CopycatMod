@@ -1,6 +1,6 @@
 {
   "CopycatMod:DynamicCard": {
-    "NAME": "Simple Effects",
+    "NAME": "Monster Card",
     "DESCRIPTION": "This card's effect becomes the copy of an enemy move.",
     "EXTENDED_DESCRIPTION": [
       "Gain !M! ",
@@ -8,8 +8,9 @@
       "Apply !M! ",
       ".",
       "Gain [E].",
-      "Next turn, gain [E].",
+      "Enter Calm.",
       "Exhaust 1 card.",
+      "Discard 1 card.",
       " Heal HP equal to unblocked damage.",
       "Gain !M! copycatmod:Metallicize.",
       " #"
@@ -25,16 +26,17 @@
   },
   "CopycatMod:Mimic": {
     "NAME": "Mimic",
-    "DESCRIPTION": "Add a card containing enemy's last move into your hand. NL Exhaust.",
-    "UPGRADE_DESCRIPTION": "Retain. NL Add a card containing enemy's last move into your hand. NL Exhaust."
+    "DESCRIPTION": "Add a copycatmod:Monster copycatmod:Card containing enemy's last move into your hand. NL Exhaust.",
+    "UPGRADE_DESCRIPTION": "Retain. NL Add a copycatmod:Monster copycatmod:Card containing enemy's last move into your hand. NL Exhaust."
   },
   "CopycatMod:NoMove": {
     "NAME": "(No Move)",
-    "DESCRIPTION": "Apply !M! Vulnerable. NL Apply !M! Weak."
+    "DESCRIPTION": "Gain [E]. NL Exhaust.",
+    "UPGRADE_DESCRIPTION": "Gain [E] [E]. NL Exhaust."
   },
   "CopycatMod:MirrorMove": {
     "NAME": "Mirror Move",
-    "DESCRIPTION": "Copy the enemy's last move. NL Exhaust."
+    "DESCRIPTION": "Play the copycatmod:Monster copycatmod:Card containing enemy's last move. NL Exhaust."
   },
   "CopycatMod:Metronome": {
     "NAME": "Metronome",
@@ -43,19 +45,27 @@
   },
   "CopycatMod:BeatUp": {
     "NAME": "Beat Up",
-    "DESCRIPTION": "ALL allies attack the enemy for !D! damage.",
+    "DESCRIPTION": "ALL allies attack the enemy for !M! damage.",
     "EXTENDED_DESCRIPTION": [
-      "(Total: ",
-      " damage)"
+      " NL (Total: ",
+      " damage)",
+      "",
+      " damage"
     ]
   },
-  "CopycatMod:AreaMetallicize": {
-    "NAME": "Area Metallicize",
+  "CopycatMod:MetallicizeAll": {
+    "NAME": "Metallicize All",
     "DESCRIPTION": "ALL allies gain !M! copycatmod:Metallicize."
   },
   "CopycatMod:MeFirst": {
     "NAME": "Me First",
-    "DESCRIPTION": "If the enemy intends to... NL Block: Gain !B! Block. NL Attack: Deal !D! damage. NL Buff: Gain !M! Strength. NL Debuff: Apply !M! Weak."
+    "DESCRIPTION": "If the enemy intends to...",
+    "EXTENDED_DESCRIPTION": [
+      "Block: Gain !B! Block.",
+      "Attack: Deal !D! damage.",
+      "Buff: Gain !M! Strength.",
+      "Debuff: Apply !M! Weak."
+    ]
   },
   "CopycatMod:Transform": {
     "NAME": "Transform",
@@ -63,8 +73,8 @@
   },
   "CopycatMod:Sketch": {
     "NAME": "Sketch",
-    "DESCRIPTION": "Permanently replace this with the card containing enemy's last move.",
-    "UPGRADE_DESCRIPTION": "Retain. NL Permanently replace this with the card containing enemy's last move."
+    "DESCRIPTION": "Permanently replace this with the copycatmod:Monster copycatmod:Card containing enemy's last move.",
+    "UPGRADE_DESCRIPTION": "Retain. NL Permanently replace this with the copycatmod:Monster copycatmod:Card containing enemy's last move."
   },
   "CopycatMod:Substitute": {
     "NAME": "Substitute",
@@ -90,7 +100,7 @@
     "NAME": "Fly",
     "DESCRIPTION": "For this turn, you take half damage from attacks."
   },
-  "CopycatMod:SummonCard": {
+  "CopycatMod:SummonMonsterCard": {
     "NAME": "Summon",
     "DESCRIPTION": "copycatmod:Summon a monster.",
     "EXTENDED_DESCRIPTION": [
@@ -119,8 +129,8 @@
   },
   "CopycatMod:PerplexingEye": {
     "NAME": "Perplexing Eye",
-    "DESCRIPTION": "Become Confused. NL At the start of your turn, draw 2 additional cards.",
-    "UPGRADE_DESCRIPTION": "Innate. NL Become Confused. NL At the start of your turn, draw 2 additional cards."
+    "DESCRIPTION": "Become Confused. NL At the start of your turn, draw !M! additional card.",
+    "UPGRADE_DESCRIPTION": "Become Confused. NL At the start of your turn, draw !M! additional cards."
   },
   "CopycatMod:Nom": {
     "NAME": "Nom",
@@ -135,14 +145,14 @@
   },
   "CopycatMod:FadingAttack": {
     "NAME": "FadingAttack",
-    "DESCRIPTION": "Deal !M! + 10 copycatmod:T damage. NL Exhaust.",
+    "DESCRIPTION": "Deal !M! + 10 copycatmod:T damage.",
     "EXTENDED_DESCRIPTION": [
       " NL (Deals !D! damage.)"
     ]
   },
   "CopycatMod:MultiStabbing": {
     "NAME": "Multi Stabbing",
-    "DESCRIPTION": "Deal !D! damage !M! time(s). NL Increase the number of hits of this card by 1 this combat."
+    "DESCRIPTION": "Innate. NL Deal !D! damage !M! time(s). NL Increase the number of hits of this card by 1 this combat."
   },
   "CopycatMod:MultiStabbing2": {
     "NAME": "Multi Stabbing",
@@ -172,7 +182,7 @@
   },
   "CopycatMod:ChampsAnger": {
     "NAME": "Champ's Anger",
-    "DESCRIPTION": "Remove all of your debuffs. NL Gain !M! Strength. NL Exhaust."
+    "DESCRIPTION": "Gain !M! Strength. NL Next turn, enter Wrath. NL Exhaust."
   },
   "CopycatMod:Haste": {
     "NAME": "Haste",
@@ -185,5 +195,65 @@
   "CopycatMod:Debilitate": {
     "NAME": "Debilitate",
     "DESCRIPTION": "Gain !M! Strength. NL Gain !M! Dexterity. NL Apply !M! Poison. NL Apply !M! Vulnerable. NL Apply !M! Weak. NL Exhaust."
+  },
+  "CopycatMod:PlagiarizedStrike": {
+    "NAME": "Plagiarized Strike",
+    "DESCRIPTION": "(Copies description from Pummel Strike and Cut Through Fate)"
+  },
+  "CopycatMod:HeavySlam": {
+    "NAME": "Heavy Slam",
+    "DESCRIPTION": "Deal !D! damage. NL Enter copycatmod:Protective."
+  },
+  "CopycatMod:ToxicMinds": {
+    "NAME": "Toxic Minds",
+    "DESCRIPTION": "Apply !M! Poison. NL Enter Calm."
+  },
+  "CopycatMod:SkewerBlade": {
+    "NAME": "Skewer Blade",
+    "DESCRIPTION": "Deal !D! damage X times. NL Change the cost to 1 and keep the number of hits for this combat.",
+    "EXTENDED_DESCRIPTION": [
+      "Deal !D! damage !M! times.",
+      "Deal !D! damage !M! time."
+    ]
+  },
+  "CopycatMod:WellPrepared": {
+    "NAME": "Well Prepared",
+    "DESCRIPTION": "Draw !M! card. NL Discard !M! card. NL If you have 6 or more Strength, apply 2 Vulnerable to ALL enemies.",
+    "UPGRADE_DESCRIPTION": "Draw !M! cards. NL Discard !M! cards. NL If you have 6 or more Strength, apply 2 Vulnerable to ALL enemies."
+  },
+  "CopycatMod:DoubleDash": {
+    "NAME": "Double Dash",
+    "DESCRIPTION": "Gain !B! Block. NL Deal !D! damage twice."
+  },
+  "CopycatMod:ClearFist": {
+    "NAME": "Clear Fist",
+    "DESCRIPTION": "Deal !D! damage. NL If you are in any Stance, deal !M! damage and exit your Stance."
+  },
+  "CopycatMod:ClearBody": {
+    "NAME": "Clear Body",
+    "DESCRIPTION": "Gain !B! Block X times. NL If you are in any Stance, gain [E] and exit your Stance."
+  },
+  "CopycatMod:Grab": {
+    "NAME": "Grab",
+    "DESCRIPTION": "Deal !D! damage. NL If you have 6 or more Strength, enter copycatmod:Protective."
+  },
+  "CopycatMod:GlowingCard": {
+    "NAME": "Glowing Card",
+    "DESCRIPTION": "Unplayable. NL Whenever you copycatmod:Choose this card, gain !M! Block if it is in combat or heal !M! HP if not.",
+    "EXTENDED_DESCRIPTION": [
+      "I can't play this card."
+    ]
+  },
+  "CopycatMod:StanceChange": {
+    "NAME": "Stance Change",
+    "DESCRIPTION": "Enter Calm, Wrath or copycatmod:Protective."
+  },
+  "CopycatMod:Protective": {
+    "NAME": "Protective",
+    "DESCRIPTION": "Upon entering or exiting Protective, all enemies change their target to you."
+  },
+  "CopycatMod:TwinSlicer": {
+    "NAME": "Twin Slicer",
+    "DESCRIPTION": "Deal !D! damage to ALL enemies twice. If you have 6 or more Strength, heal !M! HP and Exhaust."
   }
 }

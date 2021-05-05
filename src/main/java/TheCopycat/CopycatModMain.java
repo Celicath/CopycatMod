@@ -1,19 +1,21 @@
 package TheCopycat;
 
+import TheCopycat.blights.Spiredex;
 import TheCopycat.cards.Mimic;
 import TheCopycat.cards.monster.AbstractMonsterCard;
 import TheCopycat.cards.monster.Charging;
 import TheCopycat.cards.monster.DynamicCard;
 import TheCopycat.cards.monster.NoMove;
+import TheCopycat.cards.temp.ChooseProtective;
 import TheCopycat.characters.Copycat;
+import TheCopycat.crossovers.BetterFriendlyMinions;
+import TheCopycat.friendlyminions.AbstractCopycatMinion;
 import TheCopycat.patches.CaptureEnemyMovePatch;
 import TheCopycat.patches.CharacterEnum;
-import TheCopycat.relics.Spiredex;
-import TheCopycat.relics.XCard;
+import TheCopycat.relics.LuckyBag;
 import basemod.AutoAdd;
 import basemod.BaseMod;
 import basemod.ModPanel;
-import basemod.helpers.RelicType;
 import basemod.interfaces.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -24,23 +26,25 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.CardHelper;
 import com.megacrit.cardcrawl.localization.*;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.powers.AbstractPower;
+import com.megacrit.cardcrawl.powers.StrengthPower;
+import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import com.megacrit.cardcrawl.screens.custom.CustomMod;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 @SpireInitializer
 public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscriber, PostInitializeSubscriber,
 		EditCharactersSubscriber, EditCardsSubscriber, EditRelicsSubscriber,
 		PreStartGameSubscriber, OnStartBattleSubscriber, AddCustomModeModsSubscriber,
-		PostCreateStartingDeckSubscriber, PostCreateStartingRelicsSubscriber {
+		PostCreateStartingDeckSubscriber {
 
 	private static final String MODNAME = "The Copycat";
 	private static final String AUTHOR = "Celicath";
@@ -131,6 +135,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 		new AutoAdd(MOD_ID)
 				.packageFilter(Mimic.class)
 				.notPackageFilter(AbstractMonsterCard.class)
+				.notPackageFilter(ChooseProtective.class)
 				.setDefaultSeen(true)
 				.cards();
 		new AutoAdd(MOD_ID)
@@ -141,8 +146,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 
 	@Override
 	public void receiveEditRelics() {
-		BaseMod.addRelicToCustomPool(new Spiredex(), CharacterEnum.CardColorEnum.COPYCAT_BLUE);
-		BaseMod.addRelic(new XCard(), RelicType.SHARED);
+		BaseMod.addRelicToCustomPool(new LuckyBag(), CharacterEnum.CardColorEnum.COPYCAT_BLUE);
 	}
 
 	@Override
@@ -156,6 +160,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 	private void loadLocStrings(String loc) {
 		try {
 			if (Gdx.files.internal(MOD_ID + "/localization/" + loc).exists()) {
+				BaseMod.loadCustomStrings(BlightStrings.class, GetLocString(loc, "blights"));
 				BaseMod.loadCustomStrings(CardStrings.class, GetLocString(loc, "cards"));
 				BaseMod.loadCustomStrings(CharacterStrings.class, GetLocString(loc, "characters"));
 				BaseMod.loadCustomStrings(EventStrings.class, GetLocString(loc, "events"));
@@ -163,6 +168,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 				BaseMod.loadCustomStrings(PowerStrings.class, GetLocString(loc, "powers"));
 				BaseMod.loadCustomStrings(RelicStrings.class, GetLocString(loc, "relics"));
 				BaseMod.loadCustomStrings(RunModStrings.class, GetLocString(loc, "run_mods"));
+				BaseMod.loadCustomStrings(StanceStrings.class, GetLocString(loc, "stances"));
 				BaseMod.loadCustomStrings(TutorialStrings.class, GetLocString(loc, "tutorials"));
 				BaseMod.loadCustomStrings(UIStrings.class, GetLocString(loc, "ui"));
 			}
@@ -201,12 +207,20 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 		return MOD_ID + "/images/powers/" + id + "_" + size + ".png";
 	}
 
-	public static String GetOtherPath(String id) {
-		return MOD_ID + "/images/other/" + id + ".png";
+	public static String GetMinionPath(String id) {
+		return MOD_ID + "/images/char/Minions/" + id + ".png";
 	}
 
 	public static String GetRelicPath(String id) {
 		return MOD_ID + "/images/relics/" + id + ".png";
+	}
+
+	public static String GetBlightPath(String id) {
+		return MOD_ID + "/images/blights/" + id + ".png";
+	}
+
+	public static String GetBlightOutlinePath(String id) {
+		return MOD_ID + "/images/blights/outline/" + id + ".png";
 	}
 
 	public static String GetRelicOutlinePath(String id) {
@@ -244,6 +258,10 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 	@Override
 	public void receiveOnBattleStart(AbstractRoom room) {
 		Charging.useCount = 0;
+		BetterFriendlyMinions.copycatMinions = new AbstractCopycatMinion[4];
+		BetterFriendlyMinions.minionAiRng = new Random(Settings.seed + AbstractDungeon.floorNum);
+		BetterFriendlyMinions.enemyTargetRng = new Random(Settings.seed + AbstractDungeon.floorNum);
+		Spiredex.monsterCardRng = new Random(Settings.seed + AbstractDungeon.floorNum);
 	}
 
 	@Override
@@ -253,24 +271,22 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 
 	@Override
 	public void receivePostCreateStartingDeck(AbstractPlayer.PlayerClass chosenClass, CardGroup addCardsToMe) {
-		AbstractCard cardToUpgrade = null;
-		for (AbstractCard c : addCardsToMe.group) {
-			if (c.cardID.equals(Mimic.ID)) {
-				cardToUpgrade = c;
+		if (chosenClass == CharacterEnum.PlayerClassEnum.THE_COPYCAT) {
+			AbstractCard cardToUpgrade = null;
+			for (AbstractCard c : addCardsToMe.group) {
+				if (c.cardID.equals(Mimic.ID)) {
+					cardToUpgrade = c;
+				}
 			}
-		}
-		if (cardToUpgrade != null) {
-			cardToUpgrade.upgrade();
+			if (cardToUpgrade != null) {
+				cardToUpgrade.upgrade();
+			}
 		}
 	}
 
-	@Override
-	public void receivePostCreateStartingRelics(AbstractPlayer.PlayerClass playerClass, ArrayList<String> relics) {
-		if (CardCrawlGame.trial != null && CardCrawlGame.trial.dailyModIDs().contains(makeID("MonsterOnly"))) {
-			relics.add(XCard.ID);
-			for (int i = 0; i < 3; i++) {
-				relics.add(Spiredex.ID);
-			}
-		}
+	public static boolean strengthThreshold() {
+		if (AbstractDungeon.player == null) return false;
+		AbstractPower pow = AbstractDungeon.player.getPower(StrengthPower.POWER_ID);
+		return pow != null && pow.amount >= 6;
 	}
 }

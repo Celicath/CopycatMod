@@ -19,11 +19,13 @@ public class PerplexingEye extends AbstractMonsterCard {
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 1;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
+	public static final String UPGRADE_DESCRIPTION = cardStrings.UPGRADE_DESCRIPTION;
 	private static final CardType TYPE = CardType.POWER;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
 	private static final CardTarget TARGET = CardTarget.SELF;
 
-	private static final int POWER = 2;
+	private static final int POWER = 1;
+	private static final int UPGRADE_BONUS = 1;
 
 	public PerplexingEye() {
 		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET, Snecko.ID, 1);
@@ -45,7 +47,7 @@ public class PerplexingEye extends AbstractMonsterCard {
 	public void upgrade() {
 		if (!upgraded) {
 			upgradeName();
-			isInnate = true;
+			upgradeMagicNumber(UPGRADE_BONUS);
 			rawDescription = cardStrings.UPGRADE_DESCRIPTION;
 			initializeDescription();
 		}

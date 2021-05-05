@@ -1,0 +1,11 @@
+{
+  "CopycatMod:Spiredex": {
+    "NAME": "Spiredex",
+    "DESCRIPTION": [
+      "The first card from combat reward becomes a #yMonster #yCard containing a random enemy move used in this combat.",
+      "The first #b",
+      " cards from combat reward becomes a #yMonster #yCard containing a random enemy move used in this combat.",
+      "All card rewards become #yMonster #yCards containing a random enemy move used in this combat."
+    ]
+  }
+}

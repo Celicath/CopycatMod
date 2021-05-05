@@ -1,7 +1,8 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
-import TheCopycat.actions.SummonMirrorMinionAction;
+import TheCopycat.actions.SummonCopycatMinionAction;
+import TheCopycat.friendlyminions.MirrorMinion;
 import basemod.AutoAdd;
 import com.megacrit.cardcrawl.actions.animations.TalkAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -17,8 +18,8 @@ import com.megacrit.cardcrawl.monsters.exordium.*;
 import java.util.ArrayList;
 
 @AutoAdd.Seen
-public class SummonCard extends AbstractMonsterCard {
-	private static final String RAW_ID = "SummonCard";
+public class SummonMonsterCard extends AbstractMonsterCard {
+	private static final String RAW_ID = "SummonMonsterCard";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
@@ -33,6 +34,7 @@ public class SummonCard extends AbstractMonsterCard {
 	public String summonName = null;
 	public int baseCost;
 	public boolean initialized = false;
+	public boolean smallFont = false;
 
 	public static AbstractMonster makeMonster(String ID) {
 		switch (ID) {
@@ -65,22 +67,19 @@ public class SummonCard extends AbstractMonsterCard {
 		}
 	}
 
-	public SummonCard() {
+	public SummonMonsterCard() {
 		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
+		exhaust = true;
 	}
 
 	@Override
 	public void use(AbstractPlayer p, AbstractMonster m) {
-		addToBot(new TalkAction(true, "Summon is not implemented yet!", 0.5f, 4.0f));
-		return;
-/*
 		AbstractMonster summon = makeMonster(summonID);
 		if (summon == null) {
-			addToBot(new TalkAction(true, "I said not implemented!", 0.5f, 4.0f));
+			addToBot(new TalkAction(true, "This minion is not supported.", 0.5f, 4.0f));
 		} else {
-			addToBot(new SummonMirrorMinionAction(summon.name, summon, magicNumber));
+			addToBot(new SummonCopycatMinionAction(new MirrorMinion(summon.name, summon, magicNumber)));
 		}
- */
 	}
 
 	public void calculateMonsterCardID() {
@@ -91,6 +90,7 @@ public class SummonCard extends AbstractMonsterCard {
 		result.add(String.valueOf(summonName));
 		result.add(String.valueOf(baseCost));
 		result.add(String.valueOf(baseMagicNumber));
+		result.add(String.valueOf(smallFont));
 
 		monsterCardID = String.join(idSeparator, result);
 	}
@@ -108,39 +108,58 @@ public class SummonCard extends AbstractMonsterCard {
 
 	@Override
 	public void loadFromTokens(String[] tokens) {
-		if (tokens.length >= 6) {
+		if (tokens.length >= 7) {
 			try {
+				int shouldUpgrade = 0;
+				if (upgraded) {
+					upgraded = false;
+					shouldUpgrade = timesUpgraded > 0 ? timesUpgraded : 1;
+				}
 				originalName = name = tokens[1];
 				summonID = tokens[2];
 				summonName = tokens[3];
 				baseCost = cost = costForTurn = Integer.parseInt(tokens[4]);
 				baseMagicNumber = magicNumber = Integer.parseInt(tokens[5]);
+				smallFont = tokens[6].equals("true");
 				updateDescription();
+				for (int i = 0; i < shouldUpgrade; i++) {
+					upgrade();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
+	@Override
+	public void onLoad(String id) {
+		loadFromTokens(id.split(idSeparator, -1));
+		monsterCardID = id;
+
+		super.onLoad(id);
+	}
+
 	public void setName(String cardName, AbstractMonster m) {
 		if (cardName == null) {
-			this.originalName = this.name = EXTENDED_DESCRIPTION[0] + m.name;
+			originalName = name = EXTENDED_DESCRIPTION[0] + m.name;
+			smallFont = true;
 		} else {
-			this.originalName = this.name = cardName;
+			originalName = name = cardName;
+			smallFont = false;
 		}
 	}
 
 	public void setSummon(AbstractMonster m, int cost, int hp) {
-		this.summonID = m.id;
-		this.summonName = m.name;
-		this.baseCost = this.cost = this.costForTurn = cost;
-		this.baseMagicNumber = this.magicNumber = hp;
-		this.updateDescription();
+		summonID = m.id;
+		summonName = m.name;
+		baseCost = cost = costForTurn = cost;
+		baseMagicNumber = magicNumber = hp;
+		updateDescription();
 	}
 
 	@Override
 	public AbstractCard makeCopy() {
-		SummonCard c = new SummonCard();
+		SummonMonsterCard c = new SummonMonsterCard();
 		if (initialized) {
 			c.loadFromMonsterCardID(monsterCardID);
 			c.loadTexture(monsterModelID);
@@ -149,9 +168,19 @@ public class SummonCard extends AbstractMonsterCard {
 	}
 
 	@Override
+	public float getTitleFontSize() {
+		if (smallFont) {
+			return 20;
+		} else {
+			return super.getTitleFontSize();
+		}
+	}
+
+	@Override
 	public void upgrade() {
 		if (!upgraded) {
 			upgradeName();
+			upgradeMagicNumber(4);
 		}
 	}
 }

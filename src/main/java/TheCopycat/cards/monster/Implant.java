@@ -10,7 +10,6 @@ import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.beyond.WrithingMass;
 import com.megacrit.cardcrawl.vfx.combat.FlyingOrbEffect;
-import com.megacrit.cardcrawl.vfx.combat.HemokinesisEffect;
 
 public class Implant extends AbstractMonsterCard {
 	private static final String RAW_ID = "Implant";
@@ -18,7 +17,7 @@ public class Implant extends AbstractMonsterCard {
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
-	private static final int COST = 1;
+	private static final int COST = 0;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;

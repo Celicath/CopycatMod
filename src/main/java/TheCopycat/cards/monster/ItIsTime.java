@@ -19,13 +19,13 @@ public class ItIsTime extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	private static final int COST = 2;
+	private static final int COST = 1;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
-	private static final int POWER = 15;
+	private static final int POWER = 5;
 	private static final int UPGRADE_BONUS = 5;
 	private static final int TURN_MULTIPLIER = 5;
 

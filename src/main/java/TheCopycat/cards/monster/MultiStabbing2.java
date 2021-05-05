@@ -31,6 +31,7 @@ public class MultiStabbing2 extends AbstractMonsterCard {
 	public MultiStabbing2() {
 		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET, Maw.ID, 5);
 		baseDamage = POWER;
+		isInnate = true;
 	}
 
 	@Override

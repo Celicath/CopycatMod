@@ -1,16 +1,14 @@
 {
-  "CopycatMod:Spiredex": {
-    "NAME": "Spiredex",
-    "FLAVOR": "It's a high-tech encyclopedia!",
+  "CopycatMod:LuckyBag": {
+    "NAME": "Lucky Bag",
+    "FLAVOR": "What will you get from this bag?",
     "DESCRIPTIONS": [
-      "Card rewards have #b1 additional card containing an enemy move performed in this combat."
-    ]
-  },
-  "CopycatMod:XCard": {
-    "NAME": "X card",
-    "FLAVOR": "Allows you to focus on Monster behavior. (Monster Only Mod)",
-    "DESCRIPTIONS": [
-      "Card rewards contain #b3 less cards."
+      "When you play the first card in combat, gain a bonus effect based on its type.",
+      "Bonus",
+      "Attack: Gain 2 #yStrength.",
+      "Skill: Gain 3 #yPlated #yArmor.",
+      "Power: Gain [E] [E] .",
+      "Other: Gain 3 Max HP."
     ]
   }
 }

@@ -14,11 +14,13 @@ import java.util.ArrayList;
 public class MetronomeAction extends AbstractGameAction {
 	private boolean retrieveCard = false;
 	private boolean upgraded;
+	private AbstractMonster m;
 
-	public MetronomeAction(boolean upgraded) {
+	public MetronomeAction(boolean upgraded, AbstractMonster m) {
 		this.actionType = ActionType.CARD_MANIPULATION;
 		this.duration = Settings.ACTION_DUR_FAST;
 		this.upgraded = upgraded;
+		this.m = m;
 	}
 
 	public void update() {
@@ -34,7 +36,9 @@ public class MetronomeAction extends AbstractGameAction {
 					// disCard.target_x = Settings.WIDTH / 2.0F - 300.0F * Settings.scale;
 					// disCard.target_y = Settings.HEIGHT / 2.0F;
 
-					AbstractMonster m = AbstractDungeon.getCurrRoom().monsters.getRandomMonster(null, true, AbstractDungeon.cardRandomRng);
+					if (m == null) {
+						m = AbstractDungeon.getCurrRoom().monsters.getRandomMonster(null, true, AbstractDungeon.cardRandomRng);
+					}
 					if (m != null) {
 						disCard.calculateCardDamage(m);
 					}
@@ -65,10 +69,10 @@ public class MetronomeAction extends AbstractGameAction {
 				cardRarity = AbstractCard.CardRarity.RARE;
 			}
 
-			AbstractCard tmp = CardLibrary.getAnyColorCard(cardRarity);
+			AbstractCard tmp = CardLibrary.getAnyColorCard(cardRarity).makeCopy();
 			if (result.stream().noneMatch(c -> c.cardID.equals(tmp.cardID))) {
 				if (upgraded) tmp.upgrade();
-				result.add(tmp.makeCopy());
+				result.add(tmp);
 			}
 		}
 

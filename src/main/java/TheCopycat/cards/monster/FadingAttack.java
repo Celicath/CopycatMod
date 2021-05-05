@@ -25,14 +25,13 @@ public class FadingAttack extends AbstractMonsterCard {
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
-	private static final int POWER = 20;
+	private static final int POWER = 10;
 	private static final int UPGRADE_BONUS = 10;
 	private static final int TURN_MULTIPLIER = 10;
 
 	public FadingAttack() {
 		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET, Transient.ID, 1);
 		baseMagicNumber = magicNumber = POWER;
-		exhaust = true;
 	}
 
 	@Override

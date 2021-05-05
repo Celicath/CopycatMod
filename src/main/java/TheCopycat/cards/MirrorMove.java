@@ -1,15 +1,21 @@
 package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.interfaces.HoverMonsterCard;
 import TheCopycat.patches.CharacterEnum;
 import basemod.abstracts.CustomCard;
+import com.megacrit.cardcrawl.actions.AbstractGameAction;
+import com.megacrit.cardcrawl.actions.utility.NewQueueCardAction;
+import com.megacrit.cardcrawl.actions.utility.UnlimboAction;
+import com.megacrit.cardcrawl.actions.utility.WaitAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
-public class MirrorMove extends CustomCard {
+public class MirrorMove extends CustomCard implements HoverMonsterCard {
 	private static final String RAW_ID = "MirrorMove";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
@@ -17,7 +23,7 @@ public class MirrorMove extends CustomCard {
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 1;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
-	private static final CardType TYPE = CardType.ATTACK;
+	private static final CardType TYPE = CardType.SKILL;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.COMMON;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
@@ -32,15 +38,32 @@ public class MirrorMove extends CustomCard {
 
 	@Override
 	public void use(AbstractPlayer p, AbstractMonster m) {
-		AbstractCard c = CopycatModMain.getEnemyLastMoveCard(m).makeCopy();
-		c.calculateCardDamage(m);
-		c.use(p, m);
+		addToBot(new AbstractGameAction() {
+			@Override
+			public void update() {
+				AbstractCard c = CopycatModMain.getEnemyLastMoveCard(m).makeCopy();
+				c.calculateCardDamage(m);
+				p.limbo.group.add(c);
+				c.current_x = CopycatModMain.getEnemyLastMoveCard(m).current_x;
+				c.current_y = CopycatModMain.getEnemyLastMoveCard(m).current_y;
+				c.target_x = (float) Settings.WIDTH / 2.0F + 200.0F * Settings.xScale;
+				c.target_y = (float) Settings.HEIGHT / 2.0F;
+				c.targetAngle = 0.0F;
+				c.drawScale = 0.75F;
+				c.targetDrawScale = 0.75F;
+				c.lighten(false);
+				c.purgeOnUse = true;
+				addToTop(new NewQueueCardAction(c, m, false, true));
+				addToTop(new UnlimboAction(c));
+				addToTop(new WaitAction(Settings.FAST_MODE ? Settings.ACTION_DUR_FASTER : Settings.ACTION_DUR_MED));
+				isDone = true;
+			}
+		});
 	}
 
 	@Override
-	public void calculateCardDamage(AbstractMonster mo) {
-		super.calculateCardDamage(mo);
-		CopycatModMain.getEnemyLastMoveCard(mo).calculateCardDamage(mo);
+	public void onHoverMonster(AbstractMonster m) {
+		CopycatModMain.getEnemyLastMoveCard(m).calculateCardDamage(m);
 	}
 
 	@Override

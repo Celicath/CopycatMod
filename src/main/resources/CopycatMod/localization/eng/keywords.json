@@ -4,7 +4,14 @@
     "NAMES": [
       "summon"
     ],
-    "DESCRIPTION": "Summon a specified monster as a friendly minion. At the end of your turn, it will perform moves of that monster. NL [NOT IMPLEMENTED YET.]"
+    "DESCRIPTION": "Summon a friendly minion to fight along with you. You can summon up to #b4 minions. Each minion has #b25% chance to be the target of attacking enemy."
+  },
+  {
+    "PROPER_NAME": "Enemy Monster",
+    "NAMES": [
+      "enemy monster"
+    ],
+    "DESCRIPTION": "This Minion is a copy of a monster. At the end of your turn, it will perform moves of the original monster."
   },
   {
     "PROPER_NAME": "T",
@@ -19,5 +26,29 @@
       "metallicize"
     ],
     "DESCRIPTION": "Gain Block at the end of your turn."
+  },
+  {
+    "PROPER_NAME": "Protective",
+    "NAMES": [
+      "protective"
+    ],
+    "DESCRIPTION": "Upon entering or exiting this #yStance, all enemies change their target to you."
+  },
+  {
+    "PROPER_NAME": "Monster Card",
+    "NAMES": [
+      "monster card",
+      "monster_card",
+      "monster",
+      "card"
+    ],
+    "DESCRIPTION": "A card containing enemy move."
+  },
+  {
+    "PROPER_NAME": "Choose",
+    "NAMES": [
+      "choose"
+    ],
+    "DESCRIPTION": "In combat examples: Discard, Exhaust, Scry, put it on top of your deck. NL Out of combat examples: Card reward, event, upgrade, remove. NL Does #rNOT activate if chosen randomly or automatically."
   }
 ]

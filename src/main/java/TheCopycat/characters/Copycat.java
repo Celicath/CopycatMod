@@ -5,7 +5,7 @@ import TheCopycat.cards.Defend;
 import TheCopycat.cards.Mimic;
 import TheCopycat.cards.Strike;
 import TheCopycat.patches.CharacterEnum;
-import TheCopycat.relics.Spiredex;
+import TheCopycat.relics.LuckyBag;
 import basemod.abstracts.CustomPlayer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -30,8 +30,8 @@ public class Copycat extends CustomPlayer {
 	public static final Logger logger = LogManager.getLogger(CopycatModMain.class.getName());
 
 	public static final int ENERGY_PER_TURN = 3;
-	public static final int STARTING_HP = 96;
-	public static final int MAX_HP = 96;
+	public static final int STARTING_HP = 88;
+	public static final int MAX_HP = 88;
 	public static final int STARTING_GOLD = 99;
 	public static final int CARD_DRAW = 5;
 	public static final int ORB_SLOTS = 0;
@@ -94,9 +94,9 @@ public class Copycat extends CustomPlayer {
 	public ArrayList<String> getStartingRelics() {
 		ArrayList<String> retVal = new ArrayList<>();
 
-		retVal.add(Spiredex.ID);
+		retVal.add(LuckyBag.ID);
 
-		UnlockTracker.markRelicAsSeen(Spiredex.ID);
+		UnlockTracker.markRelicAsSeen(LuckyBag.ID);
 
 		return retVal;
 	}

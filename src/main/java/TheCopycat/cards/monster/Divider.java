@@ -1,7 +1,7 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
-import TheCopycat.interfaces.VariableDamageCard;
+import TheCopycat.interfaces.HoverMonsterCard;
 import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
@@ -17,12 +17,12 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.exordium.Hexaghost;
 import com.megacrit.cardcrawl.vfx.combat.GhostIgniteEffect;
 
-public class Divider extends AbstractMonsterCard implements VariableDamageCard {
+public class Divider extends AbstractMonsterCard implements HoverMonsterCard {
 	private static final String RAW_ID = "Divider";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	private static final int COST = 2;
+	private static final int COST = 3;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String[] EXTENDED_DESCRIPTION = cardStrings.EXTENDED_DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;

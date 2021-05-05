@@ -1,17 +1,17 @@
 package TheCopycat.patches;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.blights.Spiredex;
 import TheCopycat.cards.monster.AbstractMonsterCard;
-import TheCopycat.relics.Spiredex;
 import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePostfixPatch;
+import com.megacrit.cardcrawl.blights.AbstractBlight;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.localization.TutorialStrings;
-import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.rewards.RewardItem;
 import com.megacrit.cardcrawl.ui.FtueTip;
 
@@ -47,9 +47,9 @@ public class TutorialPatch {
 		@SpirePostfixPatch
 		public static void Postfix(RewardItem __instance) {
 			if (__instance.type == RewardItem.RewardType.CARD) {
-				for (AbstractRelic r : AbstractDungeon.player.relics) {
-					if (r instanceof Spiredex && !((Spiredex) r).monsterCardRewardSaveData.isEmpty()) {
-						r.flash();
+				for (AbstractBlight b : AbstractDungeon.player.blights) {
+					if (b instanceof Spiredex && !Spiredex.monsterCardRewardSaveData.isEmpty()) {
+						b.flash();
 					}
 				}
 				boolean seenTutorial = loadTutorialConfig();

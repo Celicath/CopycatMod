@@ -5,7 +5,8 @@
   },
   "CopycatMod:Minion": {
     "TEXT": [
-      "I can only have up to 4 minions."
+      "I can only have up to 4 minions.",
+      "I can't summon more minions."
     ]
   },
   "CopycatMod:Descriptors": {
