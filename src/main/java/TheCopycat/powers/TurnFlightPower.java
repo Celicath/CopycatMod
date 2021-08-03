@@ -37,6 +37,7 @@ public class TurnFlightPower extends AbstractPower {
 		}
 	}
 
+	@Override
 	public void atEndOfRound() {
 		flash();
 		if (amount == 0) {

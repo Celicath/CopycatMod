@@ -1,7 +1,7 @@
 {
   "CopycatMod:Rewards": {
     "TEXT": [
-      "The Copycat has very few exclusive cards; you'll find cards from other characters. The starting relic provides a Monster card as well."
+      "The first card from each card reward will be a Monster Card. It contains an enemy move used in this combat."
     ],
     "LABEL": [
       "Card Reward"

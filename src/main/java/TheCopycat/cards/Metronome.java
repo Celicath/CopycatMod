@@ -21,7 +21,7 @@ public class Metronome extends CustomCard {
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.UNCOMMON;
-	private static final CardTarget TARGET = CardTarget.ENEMY;
+	private static final CardTarget TARGET = CardTarget.NONE;
 
 	public Metronome() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
@@ -29,7 +29,7 @@ public class Metronome extends CustomCard {
 
 	@Override
 	public void use(AbstractPlayer p, AbstractMonster m) {
-		addToBot(new MetronomeAction(upgraded, m));
+		addToBot(new MetronomeAction(upgraded));
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.megacrit.cardcrawl.core.Settings;
-import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.helpers.Hitbox;
 
 public class CopycatTargetArrow {
@@ -20,34 +19,29 @@ public class CopycatTargetArrow {
 
 	public static final float CONTROL_HEIGHT = 200.0f;
 
-	public static Color getColor(float t, float timer, float alpha) {
+	public static Color getColor(float t, float timer, Color color, float alpha) {
 		float x = Math.abs((timer * 1.5f + 0.4f) % 2f - 0.5f - t) / 0.08f;
 		if (x > 1) {
-			Color c = pink.cpy();
+			Color c = color.cpy();
 			c.a *= alpha;
 			return c;
 		} else {
 			x = 1 - (1 - x) * (1 - x);
 			return new Color(
-					MathUtils.lerp(white.r, pink.r, x),
-					MathUtils.lerp(white.g, pink.g, x),
-					MathUtils.lerp(white.b, pink.b, x),
-					MathUtils.lerp(white.a, pink.a, x) * alpha);
+					MathUtils.lerp(white.r, color.r, x),
+					MathUtils.lerp(white.g, color.g, x),
+					MathUtils.lerp(white.b, color.b, x),
+					MathUtils.lerp(white.a, color.a, x) * alpha);
 		}
 	}
 
-	public static void drawTargetArrow(SpriteBatch sb, Hitbox h1, Hitbox h2, float vDist, float timer, float alpha, String text) {
+	public static void drawTargetArrow(SpriteBatch sb, Hitbox h1, Hitbox h2, float vDist, float timer, float alpha, Color color) {
 		if (h1.cX == h2.cX && h1.cY == h2.cY) {
-			if (text != null) {
-				FontHelper.renderFontCentered(
-						sb,
-						FontHelper.panelNameFont,
-						text,
-						h1.cX,
-						h1.cY + 30.0f * Settings.scale,
-						Color.WHITE.cpy());
-			}
 			return;
+		}
+
+		if (color == null) {
+			color = pink;
 		}
 
 		sb.end();
@@ -65,7 +59,7 @@ public class CopycatTargetArrow {
 
 		Vector2 v1 = start.cpy();
 		Vector2 v2 = new Vector2();
-		Color c1 = getColor(0, timer, alpha);
+		Color c1 = getColor(0, timer, color, alpha);
 		Vector2 n1 = nstart.cpy().nor().scl(10.0f * Settings.scale);
 
 		boolean blendDisabled = false;
@@ -81,7 +75,7 @@ public class CopycatTargetArrow {
 		for (int i = 0; i < segs - 1; i++) {
 			float t2 = (float) (i + 1) / segs;
 			Bezier.quadratic(v2, t2, start, control, end, tmp);
-			Color c2 = getColor(t2, timer, alpha);
+			Color c2 = getColor(t2, timer, color, alpha);
 			tmp.set(MathUtils.lerp(nstart.x, nend.x, t2), MathUtils.lerp(nstart.y, nend.y, t2)).nor().scl(10.0f * Settings.scale);
 
 			if (i == 0) {
@@ -106,7 +100,7 @@ public class CopycatTargetArrow {
 
 		renderer.triangle(
 				v2.x - n1.x, v2.y - n1.y, end.x, end.y, v2.x + n1.x, v2.y + n1.y,
-				c1, getColor(1.0f, timer, alpha), c1);
+				c1, getColor(1.0f, timer, color, alpha), c1);
 
 		renderer.end();
 		if (blendDisabled) {
@@ -116,14 +110,5 @@ public class CopycatTargetArrow {
 		Bezier.quadratic(v2, 0.5f, start, control, end, tmp);
 
 		sb.begin();
-		if (text != null) {
-			FontHelper.renderFontCentered(
-					sb,
-					FontHelper.panelNameFont,
-					text,
-					v2.x,
-					v2.y + 30.0f * Settings.scale,
-					Color.WHITE.cpy());
-		}
 	}
 }

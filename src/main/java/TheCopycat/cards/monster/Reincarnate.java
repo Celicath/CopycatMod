@@ -19,11 +19,11 @@ public class Reincarnate extends AbstractMonsterCard {
 	private static final int COST = 1;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
-	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.SELF;
 
 	private static final int POWER = 1;
-	private static final int UPGRADE_BONUS = 1;
+	private static final int UPGRADE_BONUS = 2;
 
 	public Reincarnate() {
 		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET, Darkling.ID, 5);

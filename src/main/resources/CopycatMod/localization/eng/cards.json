@@ -59,9 +59,9 @@
   },
   "CopycatMod:MeFirst": {
     "NAME": "Me First",
-    "DESCRIPTION": "If the enemy intends to...",
+    "DESCRIPTION": "If the enemy intends to... NL ",
     "EXTENDED_DESCRIPTION": [
-      "Block: Gain !B! Block.",
+      "Defend: Gain !B! Block.",
       "Attack: Deal !D! damage.",
       "Buff: Gain !M! Strength.",
       "Debuff: Apply !M! Weak."
@@ -78,19 +78,22 @@
   },
   "CopycatMod:Substitute": {
     "NAME": "Substitute",
-    "DESCRIPTION": "Spend 1/4 of your Max HP to create a Substitute with that much HP. NL Exhaust."
+    "DESCRIPTION": "Ethereal. NL Lose HP equal to 1/4 of your max HP. NL Create a copycatmod:Substitute with that much HP.",
+    "EXTENDED_DESCRIPTION": [
+      " NL (Loses ",
+      " HP.)",
+      "I have too little HP.",
+      "I already have a Substitute."
+    ]
   },
   "CopycatMod:Charging": {
     "NAME": "Charging",
-    "DESCRIPTION": "After playing \"Charging\" twice, add an *Ultimate *Blast on top of your draw pile. It costs 0 and doesn't Exhaust.",
-    "UPGRADE_DESCRIPTION": "After playing \"Charging\" twice, add an *Ultimate *Blast+ on top of your draw pile. It costs 0 and doesn't Exhaust."
+    "DESCRIPTION": "After playing \"Charging\" twice, add an *Ultimate *Blast on top of your draw pile. It costs 0.",
+    "UPGRADE_DESCRIPTION": "After playing \"Charging\" twice, add an *Ultimate *Blast+ on top of your draw pile. It costs 0."
   },
   "CopycatMod:UltimateBlast": {
     "NAME": "Ultimate Blast",
-    "DESCRIPTION": "Deal !D! damage. NL Exhaust.",
-    "EXTENDED_DESCRIPTION": [
-      "Deal !D! damage."
-    ]
+    "DESCRIPTION": "Ethereal. NL Deal !D! damage."
   },
   "CopycatMod:Enrage": {
     "NAME": "Enrage",
@@ -106,7 +109,8 @@
     "EXTENDED_DESCRIPTION": [
       "Summon: ",
       "copycatmod:Summon a ",
-      " with !M! HP. NL Exhaust."
+      " with !M! HP. NL Exhaust.",
+      "This Minion is a clone of an enemy. At the end of your turn, it will perform moves of the original monster."
     ]
   },
   "CopycatMod:AreaHeal": {
@@ -125,7 +129,7 @@
   },
   "CopycatMod:Hex": {
     "NAME": "Hex",
-    "DESCRIPTION": "Enemy loses !M! HP at the end of each of its turns without attacking. NL Exhaust."
+    "DESCRIPTION": "At the end of each turn, enemy loses !M! HP if it didn't attack. NL Exhaust."
   },
   "CopycatMod:PerplexingEye": {
     "NAME": "Perplexing Eye",
@@ -144,7 +148,7 @@
     "DESCRIPTION": "Steal !M! Max HP from the enemy. NL Exhaust."
   },
   "CopycatMod:FadingAttack": {
-    "NAME": "FadingAttack",
+    "NAME": "Fading Attack",
     "DESCRIPTION": "Deal !M! + 10 copycatmod:T damage.",
     "EXTENDED_DESCRIPTION": [
       " NL (Deals !D! damage.)"
@@ -196,8 +200,8 @@
     "NAME": "Debilitate",
     "DESCRIPTION": "Gain !M! Strength. NL Gain !M! Dexterity. NL Apply !M! Poison. NL Apply !M! Vulnerable. NL Apply !M! Weak. NL Exhaust."
   },
-  "CopycatMod:PlagiarizedStrike": {
-    "NAME": "Plagiarized Strike",
+  "CopycatMod:HybridStrike": {
+    "NAME": "Hybrid Strike",
     "DESCRIPTION": "(Copies description from Pummel Strike and Cut Through Fate)"
   },
   "CopycatMod:HeavySlam": {
@@ -227,15 +231,15 @@
   },
   "CopycatMod:ClearFist": {
     "NAME": "Clear Fist",
-    "DESCRIPTION": "Deal !D! damage. NL If you are in any Stance, deal !M! damage and exit your Stance."
+    "DESCRIPTION": "Deal !D! damage. NL If you are in any Stance, draw !M! cards and exit your Stance."
   },
   "CopycatMod:ClearBody": {
     "NAME": "Clear Body",
-    "DESCRIPTION": "Gain !B! Block X times. NL If you are in any Stance, gain [E] and exit your Stance."
+    "DESCRIPTION": "Gain !B! Block. NL If you are in any Stance, draw !M! cards and exit your Stance."
   },
   "CopycatMod:Grab": {
     "NAME": "Grab",
-    "DESCRIPTION": "Deal !D! damage. NL If you have 6 or more Strength, enter copycatmod:Protective."
+    "DESCRIPTION": "Deal !D! damage. NL If the enemy intends to attack, enter copycatmod:Protective."
   },
   "CopycatMod:GlowingCard": {
     "NAME": "Glowing Card",
@@ -246,14 +250,111 @@
   },
   "CopycatMod:StanceChange": {
     "NAME": "Stance Change",
-    "DESCRIPTION": "Enter Calm, Wrath or copycatmod:Protective."
+    "DESCRIPTION": "Enter Calm, Wrath or copycatmod:Protective. NL Exhaust.",
+    "UPGRADE_DESCRIPTION": "Enter Calm, Wrath or copycatmod:Protective."
   },
   "CopycatMod:Protective": {
     "NAME": "Protective",
-    "DESCRIPTION": "Upon entering or exiting Protective, all enemies change their target to you."
+    "DESCRIPTION": "While you are in Protective, all enemies target you. NL When you exit Protective, all attacking enemies change their target to a random Minion."
   },
   "CopycatMod:TwinSlicer": {
     "NAME": "Twin Slicer",
-    "DESCRIPTION": "Deal !D! damage to ALL enemies twice. If you have 6 or more Strength, heal !M! HP and Exhaust."
+    "DESCRIPTION": "Deal !D! damage to ALL enemies twice. NL If you have 6 or more Strength, heal !M! HP and Exhaust."
+  },
+  "CopycatMod:CopycatForm": {
+    "NAME": "Copycat Form",
+    "DESCRIPTION": "Whenever you use an copycatmod:Exclusive copycatmod:Mechanic from other class, gain !M! Block and deal !M! damage to ALL enemies."
+  },
+  "CopycatMod:UnstablePickup": {
+    "NAME": "Unstable Pickup",
+    "DESCRIPTION": "Choose 2 cards from your discard pile. NL Put a random one into your hand and the other on top of your draw pile. NL Exhaust.",
+    "UPGRADE_DESCRIPTION": "Choose 2 cards from your discard pile. NL Put a random one into your hand and the other on top of your draw pile."
+  },
+  "CopycatMod:PhantomSlime": {
+    "NAME": "Phantom Slime",
+    "DESCRIPTION": "copycatmod:Summon an copycatmod:Apology copycatmod:Slime with !M! HP. NL It dies after 2 turns. NL Exhaust."
+  },
+  "CopycatMod:FleshToSlime": {
+    "NAME": "Flesh to Slime",
+    "DESCRIPTION": "Deal !D! damage. NL copycatmod:Summon an copycatmod:Apology copycatmod:Slime with HP equal to unblocked damage. NL Exhaust."
+  },
+  "CopycatMod:Magnet": {
+    "NAME": "Magnet",
+    "DESCRIPTION": "Steal all Artifact from the enemy. NL Exhaust.",
+    "UPGRADE_DESCRIPTION": "Steal all Artifact from the enemy. NL Gain 1 Artifact. NL Exhaust."
+  },
+  "CopycatMod:MonsterStudy": {
+    "NAME": "Monster Study",
+    "DESCRIPTION": "Deal !D! damage. NL Gain !B! Block for each copycatmod:Monster copycatmod:Card in your hand.",
+    "EXTENDED_DESCRIPTION": [
+      " NL (You have ",
+      " Monster Card).",
+      " Monster Cards)."
+    ]
+  },
+  "CopycatMod:BowlingFlask": {
+    "NAME": "Bowling Flask",
+    "DESCRIPTION": "Apply !M! Poison for each enemy in combat."
+  },
+  "CopycatMod:Analysis": {
+    "NAME": "Analysis",
+    "DESCRIPTION": "Draw !M! cards. NL If you have 6 or more Strength, this costs 0."
+  },
+  "CopycatMod:Peace": {
+    "NAME": "Peace",
+    "DESCRIPTION": "If you are in Calm, gain !B! Block. Otherwise, Enter Calm."
+  },
+  "CopycatMod:DoubleTime": {
+    "NAME": "Double Time",
+    "DESCRIPTION": "Your []Minions perform their move 1 additional time if no enemy intends to attack them."
+  },
+  "CopycatMod:Venomology": {
+    "NAME": "Venomology",
+    "DESCRIPTION": "Whenever you apply a debuff to an enemy, apply !M! Poison to it."
+  },
+  "CopycatMod:MonstrousPlan": {
+    "NAME": "Monstrous Plan",
+    "DESCRIPTION": "copycatmod:Monster copycatmod:Cards are Retained every turn.",
+    "UPGRADE_DESCRIPTION": "copycatmod:Monster copycatmod:Cards are Retained every turn. NL Increase your max hand size to 12."
+  },
+  "CopycatMod:StrengthSap": {
+    "NAME": "Strength Sap",
+    "DESCRIPTION": "For this turn, all allies steal !M! Strength from the enemy."
+  },
+  "CopycatMod:MindControl": {
+    "NAME": "Mind Control",
+    "DESCRIPTION": "Take control of an enemy with !M! times X or less HP. NL It becomes your []Minion.",
+    "EXTENDED_DESCRIPTION": [
+      "This enemy has too much HP."
+    ]
+  },
+  "CopycatMod:Spotlight": {
+    "NAME": "Spotlight",
+    "DESCRIPTION": "Choose an ally to gain !M! Block. NL ALL attacking enemies change their target to the chosen ally."
+  },
+  "CopycatMod:Swindle": {
+    "NAME": "Swindle",
+    "DESCRIPTION": "Enemy loses !M! Strength this turn. NL If it does not intend to attack, change its intent to \"Deal 10 damage and gain 10 Block\"."
+  },
+  "CopycatMod:SlimeSlasher": {
+    "NAME": "Slime Slasher",
+    "DESCRIPTION": "Deal !D! damage to ALL enemies and Slimes. NL Deals 1 additional damage for every 2 Slimes killed with this."
+  },
+  "CopycatMod:Scammed": {
+    "NAME": "Scammed!",
+    "DESCRIPTION": "Gain !B! Block. NL Deal !D! damage. NL Exhaust."
+  },
+  "CopycatMod:SeesawBlow": {
+    "NAME": "Seesaw Blow",
+    "DESCRIPTION": "Deal !D! damage. NL If the enemy intends to attack, apply !M! Vulnerable.",
+    "UPGRADE_DESCRIPTION": "Deal !D! damage. NL If the enemy intends to attack, apply !M! Weak."
+  },
+  "CopycatMod:HybridMovement": {
+    "NAME": "Hybrid Movement",
+    "DESCRIPTION": "(Copies description from Leap and Third Eye)"
+  },
+  "CopycatMod:BadSlice": {
+    "NAME": "Bad Slice",
+    "DESCRIPTION": "Deal !D! damage. NL Discard 1 card."
   }
 }

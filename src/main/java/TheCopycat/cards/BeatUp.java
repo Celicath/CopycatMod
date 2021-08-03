@@ -2,10 +2,9 @@ package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
 import TheCopycat.actions.DoAreaAction;
-import TheCopycat.crossovers.BetterFriendlyMinions;
-import TheCopycat.crossovers.DTModCrossover;
 import TheCopycat.interfaces.HoverMonsterCard;
 import TheCopycat.patches.CharacterEnum;
+import TheCopycat.utils.BetterFriendlyMinionsUtils;
 import basemod.abstracts.CustomCard;
 import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
@@ -86,24 +85,13 @@ public class BeatUp extends CustomCard implements HoverMonsterCard {
 		damageMap.put(AbstractDungeon.player, damage);
 
 		int totalDamage = damage;
-		ArrayList<AbstractMonster> monsters = BetterFriendlyMinions.getMinionList();
+		ArrayList<AbstractCreature> allies = BetterFriendlyMinionsUtils.getAllyList();
 
-		if (monsters != null) {
-			for (AbstractMonster m : monsters) {
-				if (m != null) {
-					int d = calculateDamageAsOthers(m, mo);
-					totalDamage += d;
-					damageMap.put(m, d);
-				}
-			}
-		}
-
-		if (CopycatModMain.isDragonTamerLoaded) {
-			AbstractPlayer p = DTModCrossover.getLivingDragon();
-			if (p != null) {
-				int d = calculateDamageAsOthers(p, mo);
+		for (AbstractCreature c : allies) {
+			if (c != null && c != AbstractDungeon.player) {
+				int d = calculateDamageAsOthers(c, mo);
 				totalDamage += d;
-				damageMap.put(p, d);
+				damageMap.put(c, d);
 			}
 		}
 
@@ -116,14 +104,44 @@ public class BeatUp extends CustomCard implements HoverMonsterCard {
 		AbstractStance stance = AbstractDungeon.player.stance;
 		AbstractDungeon.player.powers = source.powers;
 		AbstractDungeon.player.stance = source instanceof AbstractPlayer ? ((AbstractPlayer) source).stance : neutralStance;
-		super.calculateCardDamage(target);
+		if (target != null) {
+			super.calculateCardDamage(target);
+		} else {
+			super.applyPowers();
+		}
 		AbstractDungeon.player.powers = powers;
 		AbstractDungeon.player.stance = stance;
 		return damage;
 	}
 
 	@Override
+	public void applyPowers() {
+		damageMap.clear();
+		super.applyPowers();
+		damageMap.put(AbstractDungeon.player, damage);
+
+		int totalDamage = damage;
+		ArrayList<AbstractCreature> allies = BetterFriendlyMinionsUtils.getAllyList();
+
+		for (AbstractCreature c : allies) {
+			if (c != null && c != AbstractDungeon.player) {
+				int d = calculateDamageAsOthers(c, null);
+				totalDamage += d;
+				damageMap.put(c, d);
+			}
+		}
+
+		rawDescription = DESCRIPTION + EXTENDED_DESCRIPTION[0] + totalDamage + EXTENDED_DESCRIPTION[1];
+		initializeDescription();
+	}
+
+	@Override
 	public void onUnhoverMonster() {
+		applyPowers();
+	}
+
+	@Override
+	public void onMoveToDiscard() {
 		rawDescription = DESCRIPTION;
 		initializeDescription();
 	}

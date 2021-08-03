@@ -40,6 +40,7 @@ public class TwinSlicer extends CustomCard {
 		baseDamage = POWER;
 		baseMagicNumber = magicNumber = HEAL;
 		isMultiDamage = true;
+		tags.add(CardTags.HEALING);
 	}
 
 	@Override
@@ -54,6 +55,12 @@ public class TwinSlicer extends CustomCard {
 	@Override
 	public void applyPowers() {
 		super.applyPowers();
+		powerup = exhaust = CopycatModMain.strengthThreshold();
+	}
+
+	@Override
+	public void calculateCardDamage(AbstractMonster m) {
+		super.calculateCardDamage(m);
 		powerup = exhaust = CopycatModMain.strengthThreshold();
 	}
 

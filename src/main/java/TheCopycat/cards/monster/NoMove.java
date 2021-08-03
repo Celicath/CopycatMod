@@ -31,7 +31,7 @@ public class NoMove extends AbstractMonsterCard {
 	};
 
 	public NoMove() {
-		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
+		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET, IMG);
 		baseMagicNumber = magicNumber = POWER;
 		exhaust = true;
 	}

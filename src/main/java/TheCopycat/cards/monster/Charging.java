@@ -15,11 +15,10 @@ public class Charging extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 0;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
-	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.SELF;
 
 	public static int useCount = 0;
@@ -47,7 +46,6 @@ public class Charging extends AbstractMonsterCard {
 			c.cost = 0;
 			c.costForTurn = 0;
 			c.isCostModified = true;
-			c.unExhaust();
 			addToBot(new MakeTempCardInDrawPileAction(c, 1, false, true));
 			useCount = 0;
 		}

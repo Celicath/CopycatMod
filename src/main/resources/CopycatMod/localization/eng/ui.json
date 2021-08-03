@@ -13,5 +13,32 @@
     "TEXT": [
       "Monster"
     ]
+  },
+  "CopycatMod:UnstablePickupAction": {
+    "TEXT": [
+      "Choose 2 Cards for Unstable Pickup."
+    ]
+  },
+  "CopycatMod:MindControlAction": {
+    "TEXT": [
+      "This enemy has too much HP."
+    ]
+  },
+  "CopycatMod:MonsterIntent": {
+    "TEXT": [
+      "Aggressive",
+      "This enemy intends to NL #yAttack %s for #b",
+      " damage #b",
+      " times.",
+      "This enemy intends to NL #yAttack %s for #b",
+      " damage.",
+      "Aggressive",
+      "This enemy intends to use a #yBuff and #yAttack %s for #b",
+      " times.",
+      "This enemy intends to use a #yBuff and #yAttack %s for #b",
+      "Strategic",
+      "This enemy intends to inflict a #yNegative #yEffect on %s and #yAttack for #b",
+      "This enemy intends to #yBlock and #yAttack %s for #b"
+    ]
   }
 }

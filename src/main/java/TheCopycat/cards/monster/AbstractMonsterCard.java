@@ -2,6 +2,7 @@ package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
 import TheCopycat.patches.CharacterEnum;
+import TheCopycat.utils.GameLogicUtils;
 import basemod.AutoAdd;
 import basemod.abstracts.CustomCard;
 import basemod.abstracts.CustomSavable;
@@ -26,7 +27,6 @@ public abstract class AbstractMonsterCard extends CustomCard implements CustomSa
 	private static final String RAW_ID = "MonsterCard";
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_MONSTER;
-	public static final String idSeparator = "_#_";
 	public static final String[] DESCRIPTORS = CardCrawlGame.languagePack.getUIString(CopycatModMain.makeID("Descriptors")).TEXT;
 
 	public static HashMap<String, AbstractMonsterCard> specialMonsterCardLibrary = new HashMap<>();
@@ -46,9 +46,19 @@ public abstract class AbstractMonsterCard extends CustomCard implements CustomSa
 		loadTexture(monsterID + "_" + move);
 	}
 
+	public AbstractMonsterCard(String id, String name, int cost, String rawDescription, CardType type, CardRarity rarity, CardTarget target, String imagePath) {
+		super(id, name, imagePath, cost, rawDescription, type, COLOR, rarity, target);
+		monsterCardID = id;
+	}
+
 	@Override
 	public List<String> getCardDescriptors() {
 		return Collections.singletonList(DESCRIPTORS[0]);
+	}
+
+	public void loadFromMonsterCardID(String id) {
+		monsterCardID = id;
+		loadFromTokens(id.split(GameLogicUtils.metricIdSeparator, -1));
 	}
 
 	public void loadFromTokens(String[] tokens) {
@@ -67,14 +77,20 @@ public abstract class AbstractMonsterCard extends CustomCard implements CustomSa
 		}
 
 		String monsterID = null;
-		String[] tokens = id.split(idSeparator, -1);
+		String[] tokens = id.split(GameLogicUtils.metricIdSeparator, -1);
 
+		AbstractMonsterCard c = specialMonsterCardLibrary.get(tokens[0]);
+		if (c == null) return null;
+
+		String monsterCardID = id;
 		if (tokens.length > 1) {
 			monsterID = tokens[tokens.length - 1];
+			monsterCardID = id.substring(0, id.length() - monsterID.length() - GameLogicUtils.metricIdSeparator.length());
 		}
 
-		AbstractMonsterCard c = (AbstractMonsterCard) specialMonsterCardLibrary.get(tokens[0]).makeCopy();
+		c = (AbstractMonsterCard) c.makeCopy();
 		c.loadFromTokens(tokens);
+		c.monsterCardID = monsterCardID;
 		for (int i = 0; i < upgradeCount; i++) {
 			c.upgrade();
 		}
@@ -83,7 +99,7 @@ public abstract class AbstractMonsterCard extends CustomCard implements CustomSa
 	}
 
 	public String getDynamicID() {
-		return monsterCardID + idSeparator + monsterModelID;
+		return monsterCardID + GameLogicUtils.metricIdSeparator + monsterModelID;
 	}
 
 	@Override
@@ -107,10 +123,11 @@ public abstract class AbstractMonsterCard extends CustomCard implements CustomSa
 
 	@Override
 	public void onLoad(String id) {
-		int index = id.lastIndexOf(idSeparator);
+		int index = id.lastIndexOf(GameLogicUtils.metricIdSeparator);
 		if (index != -1) {
-			String monsterID = id.substring(index + idSeparator.length());
+			String monsterID = id.substring(index + GameLogicUtils.metricIdSeparator.length());
 			loadTexture(monsterID);
+			loadFromMonsterCardID(id.substring(0, index));
 		}
 	}
 

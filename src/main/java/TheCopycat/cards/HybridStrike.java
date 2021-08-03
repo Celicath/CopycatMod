@@ -1,8 +1,9 @@
 package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.interfaces.DualImageCard;
 import TheCopycat.patches.CharacterEnum;
-import TheCopycat.patches.PlagiarizedStrikePatch;
+import TheCopycat.patches.DualImageCardPatch;
 import basemod.abstracts.CustomCard;
 import com.badlogic.gdx.graphics.Texture;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
@@ -19,9 +20,9 @@ import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
-public class PlagiarizedStrike extends CustomCard {
-	private static final String RAW_ID = "PlagiarizedStrike";
-	private static final String RAW_ID2 = "PlagiarizedStrike2";
+public class HybridStrike extends CustomCard implements DualImageCard {
+	private static final String RAW_ID = "HybridStrike";
+	private static final String RAW_ID2 = "HybridStrike2";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
@@ -40,7 +41,7 @@ public class PlagiarizedStrike extends CustomCard {
 	private static final int MAGIC = 1;
 	private static final int UPGRADE_BONUS = 2;
 
-	public PlagiarizedStrike() {
+	public HybridStrike() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
 		baseMagicNumber = magicNumber = MAGIC;
 		baseDamage = POWER;
@@ -60,7 +61,7 @@ public class PlagiarizedStrike extends CustomCard {
 
 	@Override
 	public AbstractCard makeCopy() {
-		return new PlagiarizedStrike();
+		return new HybridStrike();
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class PlagiarizedStrike extends CustomCard {
 	@Override
 	protected Texture getPortraitImage() {
 		if (upgraded) {
-			PlagiarizedStrikePatch.portraitUpgraded = true;
+			DualImageCardPatch.portraitUpgraded = true;
 			try {
 				return ImageMaster.loadImage(IMG_UPGRADE_PORTRAIT);
 			} catch (Exception e) {
@@ -86,8 +87,13 @@ public class PlagiarizedStrike extends CustomCard {
 				return null;
 			}
 		} else {
-			PlagiarizedStrikePatch.portraitUpgraded = false;
+			DualImageCardPatch.portraitUpgraded = false;
 			return super.getPortraitImage();
 		}
+	}
+
+	@Override
+	public boolean viewUpgradedImage() {
+		return upgraded;
 	}
 }

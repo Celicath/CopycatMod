@@ -1,8 +1,8 @@
 package TheCopycat.actions;
 
 import TheCopycat.CopycatModMain;
-import TheCopycat.crossovers.BetterFriendlyMinions;
 import TheCopycat.friendlyminions.AbstractCopycatMinion;
+import TheCopycat.utils.BetterFriendlyMinionsUtils;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
@@ -23,8 +23,8 @@ public class SummonCopycatMinionAction extends AbstractGameAction {
 	}
 
 	public void update() {
-		if (!BetterFriendlyMinions.summonCopycatMinion(m)) {
-			AbstractDungeon.effectsQueue.add(new ThoughtBubble(AbstractDungeon.player.dialogX, AbstractDungeon.player.dialogY, 3.0F, TEXT[0], true));
+		if (!BetterFriendlyMinionsUtils.summonCopycatMinion(m)) {
+			AbstractDungeon.effectList.add(new ThoughtBubble(AbstractDungeon.player.dialogX, AbstractDungeon.player.dialogY, 3.0F, TEXT[0], true));
 		}
 		isDone = true;
 	}

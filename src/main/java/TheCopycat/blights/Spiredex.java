@@ -15,7 +15,7 @@ import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 public class Spiredex extends AbstractBlight implements CustomSavable<ArrayList<String>> {
 
@@ -41,35 +41,47 @@ public class Spiredex extends AbstractBlight implements CustomSavable<ArrayList<
 		img = ImageMaster.loadImage(IMG);
 		outlineImg = ImageMaster.loadImage(OUTLINE_IMG);
 		BaseMod.addSaveField(ID, this);
+		updateDescription();
 	}
 
 	@Override
 	public void updateDescription() {
-		if (counter == 1) {
+		int count = Math.abs(counter);
+		if (count == 1) {
 			description = DESCRIPTION[0];
-		} else if (counter < 9) {
-			description = DESCRIPTION[1] + counter + DESCRIPTION[2];
+		} else if (count < 9) {
+			description = DESCRIPTION[1] + count + DESCRIPTION[2];
 		} else {
 			description = DESCRIPTION[3];
 		}
 		tips.clear();
 		tips.add(new PowerTip(name, description));
 		tips.add(new PowerTip(
-				BaseMod.getKeywordTitle(CopycatModMain.makeID("monster_card")),
-				BaseMod.getKeywordDescription(CopycatModMain.makeID("monster card"))));
+				BaseMod.getKeywordTitle(CopycatModMain.makeLowerID("monster_card")),
+				BaseMod.getKeywordDescription(CopycatModMain.makeLowerID("monster_card"))));
 		initializeTips();
 	}
 
-	public void replaceCardRewards(ArrayList<AbstractCard> monsterCards, ArrayList<AbstractCard> __result, float cardUpgradedChance) {
+	public void replaceCardRewards(List<AbstractMonsterCard> monsterCards, ArrayList<AbstractCard> __result, float cardUpgradedChance) {
 		if (!monsterCards.isEmpty()) {
-			Collections.shuffle(monsterCards, new java.util.Random(Spiredex.monsterCardRng.randomLong()));
-			for (int i = 0; i < counter; i++) {
-				if (i >= __result.size() || i >= monsterCards.size()) {
+			for (int i = 0; i < Math.abs(counter); i++) {
+				if (i >= __result.size() || monsterCards.isEmpty()) {
 					return;
 				}
 
-				AbstractCard c = monsterCards.get(i);
+				AbstractCard c;
+				int ratio;
+				int index;
+				do {
+					index = Spiredex.monsterCardRng.random(monsterCards.size() - 1);
+					c = monsterCards.get(index);
+					ratio = c.rarity == AbstractCard.CardRarity.COMMON ? 0 : c.rarity == AbstractCard.CardRarity.UNCOMMON ? 3 : c.rarity == AbstractCard.CardRarity.RARE ? 4 : 6;
+				} while (Spiredex.monsterCardRng.random(5) < ratio);
+
+				monsterCards.remove(index);
 				c.resetAttributes();
+				c = c.makeCopy();
+
 				if (Spiredex.monsterCardRng.randomBoolean(cardUpgradedChance) && c.canUpgrade()) {
 					c.upgrade();
 				} else {
@@ -82,7 +94,7 @@ public class Spiredex extends AbstractBlight implements CustomSavable<ArrayList<
 				saveDataIndex++;
 			}
 		} else if (monsterCardRewardSaveData.size() > saveDataIndex) {
-			for (int i = 0; i < counter; i++) {
+			for (int i = 0; i < Math.abs(counter); i++) {
 				if (i >= __result.size()) {
 					return;
 				}
@@ -103,6 +115,8 @@ public class Spiredex extends AbstractBlight implements CustomSavable<ArrayList<
 		if (data != null) {
 			monsterCardRewardSaveData = data;
 			saveDataIndex = 0;
+		} else {
+			monsterCardRewardSaveData.clear();
 		}
 	}
 }

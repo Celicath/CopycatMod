@@ -10,8 +10,62 @@
   "CopycatMod:EnemyHexPower": {
     "NAME": "Hex",
     "DESCRIPTIONS": [
-      "At the end of its turn, if it didn't attack, loses #b",
-      " HP."
+      "At the end of its turn, loses #b",
+      " HP if it didn't attack."
+    ]
+  },
+  "CopycatMod:CopycatFormPower": {
+    "NAME": "Copycat Form",
+    "DESCRIPTIONS": [
+      "Whenever you #yDiscard a card, apply #yPoison, #yChannel / #yEvoke Orbs, #yScry, or change #yStance, gain #b",
+      " Block and deal #b",
+      " damage to ALL enemies.",
+      "Discard",
+      "Poison",
+      "Orb",
+      "Scry",
+      "Stance"
+    ]
+  },
+  "CopycatMod:StrikeDummyPower": {
+    "NAME": "Strike Dummy",
+    "DESCRIPTIONS": [
+      "Cards containing \"Strike\" deal #b",
+      " additional damage."
+    ]
+  },
+  "CopycatMod:DoubleTimePower": {
+    "NAME": "Double Time",
+    "DESCRIPTIONS": [
+      "Your Minions attack #b",
+      " additional time if no enemies intend to attack them."
+    ]
+  },
+  "CopycatMod:VenomologyPower": {
+    "NAME": "Venomology",
+    "DESCRIPTIONS": [
+      "Whenever you apply a debuff to an enemy, apply #b",
+      " #yPoison to it. This Poison does not activate Venomology again."
+    ]
+  },
+  "CopycatMod:MonstrousPlanPower": {
+    "NAME": "Monstrous Plan",
+    "DESCRIPTIONS": [
+      "#yMonster #yCards are Retained every turn."
+    ]
+  },
+  "CopycatMod:HandSize12Power": {
+    "NAME": "Hand Size Increased",
+    "DESCRIPTIONS": [
+      "Your maximum hand size is increased to #b12."
+    ]
+  },
+  "CopycatMod:HallucinationPower": {
+    "NAME": "Hallucination",
+    "DESCRIPTIONS": [
+      "Dies after #b",
+      " turn.",
+      " turns."
     ]
   }
 }

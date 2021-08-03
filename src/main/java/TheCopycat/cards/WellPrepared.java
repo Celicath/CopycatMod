@@ -41,17 +41,11 @@ public class WellPrepared extends CustomCard {
 	public void use(AbstractPlayer p, AbstractMonster m) {
 		addToBot(new DrawCardAction(p, this.magicNumber));
 		addToBot(new DiscardAction(p, p, this.magicNumber, false));
-		addToBot(new AbstractGameAction() {
-			@Override
-			public void update() {
-				if (CopycatModMain.strengthThreshold()) {
-					for (AbstractMonster mo : AbstractDungeon.getCurrRoom().monsters.monsters) {
-						addToBot(new ApplyPowerAction(mo, p, new VulnerablePower(mo, VULN, false), VULN, true, AttackEffect.NONE));
-					}
-				}
-				isDone = true;
+		if (CopycatModMain.strengthThreshold()) {
+			for (AbstractMonster mo : AbstractDungeon.getCurrRoom().monsters.monsters) {
+				addToBot(new ApplyPowerAction(mo, p, new VulnerablePower(mo, VULN, false), VULN, true, AbstractGameAction.AttackEffect.NONE));
 			}
-		});
+		}
 	}
 
 	@Override

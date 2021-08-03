@@ -1,6 +1,6 @@
 package TheCopycat.actions;
 
-import TheCopycat.cards.MeFirst;
+import TheCopycat.utils.GameLogicUtils;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
@@ -26,16 +26,16 @@ public class MeFirstAction extends AbstractGameAction {
 	@Override
 	public void update() {
 		if (m != null) {
-			if (MeFirst.checkActivate(m, 3)) {
+			if (GameLogicUtils.checkIntent(m, 3)) {
 				addToTop(new ApplyPowerAction(m, AbstractDungeon.player, new WeakPower(m, magic, false)));
 			}
-			if (MeFirst.checkActivate(m, 2)) {
+			if (GameLogicUtils.checkIntent(m, 2)) {
 				addToTop(new ApplyPowerAction(AbstractDungeon.player, AbstractDungeon.player, new StrengthPower(AbstractDungeon.player, magic)));
 			}
-			if (MeFirst.checkActivate(m, 1)) {
+			if (GameLogicUtils.checkIntent(m, 1)) {
 				addToTop(new DamageAction(m, info, AbstractGameAction.AttackEffect.SLASH_DIAGONAL));
 			}
-			if (MeFirst.checkActivate(m, 0)) {
+			if (GameLogicUtils.checkIntent(m, 0)) {
 				addToTop(new GainBlockAction(AbstractDungeon.player, AbstractDungeon.player, block));
 			}
 		}

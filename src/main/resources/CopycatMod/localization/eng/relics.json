@@ -3,7 +3,7 @@
     "NAME": "Lucky Bag",
     "FLAVOR": "What will you get from this bag?",
     "DESCRIPTIONS": [
-      "When you play the first card in combat, gain a bonus effect based on its type.",
+      "When you play the first card in combat, gain a #yBonus based on its type.",
       "Bonus",
       "Attack: Gain 2 #yStrength.",
       "Skill: Gain 3 #yPlated #yArmor.",

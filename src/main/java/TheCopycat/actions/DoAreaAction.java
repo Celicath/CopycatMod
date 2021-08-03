@@ -1,16 +1,12 @@
 package TheCopycat.actions;
 
-import TheCopycat.CopycatModMain;
-import TheCopycat.crossovers.DTModCrossover;
 import TheCopycat.interfaces.AreaAction;
+import TheCopycat.utils.BetterFriendlyMinionsUtils;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
-import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.monsters.AbstractMonster;
-import kobting.friendlyminions.characters.AbstractPlayerWithMinions;
-import kobting.friendlyminions.patches.PlayerAddFieldsPatch;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DoAreaAction extends AbstractGameAction {
 	AreaAction action;
@@ -20,24 +16,14 @@ public class DoAreaAction extends AbstractGameAction {
 	}
 
 	public void update() {
-		ArrayList<AbstractMonster> group = (AbstractDungeon.player instanceof AbstractPlayerWithMinions) ?
-				((AbstractPlayerWithMinions) AbstractDungeon.player).minions.monsters :
-				PlayerAddFieldsPatch.f_minions.get(AbstractDungeon.player).monsters;
+		ArrayList<AbstractCreature> group = BetterFriendlyMinionsUtils.getAllyList();
+		Collections.reverse(group);
 
-		for (AbstractMonster mo : group) {
-			if (mo != null) {
-				addToTop(action.action(mo));
+		for (AbstractCreature c : group) {
+			if (c != null) {
+				addToTop(action.action(c));
 			}
 		}
-
-		if (CopycatModMain.isDragonTamerLoaded) {
-			AbstractPlayer d = DTModCrossover.getLivingDragon();
-			if (d != null) {
-				addToTop(action.action(d));
-			}
-		}
-
-		addToTop(action.action(AbstractDungeon.player));
 		isDone = true;
 	}
 }

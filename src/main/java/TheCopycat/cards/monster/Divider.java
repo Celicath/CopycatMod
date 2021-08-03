@@ -22,15 +22,15 @@ public class Divider extends AbstractMonsterCard implements HoverMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	private static final int COST = 3;
+	private static final int COST = 4;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String[] EXTENDED_DESCRIPTION = cardStrings.EXTENDED_DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
-	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardRarity RARITY = CardRarity.RARE;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
 	private static final int DAMAGE_BONUS = 1;
-	private static final int UPGRADE_BONUS = 1;
+	private static final int NEW_COST = 3;
 	private static final int HITS = 6;
 	private static final int DIV = 12;
 
@@ -82,7 +82,7 @@ public class Divider extends AbstractMonsterCard implements HoverMonsterCard {
 	public void upgrade() {
 		if (!upgraded) {
 			upgradeName();
-			upgradeMagicNumber(UPGRADE_BONUS);
+			upgradeBaseCost(NEW_COST);
 		}
 	}
 

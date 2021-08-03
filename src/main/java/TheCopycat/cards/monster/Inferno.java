@@ -25,7 +25,7 @@ public class Inferno extends AbstractMonsterCard {
 	private static final int COST = 3;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
-	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardRarity RARITY = CardRarity.RARE;
 	private static final CardTarget TARGET = CardTarget.ALL_ENEMY;
 
 	private static final int DAMAGE = 2;

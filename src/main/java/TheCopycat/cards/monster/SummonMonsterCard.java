@@ -3,7 +3,9 @@ package TheCopycat.cards.monster;
 import TheCopycat.CopycatModMain;
 import TheCopycat.actions.SummonCopycatMinionAction;
 import TheCopycat.friendlyminions.MirrorMinion;
+import TheCopycat.utils.GameLogicUtils;
 import basemod.AutoAdd;
+import basemod.helpers.TooltipInfo;
 import com.megacrit.cardcrawl.actions.animations.TalkAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
@@ -16,6 +18,7 @@ import com.megacrit.cardcrawl.monsters.city.TorchHead;
 import com.megacrit.cardcrawl.monsters.exordium.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @AutoAdd.Seen
 public class SummonMonsterCard extends AbstractMonsterCard {
@@ -36,7 +39,12 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 	public boolean initialized = false;
 	public boolean smallFont = false;
 
+	ArrayList<TooltipInfo> tooltips = new ArrayList<>();
+
 	public static AbstractMonster makeMonster(String ID) {
+		if (ID == null) {
+			return null;
+		}
 		switch (ID) {
 			case AcidSlime_M.ID:
 				return new AcidSlime_M(0.0f, 0.0f);
@@ -76,7 +84,7 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 	public void use(AbstractPlayer p, AbstractMonster m) {
 		AbstractMonster summon = makeMonster(summonID);
 		if (summon == null) {
-			addToBot(new TalkAction(true, "This minion is not supported.", 0.5f, 4.0f));
+			addToBot(new TalkAction(true, "This minion is not supported. Please ask Celicath to add this monster.", 0.5f, 4.0f));
 		} else {
 			addToBot(new SummonCopycatMinionAction(new MirrorMinion(summon.name, summon, magicNumber)));
 		}
@@ -92,18 +100,21 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 		result.add(String.valueOf(baseMagicNumber));
 		result.add(String.valueOf(smallFont));
 
-		monsterCardID = String.join(idSeparator, result);
+		monsterCardID = String.join(GameLogicUtils.metricIdSeparator, result);
 	}
 
-	public void updateDescription() {
-		rawDescription = EXTENDED_DESCRIPTION[1] + summonName + EXTENDED_DESCRIPTION[2];
+	public void updateDescriptionAndInitialize() {
+		rawDescription = EXTENDED_DESCRIPTION[1] + summonName.replaceAll("(?<=\\s|^)(\\S+)(?=\\s|$)", "*$1") + EXTENDED_DESCRIPTION[2];
 		initializeDescription();
 		initialized = true;
+		tooltips.clear();
+		tooltips.add(new TooltipInfo(summonName, EXTENDED_DESCRIPTION[3]));
+		rarity = CardRarity.COMMON;
 	}
 
-	public void loadFromMonsterCardID(String id) {
-		monsterCardID = id;
-		loadFromTokens(id.split(idSeparator, -1));
+	@Override
+	public List<TooltipInfo> getCustomTooltipsTop() {
+		return tooltips;
 	}
 
 	@Override
@@ -121,7 +132,7 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 				baseCost = cost = costForTurn = Integer.parseInt(tokens[4]);
 				baseMagicNumber = magicNumber = Integer.parseInt(tokens[5]);
 				smallFont = tokens[6].equals("true");
-				updateDescription();
+				updateDescriptionAndInitialize();
 				for (int i = 0; i < shouldUpgrade; i++) {
 					upgrade();
 				}
@@ -129,14 +140,6 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	@Override
-	public void onLoad(String id) {
-		loadFromTokens(id.split(idSeparator, -1));
-		monsterCardID = id;
-
-		super.onLoad(id);
 	}
 
 	public void setName(String cardName, AbstractMonster m) {
@@ -152,9 +155,9 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 	public void setSummon(AbstractMonster m, int cost, int hp) {
 		summonID = m.id;
 		summonName = m.name;
-		baseCost = cost = costForTurn = cost;
+		baseCost = this.cost = costForTurn = cost;
 		baseMagicNumber = magicNumber = hp;
-		updateDescription();
+		updateDescriptionAndInitialize();
 	}
 
 	@Override

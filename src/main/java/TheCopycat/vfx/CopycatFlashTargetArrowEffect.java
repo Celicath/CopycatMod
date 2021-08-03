@@ -1,7 +1,9 @@
 package TheCopycat.vfx;
 
+import TheCopycat.friendlyminions.AbstractCopycatMinion;
 import TheCopycat.utils.CopycatTargetArrow;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.Settings;
@@ -16,6 +18,8 @@ public class CopycatFlashTargetArrowEffect extends AbstractGameEffect {
 	float alpha;
 	float maxAlpha;
 
+	Color color;
+
 	public CopycatFlashTargetArrowEffect(AbstractCreature from, AbstractCreature to) {
 		this(from, to, 1.0f);
 	}
@@ -25,6 +29,10 @@ public class CopycatFlashTargetArrowEffect extends AbstractGameEffect {
 		this.to = to;
 		arrowTime = 0;
 		maxAlpha = alpha;
+		color = null;
+		if (to instanceof AbstractCopycatMinion) {
+			color = AbstractCopycatMinion.arrowColors[((AbstractCopycatMinion) to).index];
+		}
 	}
 
 	public void update() {
@@ -42,7 +50,7 @@ public class CopycatFlashTargetArrowEffect extends AbstractGameEffect {
 
 	public void render(SpriteBatch sb) {
 		CopycatTargetArrow.drawTargetArrow(
-				sb, from.hb, to.hb, CopycatTargetArrow.CONTROL_HEIGHT * Settings.scale, arrowTime, alpha, null);
+				sb, from.hb, to.hb, CopycatTargetArrow.CONTROL_HEIGHT * Settings.scale, arrowTime, alpha, color);
 	}
 
 	public void dispose() {

@@ -1,5 +1,6 @@
 package TheCopycat;
 
+import TheCopycat.actions.VenomologyActivateAction;
 import TheCopycat.blights.Spiredex;
 import TheCopycat.cards.Mimic;
 import TheCopycat.cards.monster.AbstractMonsterCard;
@@ -8,14 +9,20 @@ import TheCopycat.cards.monster.DynamicCard;
 import TheCopycat.cards.monster.NoMove;
 import TheCopycat.cards.temp.ChooseProtective;
 import TheCopycat.characters.Copycat;
-import TheCopycat.crossovers.BetterFriendlyMinions;
+import TheCopycat.commands.RedirectCommand;
 import TheCopycat.friendlyminions.AbstractCopycatMinion;
+import TheCopycat.friendlyminions.SubstituteMinion;
 import TheCopycat.patches.CaptureEnemyMovePatch;
 import TheCopycat.patches.CharacterEnum;
+import TheCopycat.patches.TargetAllyPatch;
+import TheCopycat.powers.VenomologyPower;
 import TheCopycat.relics.LuckyBag;
+import TheCopycat.utils.BetterFriendlyMinionsUtils;
+import TheCopycat.vfx.TextEffect;
 import basemod.AutoAdd;
 import basemod.BaseMod;
 import basemod.ModPanel;
+import basemod.devcommands.ConsoleCommand;
 import basemod.interfaces.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -79,7 +86,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 	// Crossovers
 	public static boolean isDragonTamerLoaded;
 
-	public static final String makePath(String resource) {
+	public static String makePath(String resource) {
 		return COPYCAT_MOD_ASSETS_FOLDER + "/" + resource;
 	}
 
@@ -128,6 +135,8 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 		BaseMod.registerModBadge(badgeTexture, MODNAME, AUTHOR, DESCRIPTION, settingsPanel);
 		DynamicCard.initializeDescriptionParts();
 		AbstractMonsterCard.autoAddLibrary();
+
+		ConsoleCommand.addCommand("redirect", RedirectCommand.class);
 	}
 
 	@Override
@@ -136,7 +145,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 				.packageFilter(Mimic.class)
 				.notPackageFilter(AbstractMonsterCard.class)
 				.notPackageFilter(ChooseProtective.class)
-				.setDefaultSeen(true)
+				.setDefaultSeen(false)
 				.cards();
 		new AutoAdd(MOD_ID)
 				.packageFilter(AbstractMonsterCard.class)
@@ -164,6 +173,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 				BaseMod.loadCustomStrings(CardStrings.class, GetLocString(loc, "cards"));
 				BaseMod.loadCustomStrings(CharacterStrings.class, GetLocString(loc, "characters"));
 				BaseMod.loadCustomStrings(EventStrings.class, GetLocString(loc, "events"));
+				BaseMod.loadCustomStrings(MonsterStrings.class, GetLocString(loc, "monsters"));
 				BaseMod.loadCustomStrings(PotionStrings.class, GetLocString(loc, "potions"));
 				BaseMod.loadCustomStrings(PowerStrings.class, GetLocString(loc, "powers"));
 				BaseMod.loadCustomStrings(RelicStrings.class, GetLocString(loc, "relics"));
@@ -197,6 +207,10 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 
 	public static String makeID(String idText) {
 		return MOD_ID + ":" + idText;
+	}
+
+	public static String makeLowerID(String idText) {
+		return (MOD_ID + ":" + idText).toLowerCase();
 	}
 
 	public static String GetCardPath(String id) {
@@ -253,15 +267,22 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 	@Override
 	public void receivePreStartGame() {
 		clearMonsterCards();
+		SubstituteMinion.instance = new SubstituteMinion();
 	}
 
 	@Override
 	public void receiveOnBattleStart(AbstractRoom room) {
 		Charging.useCount = 0;
-		BetterFriendlyMinions.copycatMinions = new AbstractCopycatMinion[4];
-		BetterFriendlyMinions.minionAiRng = new Random(Settings.seed + AbstractDungeon.floorNum);
-		BetterFriendlyMinions.enemyTargetRng = new Random(Settings.seed + AbstractDungeon.floorNum);
+		BetterFriendlyMinionsUtils.copycatMinions = new AbstractCopycatMinion[4];
+		BetterFriendlyMinionsUtils.minionAiRng = new Random(Settings.seed + AbstractDungeon.floorNum);
+		BetterFriendlyMinionsUtils.enemyTargetRng = new Random(Settings.seed + AbstractDungeon.floorNum);
 		Spiredex.monsterCardRng = new Random(Settings.seed + AbstractDungeon.floorNum);
+		TextEffect.messageIndexSet.clear();
+		TextEffect.positionSet.clear();
+		VenomologyPower.disabled = false;
+		VenomologyActivateAction.poisonPowers.clear();
+		TargetAllyPatch.cardTargetMap.clear();
+		SubstituteMinion.instance.clearPowers();
 	}
 
 	@Override

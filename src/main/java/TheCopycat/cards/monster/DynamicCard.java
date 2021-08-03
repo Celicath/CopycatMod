@@ -1,6 +1,9 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.actions.PCAGainGoldAction;
+import TheCopycat.actions.PCAVFXAction;
+import TheCopycat.utils.GameLogicUtils;
 import basemod.AutoAdd;
 import com.badlogic.gdx.graphics.Color;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
@@ -94,7 +97,7 @@ public class DynamicCard extends AbstractMonsterCard {
 		if (baseDamage > 0) {
 			this.type = CardType.ATTACK;
 			this.target = CardTarget.ENEMY;
-		} else if (isDraw || baseBlock > 0 || !debuffs.isEmpty() || !getModifierString().isEmpty()) {
+		} else if (baseBlock > 0 || !debuffs.isEmpty() || isDraw || exhaustOther || isDiscard || gainEnergy || enterCalm) {
 			this.type = CardType.SKILL;
 			if (debuffs.isEmpty()) {
 				this.target = CardTarget.SELF;
@@ -113,15 +116,43 @@ public class DynamicCard extends AbstractMonsterCard {
 	}
 
 	void setModifiers(String modifiers) {
-		shouldUpgradeCost = modifiers.indexOf('C') != -1;
-		isDraw = modifiers.indexOf('D') != -1;
-		exhaust = modifiers.indexOf('T') != -1;
-		exhaustOther = modifiers.indexOf('O') != -1;
-		isDiscard = modifiers.indexOf('I') != -1;
-		gainEnergy = modifiers.indexOf('E') != -1;
-		enterCalm = modifiers.indexOf('L') != -1;
-		isVampire = modifiers.indexOf('V') != -1;
-		stealGold = modifiers.indexOf('G') != -1;
+		for (int i = 0; i < modifiers.length(); i++) {
+			switch (modifiers.charAt(i)) {
+				case 'C':
+					shouldUpgradeCost = true;
+					break;
+				case 'D':
+					isDraw = true;
+					break;
+				case 'T':
+					exhaust = true;
+					break;
+				case 'O':
+					exhaustOther = true;
+					break;
+				case 'I':
+					isDiscard = true;
+					break;
+				case 'E':
+					gainEnergy = true;
+					break;
+				case 'L':
+					enterCalm = true;
+					break;
+				case 'V':
+					isVampire = true;
+					break;
+				case 'G':
+					stealGold = true;
+					break;
+				case 'U':
+					rarity = CardRarity.UNCOMMON;
+					break;
+				case 'R':
+					rarity = CardRarity.RARE;
+					break;
+			}
+		}
 	}
 
 	String getModifierString() {
@@ -135,6 +166,8 @@ public class DynamicCard extends AbstractMonsterCard {
 		if (enterCalm) result.append('L');
 		if (isVampire) result.append('V');
 		if (stealGold) result.append('G');
+		if (rarity == CardRarity.UNCOMMON) result.append('U');
+		if (rarity == CardRarity.RARE) result.append('R');
 		return result.toString();
 	}
 
@@ -146,6 +179,7 @@ public class DynamicCard extends AbstractMonsterCard {
 	}
 
 	public void calculateCost() {
+		int rarityNum = 0;
 		if (empty) {
 			return;
 		}
@@ -155,7 +189,7 @@ public class DynamicCard extends AbstractMonsterCard {
 			switch (buffs.charAt(i)) {
 				case 'S':
 				case 'D':
-					tmp += baseMagicNumber * 4;
+					tmp += baseMagicNumber * 5.1f;
 					break;
 				case 'P':
 				case 'T':
@@ -167,6 +201,7 @@ public class DynamicCard extends AbstractMonsterCard {
 					exhaust = true;
 					break;
 				case 'R':
+					rarityNum = 2;
 					tmp += baseMagicNumber * 12;
 					forceCost = baseMagicNumber;
 					exhaust = true;
@@ -180,14 +215,14 @@ public class DynamicCard extends AbstractMonsterCard {
 					tmp += baseMagicNumber * 3.5f;
 					break;
 				case 'P':
-					tmp += baseMagicNumber * 1.5f;
+					tmp += baseMagicNumber * 1.6f;
 					break;
 				case 'S':
 					tmp += baseMagicNumber * 4;
 					exhaust = true;
 					break;
 				case 'E':
-					tmp += baseMagicNumber * 2;
+					tmp += baseMagicNumber * 0.99f;
 					exhaust = true;
 					break;
 			}
@@ -200,107 +235,194 @@ public class DynamicCard extends AbstractMonsterCard {
 			tmp += baseDamage;
 			forceCost = 2;
 			exhaust = true;
+			rarityNum++;
 		}
 		if (stealGold) {
 			if (baseDamage >= 12) {
 				forceCost = 2;
 			}
 			exhaust = true;
+			rarityNum++;
 		}
 		if (isDraw && baseDamage <= 0 && baseBlock <= 0 && buffs.isEmpty() && debuffs.isEmpty() && !gainEnergy && !enterCalm && !stealGold) {
 			if (baseMagicNumber <= 2) {
 				baseMagicNumber = magicNumber = 2;
-				cost = 0;
+				baseCost = 0;
 				exhaust = true;
 			} else if (baseMagicNumber <= 4) {
-				cost = 1;
+				baseCost = 1;
 			} else {
-				cost = 1;
+				baseCost = 1;
 				exhaust = true;
 				shouldUpgradeCost = true;
+				rarityNum++;
 			}
 		} else {
 			switch (AbstractDungeon.actNum) {
 				case 1:
 					if (tmp < 4) {
-						cost = 0;
+						baseCost = 0;
 						gainEnergy = true;
+					} else if (tmp < 7) {
+						baseCost = 0;
 					} else if (tmp < 8) {
-						cost = 0;
+						baseCost = 0;
+						rarityNum++;
 					} else if (tmp < 10) {
-						cost = 0;
-						exhaust = true;
+						baseCost = 0;
+						if (exhaust) {
+							rarityNum++;
+						} else {
+							exhaust = true;
+						}
+					} else if (tmp < 12) {
+						baseCost = 1;
 					} else if (tmp < 13) {
-						cost = 1;
+						baseCost = 1;
+						rarityNum++;
 					} else if (tmp < 16) {
-						cost = 1;
-						exhaust = true;
+						baseCost = 1;
+						if (exhaust) {
+							rarityNum++;
+						} else {
+							exhaust = true;
+						}
+					} else if (tmp < 20) {
+						baseCost = 2;
 					} else if (tmp < 25) {
-						cost = 2;
+						baseCost = 2;
+						rarityNum++;
 					} else if (tmp < 31) {
-						cost = 2;
+						baseCost = 2;
 						exhaust = true;
+					} else if (tmp < 35) {
+						baseCost = 3;
+					} else if (tmp < 38) {
+						baseCost = 3;
+						rarityNum++;
 					} else if (tmp < 41) {
-						cost = 3;
+						baseCost = 3;
+						rarityNum = 2;
 					} else {
-						cost = 3;
+						baseCost = 3;
 						exhaust = true;
+						rarityNum++;
 					}
 					break;
 				case 2:
 					if (tmp < 4) {
-						cost = 0;
+						baseCost = 0;
 						gainEnergy = true;
+					} else if (tmp < 7) {
+						baseCost = 0;
 					} else if (tmp < 9) {
-						cost = 0;
+						baseCost = 0;
+						rarityNum++;
 					} else if (tmp < 11) {
-						cost = 0;
-						exhaust = true;
+						baseCost = 0;
+						if (exhaust) {
+							rarityNum++;
+						} else {
+							exhaust = true;
+						}
+					} else if (tmp < 12) {
+						baseCost = 1;
 					} else if (tmp < 14) {
-						cost = 1;
-					} else if (tmp < 18) {
-						cost = 1;
-						exhaust = true;
+						baseCost = 1;
+						rarityNum++;
+					} else if (tmp < 17) {
+						baseCost = 1;
+						if (exhaust) {
+							rarityNum++;
+						} else {
+							exhaust = true;
+						}
+					} else if (tmp < 20) {
+						baseCost = 2;
 					} else if (tmp < 26) {
-						cost = 2;
+						baseCost = 2;
+						rarityNum++;
 					} else if (tmp < 32) {
-						cost = 2;
-						exhaust = true;
+						baseCost = 2;
+						if (exhaust) {
+							rarityNum++;
+						} else {
+							exhaust = true;
+						}
+					} else if (tmp < 35) {
+						baseCost = 3;
+					} else if (tmp < 39) {
+						baseCost = 3;
+						rarityNum++;
 					} else if (tmp < 43) {
-						cost = 3;
-						exhaust = true;
+						baseCost = 3;
+						rarityNum = 2;
 					} else {
-						cost = 3;
+						baseCost = 3;
 						exhaust = true;
+						rarityNum++;
 					}
 					break;
 				default:
 					if (tmp <= 4) {
-						cost = 0;
+						baseCost = 0;
 						gainEnergy = true;
+					} else if (tmp <= 7) {
+						baseCost = 0;
 					} else if (tmp <= 10) {
-						cost = 0;
-					} else if (tmp <= 16) {
-						cost = 1;
-					} else if (tmp <= 32) {
-						cost = 2;
-					} else if (tmp <= 48) {
-						cost = 3;
+						baseCost = 0;
+						rarityNum++;
+					} else if (tmp <= 12) {
+						baseCost = 1;
+					} else if (tmp <= 15) {
+						baseCost = 1;
+						rarityNum++;
+					} else if (tmp <= 17.5f) {
+						baseCost = 1;
+						if (exhaust) {
+							rarityNum++;
+						} else {
+							exhaust = true;
+						}
+					} else if (tmp <= 20) {
+						baseCost = 2;
+					} else if (tmp <= 25) {
+						baseCost = 2;
+						rarityNum++;
+					} else if (tmp <= 30) {
+						baseCost = 2;
+						rarityNum = 2;
+					} else if (tmp <= 35) {
+						baseCost = 3;
+					} else if (tmp <= 40) {
+						baseCost = 3;
+						rarityNum++;
+					} else if (tmp <= 45) {
+						baseCost = 3;
+						rarityNum = 2;
 					} else {
-						cost = 3;
+						baseCost = 3;
 						exhaust = true;
+						rarityNum++;
 					}
 			}
-			if (forceCost > cost) {
-				cost = forceCost;
-			}
-		}
-		baseCost = costForTurn = cost;
-		if (cost == 1 && magicNumber >= 10) {
-			exhaust = true;
 		}
 		if (exhaust && type == CardType.POWER) {
 			exhaust = false;
+			baseCost++;
+			shouldUpgradeCost = true;
+		}
+		if (forceCost > baseCost) {
+			baseCost = forceCost;
+		}
+		cost = costForTurn = baseCost;
+
+		if (rarityNum == 0) {
+			rarity = CardRarity.COMMON;
+		} else if (rarityNum == 1) {
+			rarity = CardRarity.UNCOMMON;
+		} else {
+			rarity = CardRarity.RARE;
 		}
 	}
 
@@ -366,7 +488,7 @@ public class DynamicCard extends AbstractMonsterCard {
 		}
 		if (baseDamage > 0) {
 			AbstractGameAction.AttackEffect effect;
-			switch (cost) {
+			switch (baseCost) {
 				case 0:
 				case 1:
 					effect = AbstractGameAction.AttackEffect.SLASH_DIAGONAL;
@@ -381,7 +503,7 @@ public class DynamicCard extends AbstractMonsterCard {
 			if (isVampire) {
 				effect = AbstractGameAction.AttackEffect.NONE;
 				addToBot(new VFXAction(new BiteEffect(m.hb.cX, m.hb.cY, Color.GOLD.cpy()), 0.0F));
-			} else if (cost >= 3 && hits <= 1) {
+			} else if (baseCost >= 3 && hits <= 1) {
 				addToBot(new VFXAction(new WeightyImpactEffect(m.hb.cX, m.hb.cY)));
 			}
 			for (int i = 0; i < Math.max(hits, 1); i++) {
@@ -393,14 +515,14 @@ public class DynamicCard extends AbstractMonsterCard {
 			}
 		}
 		if (stealGold) {
+			addToBot(new PCAGainGoldAction(magicNumber));
 			if (m != null) {
 				for (int i = 0; i < magicNumber; i++) {
-					addToBot(new VFXAction(new GainPennyEffect(p, m.hb.cX, m.hb.cY, p.hb.cX, p.hb.cY, true), 0.0F));
+					addToBot(new PCAVFXAction(new GainPennyEffect(p, m.hb.cX, m.hb.cY, p.hb.cX, p.hb.cY, true), 0.0F));
 				}
 			} else {
-				addToBot(new VFXAction(new RainingGoldEffect(magicNumber * 2, true), 0.0F));
+				addToBot(new PCAVFXAction(new RainingGoldEffect(magicNumber * 2, true), 0.0F));
 			}
-			addToBot(new GainGoldAction(magicNumber));
 		}
 		if (isDraw) {
 			addToBot(new DrawCardAction(p, magicNumber));
@@ -574,9 +696,9 @@ public class DynamicCard extends AbstractMonsterCard {
 				}
 				if (baseMagicNumber > 0) {
 					if (debuffs.equals("P")) {
-						upgradeMagicNumber(baseCost + (exhaust ? 3 : 2));
+						upgradeMagicNumber(Math.max(baseCost + (exhaust ? 2 : 1), 2));
 					} else {
-						upgradeMagicNumber(baseMagicNumber >= 5 ? 2 : 1);
+						upgradeMagicNumber(baseMagicNumber >= 4 ? 2 : 1);
 					}
 				}
 			}
@@ -596,12 +718,7 @@ public class DynamicCard extends AbstractMonsterCard {
 		result.add(buffs);
 		result.add(debuffs);
 
-		monsterCardID = String.join(idSeparator, result);
-	}
-
-	public void loadFromMonsterCardID(String id) {
-		monsterCardID = id;
-		loadFromTokens(id.split(idSeparator, -1));
+		monsterCardID = String.join(GameLogicUtils.metricIdSeparator, result);
 	}
 
 	@Override
@@ -632,14 +749,6 @@ public class DynamicCard extends AbstractMonsterCard {
 				invalid = true;
 			}
 		}
-	}
-
-	@Override
-	public void onLoad(String id) {
-		loadFromTokens(id.split(idSeparator, -1));
-		monsterCardID = id;
-
-		super.onLoad(id);
 	}
 
 	public void addBuff(char c) {

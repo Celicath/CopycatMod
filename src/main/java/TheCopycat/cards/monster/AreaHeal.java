@@ -2,6 +2,7 @@ package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
 import TheCopycat.actions.DoAreaAction;
+import TheCopycat.interfaces.TargetAllyCard;
 import com.megacrit.cardcrawl.actions.common.HealAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
@@ -11,19 +12,18 @@ import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.city.Healer;
 
-public class AreaHeal extends AbstractMonsterCard {
+public class AreaHeal extends AbstractMonsterCard implements TargetAllyCard {
 	private static final String RAW_ID = "AreaHeal";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 1;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
-	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.SELF;
 
-	private static final int HEAL = 8;
+	private static final int HEAL = 7;
 	private static final int UPGRADE_BONUS = 3;
 
 	public AreaHeal() {

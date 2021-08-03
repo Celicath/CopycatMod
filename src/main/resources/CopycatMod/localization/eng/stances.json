@@ -2,7 +2,7 @@
   "CopycatMod:Protective": {
     "NAME": "Protective",
     "DESCRIPTION": [
-      "Upon entering or exiting this #yStance, all enemies change their target to you."
+      "While in this #yStance, all enemies target you. NL When you exit this #yStance, all attacking enemies change their target to a random #yMinion (if any)."
     ]
   }
 }

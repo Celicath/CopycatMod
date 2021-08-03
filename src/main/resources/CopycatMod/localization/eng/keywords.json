@@ -7,13 +7,6 @@
     "DESCRIPTION": "Summon a friendly minion to fight along with you. You can summon up to #b4 minions. Each minion has #b25% chance to be the target of attacking enemy."
   },
   {
-    "PROPER_NAME": "Enemy Monster",
-    "NAMES": [
-      "enemy monster"
-    ],
-    "DESCRIPTION": "This Minion is a copy of a monster. At the end of your turn, it will perform moves of the original monster."
-  },
-  {
     "PROPER_NAME": "T",
     "NAMES": [
       "t"
@@ -32,7 +25,7 @@
     "NAMES": [
       "protective"
     ],
-    "DESCRIPTION": "Upon entering or exiting this #yStance, all enemies change their target to you."
+    "DESCRIPTION": "While in this #yStance, all enemies target you. NL When you exit this #yStance, all attacking enemies change their target to a random Minion."
   },
   {
     "PROPER_NAME": "Monster Card",
@@ -40,7 +33,8 @@
       "monster card",
       "monster_card",
       "monster",
-      "card"
+      "card",
+      "cards"
     ],
     "DESCRIPTION": "A card containing enemy move."
   },
@@ -49,6 +43,31 @@
     "NAMES": [
       "choose"
     ],
-    "DESCRIPTION": "In combat examples: Discard, Exhaust, Scry, put it on top of your deck. NL Out of combat examples: Card reward, event, upgrade, remove. NL Does #rNOT activate if chosen randomly or automatically."
+    "DESCRIPTION": "This card activates whenever you choose from effects like Exhaust, Scry, card reward, etc. Does #rNOT activate if chosen randomly or automatically."
+  },
+  {
+    "PROPER_NAME": "Exclusive Mechanics",
+    "NAMES": [
+      "exclusive",
+      "mechanic"
+    ],
+    "DESCRIPTION": "Silent - Discard, Poison NL Defect - Channel/Evoke Orbs NL Watcher - Scry, Change Stance"
+  },
+  {
+    "PROPER_NAME": "Apology Slime",
+    "NAMES": [
+      "apology slime",
+      "apology_slime",
+      "apology",
+      "slime"
+    ],
+    "DESCRIPTION": "Each turn, deals 3 damage to a random enemy."
+  },
+  {
+    "PROPER_NAME": "Substitute",
+    "NAMES": [
+      "substitute"
+    ],
+    "DESCRIPTION": "Replaces you during enemy turns, taking all your Block. NL Lasts between combats."
   }
 ]

@@ -6,7 +6,14 @@
       "Monster Cards"
     ],
     "TEXT": [
-      "The Copycat survives by mimicking other's specialty.",
+      "The Copycat survives by mimicking others. NL Interested in Slimes living in the Spire."
+    ]
+  },
+  "CopycatMod:Substitute": {
+    "NAMES": [
+      "Substitute"
+    ],
+    "TEXT": [
     ]
   }
 }

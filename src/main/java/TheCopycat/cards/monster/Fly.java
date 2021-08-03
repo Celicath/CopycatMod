@@ -18,7 +18,7 @@ public class Fly extends AbstractMonsterCard {
 	private static final int COST = 1;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.POWER;
-	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.SELF;
 	private static final int NEW_COST = 0;
 

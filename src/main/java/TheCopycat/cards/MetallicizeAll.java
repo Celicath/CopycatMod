@@ -2,6 +2,7 @@ package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
 import TheCopycat.actions.DoAreaAction;
+import TheCopycat.interfaces.TargetAllyCard;
 import TheCopycat.patches.CharacterEnum;
 import basemod.abstracts.CustomCard;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
@@ -12,7 +13,7 @@ import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.powers.MetallicizePower;
 
-public class MetallicizeAll extends CustomCard {
+public class MetallicizeAll extends CustomCard implements TargetAllyCard {
 	private static final String RAW_ID = "MetallicizeAll";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);

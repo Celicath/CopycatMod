@@ -36,7 +36,7 @@ public class BlightPatch {
 				if (CardCrawlGame.trial != null && CardCrawlGame.trial.dailyModIDs().contains(CopycatModMain.makeID("MonsterOnly"))) {
 					dex = new Spiredex(9);
 				} else if (AbstractDungeon.player instanceof Copycat) {
-					dex = new Spiredex(1);
+					dex = new Spiredex(-1);
 				}
 				if (dex != null) {
 					AbstractDungeon.getCurrRoom().spawnBlightAndObtain(100.0f * Settings.scale, Settings.HEIGHT - 200.0f * Settings.scale, dex);

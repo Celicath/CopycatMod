@@ -6,6 +6,7 @@ import basemod.abstracts.CustomCard;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
+import com.megacrit.cardcrawl.actions.common.DrawCardAction;
 import com.megacrit.cardcrawl.actions.watcher.ChangeStanceAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -31,14 +32,13 @@ public class ClearFist extends CustomCard {
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
 	private static final int POWER = 10;
-	private static final int UPGRADE_BONUS = 4;
-	private static final int SECOND_POWER = 5;
-	private static final int UPGRADE_SECOND = 2;
+	private static final int UPGRADE_BONUS = 3;
+	private static final int DRAW = 2;
 
 	public ClearFist() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
 		baseDamage = POWER;
-		baseMagicNumber = magicNumber = SECOND_POWER;
+		baseMagicNumber = magicNumber = DRAW;
 	}
 
 	@Override
@@ -48,36 +48,13 @@ public class ClearFist extends CustomCard {
 			@Override
 			public void update() {
 				if (!AbstractDungeon.player.stance.ID.equals(NeutralStance.STANCE_ID)) {
-					addToTop(new DamageAction(m, new DamageInfo(p, magicNumber, damageTypeForTurn), AbstractGameAction.AttackEffect.SLASH_VERTICAL));
+					addToTop(new DrawCardAction(magicNumber));
 					addToBot(new VFXAction(new EmptyStanceEffect(p.hb.cX, p.hb.cY), 0.1f));
 				}
-
 				isDone = true;
 			}
 		});
 		addToBot(new ChangeStanceAction(NeutralStance.STANCE_ID));
-	}
-
-	@Override
-	public void applyPowers() {
-		int temp = baseDamage;
-		baseDamage = baseMagicNumber;
-		super.applyPowers();
-		magicNumber = damage;
-		baseDamage = temp;
-		isMagicNumberModified = true;
-		super.applyPowers();
-	}
-
-	@Override
-	public void calculateCardDamage(AbstractMonster mo) {
-		int temp = baseDamage;
-		baseDamage = baseMagicNumber;
-		super.calculateCardDamage(mo);
-		magicNumber = damage;
-		baseDamage = temp;
-		isMagicNumberModified = true;
-		super.applyPowers();
 	}
 
 	@Override
@@ -90,7 +67,6 @@ public class ClearFist extends CustomCard {
 		if (!upgraded) {
 			upgradeName();
 			upgradeDamage(UPGRADE_BONUS);
-			upgradeMagicNumber(UPGRADE_SECOND);
 		}
 	}
 }

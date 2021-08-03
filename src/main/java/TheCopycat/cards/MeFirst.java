@@ -4,6 +4,7 @@ import TheCopycat.CopycatModMain;
 import TheCopycat.actions.MeFirstAction;
 import TheCopycat.interfaces.HoverMonsterCard;
 import TheCopycat.patches.CharacterEnum;
+import TheCopycat.utils.GameLogicUtils;
 import basemod.abstracts.CustomCard;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -11,9 +12,6 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
-import kobting.friendlyminions.enums.MonsterIntentEnum;
-
-import static com.megacrit.cardcrawl.monsters.AbstractMonster.Intent.*;
 
 public class MeFirst extends CustomCard implements HoverMonsterCard {
 	private static final String RAW_ID = "MeFirst";
@@ -28,10 +26,10 @@ public class MeFirst extends CustomCard implements HoverMonsterCard {
 	private static final CardRarity RARITY = CardRarity.RARE;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
-	private static final int DAMAGE = 9;
-	private static final int UPGRADE_DAMAGE = 3;
-	private static final int BLOCK = 9;
-	private static final int UPGRADE_BLOCK = 3;
+	private static final int DAMAGE = 10;
+	private static final int UPGRADE_DAMAGE = 4;
+	private static final int BLOCK = 10;
+	private static final int UPGRADE_BLOCK = 4;
 	private static final int MAGIC_POWER = 3;
 	private static final int UPGRADE_MAGIC = 1;
 
@@ -42,33 +40,10 @@ public class MeFirst extends CustomCard implements HoverMonsterCard {
 		baseMagicNumber = magicNumber = MAGIC_POWER;
 	}
 
-	public static boolean checkActivate(AbstractMonster m, int mode) {
-		if (m == null) {
-			return true;
-		}
-		switch (mode) {
-			case 0:
-				return m.intent == ATTACK_DEFEND || m.intent == DEFEND || m.intent == DEFEND_DEBUFF || m.intent == DEFEND_BUFF || m.intent == MonsterIntentEnum.ATTACK_MINION_DEFEND;
-			case 1:
-				return m.intent == ATTACK || m.intent == ATTACK_BUFF || m.intent == ATTACK_DEBUFF || m.intent == ATTACK_DEFEND || m.getIntentBaseDmg() >= 0 ||
-						m.intent == MonsterIntentEnum.ATTACK_MINION ||
-						m.intent == MonsterIntentEnum.ATTACK_MINION_BUFF ||
-						m.intent == MonsterIntentEnum.ATTACK_MINION_DEBUFF ||
-						m.intent == MonsterIntentEnum.ATTACK_MINION_DEFEND;
-			case 2:
-				return m.intent == ATTACK_BUFF || m.intent == BUFF || m.intent == DEFEND_BUFF || m.intent == MAGIC || m.intent == MonsterIntentEnum.ATTACK_MINION_BUFF;
-			case 3:
-				return m.intent == ATTACK_DEBUFF || m.intent == DEBUFF || m.intent == STRONG_DEBUFF || m.intent == DEFEND_DEBUFF || m.intent == MAGIC || m.intent == MonsterIntentEnum.ATTACK_MINION_DEBUFF;
-			default:
-				return true;
-		}
-	}
-
 	public static String getRawDescription(AbstractMonster m) {
 		StringBuilder result = new StringBuilder(DESCRIPTION);
 		for (int i = 0; i < cardStrings.EXTENDED_DESCRIPTION.length; i++) {
-			result.append(" NL");
-			if (checkActivate(m, i)) {
+			if (GameLogicUtils.checkIntent(m, i)) {
 				result.append(" ").append(cardStrings.EXTENDED_DESCRIPTION[i]);
 			} else {
 				for (String word : cardStrings.EXTENDED_DESCRIPTION[i].split(" ")) {
@@ -79,8 +54,15 @@ public class MeFirst extends CustomCard implements HoverMonsterCard {
 					}
 				}
 			}
+			result.append(" NL");
 		}
+		result.append(" \u00A0");
 		return result.toString();
+	}
+
+	@Override
+	public void onMoveToDiscard() {
+		onUnhoverMonster();
 	}
 
 	@Override

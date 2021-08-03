@@ -28,10 +28,9 @@ public class StanceChange extends CustomCard {
 	private static final CardRarity RARITY = CardRarity.RARE;
 	private static final CardTarget TARGET = CardTarget.SELF;
 
-	private static final int NEW_COST = 0;
-
 	public StanceChange() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
+		exhaust = true;
 	}
 
 	@Override
@@ -52,7 +51,9 @@ public class StanceChange extends CustomCard {
 	public void upgrade() {
 		if (!upgraded) {
 			upgradeName();
-			upgradeBaseCost(NEW_COST);
+			exhaust = false;
+			rawDescription = cardStrings.UPGRADE_DESCRIPTION;
+			initializeDescription();
 		}
 	}
 }

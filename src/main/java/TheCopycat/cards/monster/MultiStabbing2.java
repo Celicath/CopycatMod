@@ -22,7 +22,7 @@ public class MultiStabbing2 extends AbstractMonsterCard {
 	private static final int COST = 2;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
-	private static final CardRarity RARITY = CardRarity.SPECIAL;
+	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
 	private static final int POWER = 7;

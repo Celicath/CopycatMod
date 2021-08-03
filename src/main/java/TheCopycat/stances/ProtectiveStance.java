@@ -1,7 +1,7 @@
 package TheCopycat.stances;
 
 import TheCopycat.CopycatModMain;
-import TheCopycat.crossovers.BetterFriendlyMinions;
+import TheCopycat.utils.BetterFriendlyMinionsUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -17,6 +17,10 @@ import com.megacrit.cardcrawl.vfx.stance.StanceAuraEffect;
 import com.megacrit.cardcrawl.vfx.stance.StanceChangeParticleGenerator;
 import com.megacrit.cardcrawl.vfx.stance.WrathParticleEffect;
 import com.megacrit.cardcrawl.vfx.stance.WrathStanceChangeParticle;
+import kobting.friendlyminions.helpers.MonsterHelper;
+import kobting.friendlyminions.monsters.AbstractFriendlyMonster;
+
+import java.util.ArrayList;
 
 public class ProtectiveStance extends AbstractStance {
 	private static final String RAW_ID = "Protective";
@@ -41,6 +45,12 @@ public class ProtectiveStance extends AbstractStance {
 					{
 						color = new Color(MathUtils.random(0.25F, 0.5F), MathUtils.random(0.75F, 1.0F), 0.1F, 0.0F);
 					}
+
+					@Override
+					public void update() {
+						super.update();
+						color.a *= 0.8f;
+					}
 				});
 			}
 		}
@@ -52,6 +62,12 @@ public class ProtectiveStance extends AbstractStance {
 				{
 					color = new Color(MathUtils.random(0.5F, 0.6F), 1.0F, MathUtils.random(0.3F, 0.4F), 0.0f);
 				}
+
+				@Override
+				public void update() {
+					super.update();
+					color.a *= 0.75f;
+				}
 			});
 		}
 	}
@@ -60,24 +76,20 @@ public class ProtectiveStance extends AbstractStance {
 		description = stanceString.DESCRIPTION[0];
 	}
 
-	public void activate() {
-		AbstractDungeon.actionManager.addToBottom(new AbstractGameAction() {
-			@Override
-			public void update() {
-				for (AbstractMonster mo : AbstractDungeon.getCurrRoom().monsters.monsters) {
-					BetterFriendlyMinions.switchTarget(mo, null);
-				}
-				isDone = true;
-			}
-		});
-	}
-
 	public void onEnterStance() {
 		if (sfxId != -1L) {
 			stopIdleSfx();
 		}
 
-		activate();
+		AbstractDungeon.actionManager.addToBottom(new AbstractGameAction() {
+			@Override
+			public void update() {
+				for (AbstractMonster mo : AbstractDungeon.getCurrRoom().monsters.monsters) {
+					BetterFriendlyMinionsUtils.switchTarget(mo, null, false);
+				}
+				isDone = true;
+			}
+		});
 
 		CardCrawlGame.sound.play("STANCE_ENTER_WRATH");
 		sfxId = CardCrawlGame.sound.playAndLoop("STANCE_LOOP_WRATH");
@@ -99,7 +111,20 @@ public class ProtectiveStance extends AbstractStance {
 
 	public void onExitStance() {
 		stopIdleSfx();
-		activate();
+		AbstractDungeon.actionManager.addToBottom(new AbstractGameAction() {
+			@Override
+			public void update() {
+				ArrayList<AbstractMonster> minionList = BetterFriendlyMinionsUtils.getMinionList();
+				if (!minionList.isEmpty()) {
+					for (AbstractMonster mo : AbstractDungeon.getCurrRoom().monsters.monsters) {
+						if (!mo.isDeadOrEscaped() && MonsterHelper.getTarget(mo) == null) {
+							BetterFriendlyMinionsUtils.switchTarget(mo, (AbstractFriendlyMonster) minionList.get(BetterFriendlyMinionsUtils.enemyTargetRng.random(0, minionList.size() - 1)), false);
+						}
+					}
+				}
+				isDone = true;
+			}
+		});
 	}
 
 	public void stopIdleSfx() {

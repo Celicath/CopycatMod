@@ -29,8 +29,8 @@ public class HeavySlam extends CustomCard {
 	private static final CardRarity RARITY = CardRarity.COMMON;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
 
-	private static final int POWER = 16;
-	private static final int UPGRADE_BONUS = 6;
+	private static final int POWER = 15;
+	private static final int UPGRADE_BONUS = 5;
 
 	public HeavySlam() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
