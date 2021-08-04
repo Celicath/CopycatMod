@@ -29,7 +29,7 @@ public class TargetAllyPatch {
 	public static class HoverPatch {
 		@SpireInsertPatch(locator = AfterSetHoveredMonsterLocator.class)
 		public static void Insert(AbstractPlayer __instance, @ByRef AbstractMonster[] ___hoveredMonster) {
-			if (__instance.hoveredCard instanceof TargetAllyCard) {
+			if (__instance.hoveredCard instanceof TargetAllyCard && __instance.hoveredCard.target == AbstractCard.CardTarget.ENEMY) {
 				hoveredally = BetterFriendlyMinionsUtils.getHoveredAlly();
 				if (hoveredally == null) {
 					___hoveredMonster[0] = null;

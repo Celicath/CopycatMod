@@ -5,7 +5,7 @@ This mod adds The Copycat to Slay the Spire. It's a wacky character mod, like [P
 
 ## The Copycat
 
-Inspired by Copycat or Blue Mage archetype in some games, the Copycat's theme is "Copying others". Mainly, she copies enemies' move and uses it herself.
+Inspired by Copycat or Blue Mage archetype in some games, the Copycat's theme is "Copying others". Mainly, she copies enemy moves and uses them herself.
 
 Copycat has about 40 class cards. It's much less than other characters (~75 cards), but Copycat has another type of card: Monster Cards.
 
@@ -67,9 +67,9 @@ FriendlyMinions is a nice library that enables minions, but there are problems.
 * If a minion dies during enemy turn, all enemies targeting that minion will still attack it, wasting their attack.
 * Enemy choosing which minion to attack is not seeded.
 * Custom attack icon is sometimes not displayed.
-* Minions are invisible in event battle.
+* Minions are invisible in event combats.
 
-I decided to fix these problems for this mod. The fix is codenamed "Better Friendly Minions", and I might make this into a standalone mod or as an update to FriendlyMinions if there's enough demand.
+I decided to fix these problems for this mod. The fix is codenamed "Better Friendly Minions", and I might convert this into a standalone mod or as an update to FriendlyMinions if there's enough demand.
 
 Here are videos showcasing the fixes.
 * Friendly Minions: https://streamable.com/cba8ux
@@ -88,16 +88,16 @@ Hopefully, giving a twist to base game characters' archetypes is a cool way to i
 * Strength
     * Threshold-based. "If you have 6 or more Strength, do X."
 * Poison
-    * Poison cards naturally synergize with each other, but a [few](venomology) [cards](copycat-form) will make your draft differently.
+    * Poison cards naturally synergize with each other, but a [few](https://user-images.githubusercontent.com/1008668/128121698-94a31087-3e27-47c0-bff7-7f1f1f37491c.png) [cards](https://user-images.githubusercontent.com/1008668/128121778-dd5b51db-7152-4645-a4ef-35abd2dd492c.png) will make your draft differently.
 * Stance
     * Unlike Watcher's Stance, where you are supposed to switch a lot and avoid being in Wrath at the end of your turn, Copycat's Protection Stance emphasizes more on finding perfect timing to switch.
 
 #### Others
-There are [hybrid cards](hybrid-strike), ["steal" cards](magnet), or cards that care about [enemy's intention.](me-first)
+There are [hybrid cards](https://user-images.githubusercontent.com/1008668/128122014-4b1bf1f8-0295-4447-87f9-41e7ee9dc149.png), ["steal" cards](https://user-images.githubusercontent.com/1008668/128122062-e14d2d82-270c-4ae0-9b36-784516b1e777.png), or cards that care about [enemy's intention.](https://user-images.githubusercontent.com/1008668/128122125-3c1f5a22-f12a-4223-bb87-181d2662c0fc.png)
 
 There are also cards that you may think of as a meme. You will either laugh at them or feel smart by using them adequately.
 
 ## Notice
 * If you enable this mod, it will save monster card images, even if you are not playing with the Copycat.
-  * It will take about 15MB of disk space for all base game acts, and more if you have modded acts. If you want to check those files, they are in `%LOCALAPPDATA%\ModTheSpire\CopycatMod` on Windows.
-  * You might encounter lag when the game tries to save these images. It happens once for each unique enemy move.
+    * It will take about 15MB of disk space for all base game acts, and more if you have modded acts. If you want to check those files, they are in `%LOCALAPPDATA%\ModTheSpire\CopycatMod` on Windows.
+    * You might encounter lag when the game tries to save these images. It happens once for each unique enemy move.

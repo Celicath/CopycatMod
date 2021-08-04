@@ -2,6 +2,7 @@ package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
 import TheCopycat.actions.DoAreaAction;
+import TheCopycat.interfaces.TargetAllyCard;
 import TheCopycat.patches.CharacterEnum;
 import basemod.abstracts.CustomCard;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
@@ -16,7 +17,7 @@ import com.megacrit.cardcrawl.powers.GainStrengthPower;
 import com.megacrit.cardcrawl.powers.LoseStrengthPower;
 import com.megacrit.cardcrawl.powers.StrengthPower;
 
-public class StrengthSap extends CustomCard {
+public class StrengthSap extends CustomCard implements TargetAllyCard {
 	private static final String RAW_ID = "StrengthSap";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
@@ -27,7 +28,7 @@ public class StrengthSap extends CustomCard {
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.COMMON;
-	private static final CardTarget TARGET = CardTarget.ENEMY;
+	private static final CardTarget TARGET = CardTarget.SELF_AND_ENEMY;
 
 	private static final int POWER = 2;
 	private static final int UPGRADE_BONUS = 1;
