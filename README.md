@@ -68,6 +68,10 @@ FriendlyMinions is a nice library that enables minions, but there are problems.
 * Enemy choosing which minion to attack is not seeded.
 * Custom attack icon is sometimes not displayed.
 * Minions are invisible in event combats.
+* Enemies fail to damage anyone in the following scenario.
+  * Enemy must be using `setMove` instead of `RollMoveAction` to set their next move
+  * Enemy is attacking 2 turns in a row
+  * Of those 2 turns, enemy attacks your minion on the 1st turn and you on the 2nd turn
 
 I decided to fix these problems for this mod. The fix is codenamed "Better Friendly Minions", and I might convert this into a standalone mod or as an update to FriendlyMinions if there's enough demand.
 

@@ -51,6 +51,7 @@ public class CaptureEnemyMovePatch {
 	public static HashMap<String, AbstractMonsterCard> generatedCards = new HashMap<>();
 	public static HashMap<AbstractMonster, AbstractMonsterCard> lastMoveCards = new HashMap<>();
 	static AbstractMonster curMonster = null;
+	static AbstractFriendlyMonster enemyTarget = null;
 	static AbstractMonsterCard curCard = null;
 	static int curMove = -1;
 	static String id;
@@ -102,6 +103,7 @@ public class CaptureEnemyMovePatch {
 		public static void Insert(AbstractMonster ___m) {
 			AbstractFriendlyMonster target = MonsterHelper.getTarget(___m);
 			if (target instanceof AbstractCopycatMinion) {
+				enemyTarget = target;
 				BetterFriendlyMinionsUtils.hijackActionQueue(target, BetterFriendlyMinionsUtils.HijackMode.FRIENDLY_MINION_DEFEND);
 			}
 
@@ -198,15 +200,14 @@ public class CaptureEnemyMovePatch {
 			if (hijackMode == BetterFriendlyMinionsUtils.HijackMode.FRIENDLY_MINION_DEFEND) {
 				// Minion target logic
 				ArrayList<AbstractGameAction> newActions = AbstractDungeon.actionManager.actions;
-				AbstractFriendlyMonster target = MonsterHelper.getTarget(curMonster);
 				for (int i = 0; i < newActions.size(); i++) {
 					AbstractGameAction a = newActions.get(i);
 					if (a instanceof DamageAction) {
 						DamageInfo info = ReflectionHacks.getPrivate(a, DamageAction.class, "info");
-						info.applyPowers(curMonster, target);
+						info.applyPowers(curMonster, enemyTarget);
 						info.owner = curMonster;
 						a.source = curMonster;
-						a.target = target;
+						a.target = enemyTarget;
 					} else if (a instanceof ApplyPowerAction) {
 						if (a.target instanceof AbstractPlayer) {
 							AbstractPower power = ReflectionHacks.getPrivate(a, ApplyPowerAction.class, "powerToApply");
@@ -222,10 +223,10 @@ public class CaptureEnemyMovePatch {
 									power instanceof LoseStrengthPower ||
 									power instanceof LoseDexterityPower
 							) {
-								power.owner = target;
-								a.target = target;
+								power.owner = enemyTarget;
+								a.target = enemyTarget;
 							} else {
-								newActions.set(i, new TextAboveCreatureAction(target, ApplyPowerAction.TEXT[1]));
+								newActions.set(i, new TextAboveCreatureAction(enemyTarget, ApplyPowerAction.TEXT[1]));
 							}
 						}
 					}
