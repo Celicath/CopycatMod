@@ -7,7 +7,6 @@ import TheCopycat.cards.monster.DynamicCard;
 import TheCopycat.crossovers.DTModCrossover;
 import TheCopycat.patches.CaptureEnemyMovePatch;
 import TheCopycat.utils.BetterFriendlyMinionsUtils;
-import TheDT.DTModMain;
 import basemod.ReflectionHacks;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -210,16 +209,16 @@ public class MirrorMinion extends AbstractCopycatMinion {
 				ArrayList<AbstractCreature> targets = new ArrayList<>();
 				if (a.target == origMonster) {
 					targets.add(this);
-				} else if (!appliedID.containsKey(DTModMain.makeID("BLOCK"))) {
+				} else if (!appliedID.containsKey(CopycatModMain.makeID("BLOCK"))) {
 					targets.add(AbstractDungeon.player);
-					appliedID.put(DTModMain.makeID("BLOCK"), false);
+					appliedID.put(CopycatModMain.makeID("BLOCK"), false);
 				} else {
 					for (AbstractMonster fm : BetterFriendlyMinionsUtils.getMinionList()) {
 						if (this != fm) {
 							targets.add(fm);
 						}
 					}
-					appliedID.put(DTModMain.makeID("BLOCK"), true);
+					appliedID.put(CopycatModMain.makeID("BLOCK"), true);
 				}
 				for (AbstractCreature c : targets) {
 					AbstractDungeon.actionManager.actions.add(++i, new GainBlockAction(c, a.amount));
