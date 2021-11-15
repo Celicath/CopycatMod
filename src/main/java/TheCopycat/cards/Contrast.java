@@ -13,14 +13,14 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.powers.PoisonPower;
 import com.megacrit.cardcrawl.stances.CalmStance;
 
-public class ToxicMinds extends CustomCard {
-	private static final String RAW_ID = "ToxicMinds";
+public class Contrast extends CustomCard {
+	private static final String RAW_ID = "Contrast";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 1;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.COMMON;
@@ -29,7 +29,7 @@ public class ToxicMinds extends CustomCard {
 	private static final int POWER = 4;
 	private static final int UPGRADE_BONUS = 2;
 
-	public ToxicMinds() {
+	public Contrast() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
 
 		baseMagicNumber = magicNumber = POWER;
@@ -43,7 +43,7 @@ public class ToxicMinds extends CustomCard {
 
 	@Override
 	public AbstractCard makeCopy() {
-		return new ToxicMinds();
+		return new Contrast();
 	}
 
 	@Override

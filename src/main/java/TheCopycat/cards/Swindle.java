@@ -1,9 +1,11 @@
 package TheCopycat.cards;
 
 import TheCopycat.CopycatModMain;
-import TheCopycat.actions.SwindleAction;
+import TheCopycat.actions.ManipulateIntentAction;
+import TheCopycat.cards.monster.Scammed;
 import TheCopycat.patches.CharacterEnum;
 import basemod.abstracts.CustomCard;
+import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
@@ -19,9 +21,9 @@ public class Swindle extends CustomCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 1;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.RARE;
@@ -41,7 +43,15 @@ public class Swindle extends CustomCard {
 		if (m != null && !m.hasPower(ArtifactPower.POWER_ID)) {
 			addToBot(new ApplyPowerAction(m, p, new GainStrengthPower(m, magicNumber), magicNumber));
 		}
-		addToBot(new SwindleAction(m));
+		addToBot(new AbstractGameAction() {
+			@Override
+			public void update() {
+				if (m != null && m.getIntentBaseDmg() < 0) {
+					addToTop(new ManipulateIntentAction(m, new Scammed(), false));
+				}
+				isDone = true;
+			}
+		});
 	}
 
 	@Override

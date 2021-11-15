@@ -37,28 +37,28 @@ public class Copycat extends CustomPlayer {
 	public static final int ORB_SLOTS = 0;
 
 	public static final String[] orbTextures = {
-			"CopycatMod/images/char/TheCopycat/orb/layer1.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer2.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer3.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer4.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer5.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer6.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer1d.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer2d.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer3d.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer4d.png",
-			"CopycatMod/images/char/TheCopycat/orb/layer5d.png",};
+		"CopycatMod/images/char/TheCopycat/orb/layer1.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer2.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer3.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer4.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer5.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer6.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer1d.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer2d.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer3d.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer4d.png",
+		"CopycatMod/images/char/TheCopycat/orb/layer5d.png",};
 
 	public Copycat(String name, PlayerClass setClass) {
 		super(name, setClass, orbTextures,
-				"CopycatMod/images/char/TheCopycat/orb/vfx.png", null, null, null);
+			"CopycatMod/images/char/TheCopycat/orb/vfx.png", null, null, null);
 
 		CharSelectInfo loadout = getLoadout();
 		initializeClass(CopycatModMain.makePath("char/TheCopycat/idle.png"),
-				CopycatModMain.makePath(CopycatModMain.THE_COPYCAT_SHOULDER_1),
-				CopycatModMain.makePath(CopycatModMain.THE_COPYCAT_SHOULDER_2),
-				CopycatModMain.makePath(CopycatModMain.THE_COPYCAT_CORPSE),
-				loadout, 0.0F, 0.0F, 220.0F, 290.0F, new EnergyManager(ENERGY_PER_TURN));
+			CopycatModMain.makePath(CopycatModMain.THE_COPYCAT_SHOULDER_1),
+			CopycatModMain.makePath(CopycatModMain.THE_COPYCAT_SHOULDER_2),
+			CopycatModMain.makePath(CopycatModMain.THE_COPYCAT_CORPSE),
+			loadout, 0.0F, 0.0F, 220.0F, 290.0F, new EnergyManager(ENERGY_PER_TURN));
 
 		this.dialogX = (this.drawX + 0.0F * Settings.scale);
 		this.dialogY = (this.drawY + 220.0F * Settings.scale);
@@ -67,10 +67,10 @@ public class Copycat extends CustomPlayer {
 	@Override
 	public CharSelectInfo getLoadout() {
 		return new CharSelectInfo(
-				getLocalizedCharacterName(),
-				charStrings.TEXT[0],
-				STARTING_HP, MAX_HP, ORB_SLOTS, STARTING_GOLD, CARD_DRAW, this, getStartingRelics(),
-				getStartingDeck(), false);
+			getLocalizedCharacterName(),
+			charStrings.TEXT[0],
+			STARTING_HP, MAX_HP, ORB_SLOTS, STARTING_GOLD, CARD_DRAW, this, getStartingRelics(),
+			getStartingDeck(), false);
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class Copycat extends CustomPlayer {
 	public void doCharSelectScreenSelectEffect() {
 		CardCrawlGame.sound.playA("BUFF_2", 0.80f); // Sound Effect
 		CardCrawlGame.screenShake.shake(ScreenShake.ShakeIntensity.LOW, ScreenShake.ShakeDur.SHORT,
-				false); // Screen Effect
+			false); // Screen Effect
 	}
 
 	@Override
@@ -166,13 +166,13 @@ public class Copycat extends CustomPlayer {
 	@Override
 	public AbstractGameAction.AttackEffect[] getSpireHeartSlashEffect() {
 		return new AbstractGameAction.AttackEffect[]{
-				AbstractGameAction.AttackEffect.FIRE,
-				AbstractGameAction.AttackEffect.FIRE,
-				AbstractGameAction.AttackEffect.FIRE,
-				AbstractGameAction.AttackEffect.SLASH_DIAGONAL,
-				AbstractGameAction.AttackEffect.SLASH_HEAVY,
-				AbstractGameAction.AttackEffect.BLUNT_LIGHT,
-				AbstractGameAction.AttackEffect.SLASH_HEAVY};
+			AbstractGameAction.AttackEffect.FIRE,
+			AbstractGameAction.AttackEffect.FIRE,
+			AbstractGameAction.AttackEffect.FIRE,
+			AbstractGameAction.AttackEffect.SLASH_DIAGONAL,
+			AbstractGameAction.AttackEffect.SLASH_HEAVY,
+			AbstractGameAction.AttackEffect.BLUNT_LIGHT,
+			AbstractGameAction.AttackEffect.SLASH_HEAVY};
 	}
 
 	@Override

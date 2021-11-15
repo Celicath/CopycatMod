@@ -40,5 +40,10 @@
       "This enemy intends to inflict a #yNegative #yEffect on %s and #yAttack for #b",
       "This enemy intends to #yBlock and #yAttack %s for #b"
     ]
+  },
+  "CopycatMod:LectureAction": {
+    "TEXT": [
+      "Play"
+    ]
   }
 }

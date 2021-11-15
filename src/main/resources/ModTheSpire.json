@@ -6,7 +6,7 @@
   ],
   "credits": "",
   "description": "Adds a new character called The Copycat.",
-  "version": "0.1.2",
+  "version": "0.2.0-beta",
   "sts_version": "12-22-2020",
   "mts_version": "3.19.0",
   "dependencies": [

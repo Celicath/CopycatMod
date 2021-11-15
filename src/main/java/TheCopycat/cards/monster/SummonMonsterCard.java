@@ -4,11 +4,13 @@ import TheCopycat.CopycatModMain;
 import TheCopycat.actions.SummonCopycatMinionAction;
 import TheCopycat.friendlyminions.MirrorMinion;
 import TheCopycat.utils.GameLogicUtils;
+import TheCopycat.utils.MonsterCardMoveInfo;
 import basemod.AutoAdd;
 import basemod.helpers.TooltipInfo;
 import com.megacrit.cardcrawl.actions.animations.TalkAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
@@ -26,9 +28,9 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	private static final int COST = 1;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String[] EXTENDED_DESCRIPTION = cardStrings.EXTENDED_DESCRIPTION;
+	private static final int COST = 1;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
 	private static final CardTarget TARGET = CardTarget.SELF;
@@ -40,6 +42,11 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 	public boolean smallFont = false;
 
 	ArrayList<TooltipInfo> tooltips = new ArrayList<>();
+
+	public SummonMonsterCard() {
+		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
+		exhaust = true;
+	}
 
 	public static AbstractMonster makeMonster(String ID) {
 		if (ID == null) {
@@ -73,11 +80,6 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 			default:
 				return null;
 		}
-	}
-
-	public SummonMonsterCard() {
-		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
-		exhaust = true;
 	}
 
 	@Override
@@ -184,6 +186,23 @@ public class SummonMonsterCard extends AbstractMonsterCard {
 		if (!upgraded) {
 			upgradeName();
 			upgradeMagicNumber(4);
+		}
+	}
+
+	@Override
+	public MonsterCardMoveInfo createMoveInfo(boolean isAlly) {
+		return new MonsterCardMoveInfo(AbstractMonster.Intent.UNKNOWN, this);
+	}
+
+	@Override
+	public void monsterTakeTurn(AbstractMonster owner, AbstractCreature target, boolean isAlly) {
+		if (isAlly) {
+			AbstractMonster summon = makeMonster(summonID);
+			if (summon != null) {
+				addToBot(new SummonCopycatMinionAction(new MirrorMinion(summon.name, summon, magicNumber)));
+			}
+		} else {
+			// TODO: what happens if an enemy uses this card??
 		}
 	}
 }

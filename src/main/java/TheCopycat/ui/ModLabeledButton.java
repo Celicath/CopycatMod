@@ -22,9 +22,8 @@ public class ModLabeledButton implements IUIElement {
 	                        Consumer<ModLabel> labelUpdate, Consumer<ModFixedButton> c) {
 		toggle = new ModFixedButton(xPos, yPos, p, c);
 		text = new ModLabel(labelText, xPos + TEXT_X_OFFSET, yPos + TEXT_Y_OFFSET,
-				color, font, p, labelUpdate);
+			color, font, p, labelUpdate);
 
-		// TODO: implement multi-line text
 		toggle.wrapHitboxToText(labelText, 1000.0f, 0.0f, font);
 	}
 

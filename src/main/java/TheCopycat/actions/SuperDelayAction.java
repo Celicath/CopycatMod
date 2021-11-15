@@ -4,7 +4,7 @@ import com.megacrit.cardcrawl.actions.AbstractGameAction;
 
 public class SuperDelayAction extends AbstractGameAction {
 	private int count;
-	private Runnable runnable;
+	private final Runnable runnable;
 
 	public SuperDelayAction(Runnable runnable) {
 		count = 3;

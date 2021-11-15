@@ -24,6 +24,14 @@ public class RedirectCommand extends ConsoleCommand {
 		requiresPlayer = true;
 	}
 
+	private static void help() {
+		DevConsole.couldNotParse();
+		DevConsole.log("options are:");
+		DevConsole.log("* [ally index]");
+		DevConsole.log("* [ally index] all");
+		DevConsole.log("  * ally index: -1=Player, 0-3=normal minions, 4=Substitute");
+	}
+
 	@Override
 	public void execute(String[] tokens, int depth) {
 		if (tokens.length < 2) {
@@ -90,13 +98,5 @@ public class RedirectCommand extends ConsoleCommand {
 	@Override
 	public void errorMsg() {
 		help();
-	}
-
-	private static void help() {
-		DevConsole.couldNotParse();
-		DevConsole.log("options are:");
-		DevConsole.log("* [ally index]");
-		DevConsole.log("* [ally index] all");
-		DevConsole.log("  * ally index: -1=Player, 0-3=normal minions, 4=Substitute");
 	}
 }

@@ -1,12 +1,17 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.utils.MonsterCardMoveInfo;
 import com.badlogic.gdx.math.MathUtils;
+import com.megacrit.cardcrawl.actions.animations.ShoutAction;
 import com.megacrit.cardcrawl.actions.animations.TalkAction;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
+import com.megacrit.cardcrawl.actions.unique.RemoveDebuffsAction;
+import com.megacrit.cardcrawl.actions.utility.SFXAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.localization.CardStrings;
@@ -21,8 +26,8 @@ public class ChampsAnger extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	private static final int COST = 2;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
+	private static final int COST = 2;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.SELF;
@@ -64,5 +69,21 @@ public class ChampsAnger extends AbstractMonsterCard {
 			upgradeName();
 			upgradeMagicNumber(UPGRADE_BONUS * (AbstractDungeon.ascensionLevel >= 18 ? A18_MULTIPLIER : 1));
 		}
+	}
+
+	@Override
+	public MonsterCardMoveInfo createMoveInfo(boolean isAlly) {
+		return new MonsterCardMoveInfo(AbstractMonster.Intent.BUFF, this);
+	}
+
+	@Override
+	public void monsterTakeTurn(AbstractMonster owner, AbstractCreature target, boolean isAlly) {
+		addToBot(new SFXAction("MONSTER_CHAMP_CHARGE"));
+		addToBot(new ShoutAction(owner, Champ.DIALOG[MathUtils.random(4, 5)], 2.0F, 3.0F));
+		addToBot(new VFXAction(owner, new InflameEffect(owner), 0.25F));
+		addToBot(new VFXAction(owner, new InflameEffect(owner), 0.25F));
+		addToBot(new VFXAction(owner, new InflameEffect(owner), 0.25F));
+		addToBot(new RemoveDebuffsAction(owner));
+		addToBot(new ApplyPowerAction(owner, owner, new StrengthPower(owner, magicNumber), magicNumber));
 	}
 }

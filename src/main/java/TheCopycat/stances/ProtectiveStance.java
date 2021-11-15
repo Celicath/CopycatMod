@@ -23,12 +23,11 @@ import kobting.friendlyminions.monsters.AbstractFriendlyMonster;
 import java.util.ArrayList;
 
 public class ProtectiveStance extends AbstractStance {
+	public static final int AMOUNT = 2;
 	private static final String RAW_ID = "Protective";
 	public static final String STANCE_ID = CopycatModMain.makeID(RAW_ID);
-
 	private static final StanceStrings stanceString = CardCrawlGame.languagePack.getStanceString(STANCE_ID);
 	private static long sfxId = -1L;
-	public static final int AMOUNT = 2;
 
 	public ProtectiveStance() {
 		ID = STANCE_ID;

@@ -14,10 +14,10 @@ import java.util.HashSet;
 public class TextEffect extends AbstractGameEffect {
 	public static HashSet<Integer> messageIndexSet = new HashSet<>();
 	public static HashSet<Integer> positionSet = new HashSet<>();
-	private String message;
-	private float x;
-	private float y;
-	private int messageIndex;
+	private final String message;
+	private final float x;
+	private final float y;
+	private final int messageIndex;
 	private int position;
 
 	public TextEffect(float x, float y, int messageIndex, String message) {

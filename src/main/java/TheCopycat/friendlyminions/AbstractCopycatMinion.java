@@ -20,29 +20,24 @@ import kobting.friendlyminions.monsters.AbstractFriendlyMonster;
 import java.util.ArrayList;
 
 public abstract class AbstractCopycatMinion extends AbstractFriendlyMonster {
-	public int index;
 	public static ArrayList<AbstractPower> dummyPowers = new ArrayList<>();
-
-	public boolean moveCountUpdate = true;
-	int moveCount = 0;
-
 	public static Color[] hpColors = new Color[]{
-			new Color(0.05F, 0.8F, 0.05F, 0.0F),
-			new Color(0.2F, 0.2F, 0.9F, 0.0F),
-			new Color(0.75F, 0.05F, 0.75F, 0.0F),
-			new Color(0.05F, 0.7F, 0.7F, 0.0F),
-			new Color(0.55F, 0.6F, 0.5F, 0.0F)
+		new Color(0.05F, 0.8F, 0.05F, 0.0F),
+		new Color(0.2F, 0.2F, 0.9F, 0.0F),
+		new Color(0.75F, 0.05F, 0.75F, 0.0F),
+		new Color(0.05F, 0.7F, 0.7F, 0.0F),
+		new Color(0.55F, 0.6F, 0.5F, 0.0F)
 	};
-
 	public static Color[] arrowColors = new Color[]{
-			new Color(0.5F, 0.9F, 0.5F, 0.5F),
-			new Color(0.6F, 0.6F, 0.95F, 0.5F),
-			new Color(0.85F, 0.5F, 0.85F, 0.5F),
-			new Color(0.5F, 0.8F, 0.8F, 0.5F),
-			new Color(0.75F, 0.8F, 0.7F, 0.5F)
+		new Color(0.5F, 0.9F, 0.5F, 0.5F),
+		new Color(0.6F, 0.6F, 0.95F, 0.5F),
+		new Color(0.85F, 0.5F, 0.85F, 0.5F),
+		new Color(0.5F, 0.8F, 0.8F, 0.5F),
+		new Color(0.75F, 0.8F, 0.7F, 0.5F)
 	};
-
 	public static Texture[][] attackIntentTextures;
+	static float[] offsetXPos = new float[]{-280.0f, -160.0f, 150.0f, 250.0f};
+	static float[] offsetYPos = new float[]{100.0f, 300.0f, 300.0f, 100.0f};
 
 	static {
 		attackIntentTextures = new Texture[5][7];
@@ -53,17 +48,13 @@ public abstract class AbstractCopycatMinion extends AbstractFriendlyMonster {
 		}
 	}
 
-	@Override
-	public Texture[] getAttackIntents() {
-		return attackIntentTextures[index];
-	}
+	public int index;
+	public boolean moveCountUpdate = true;
+	int moveCount = 0;
 
 	public AbstractCopycatMinion(String name, String id, int maxHealth, float width, float height, String imgUrl) {
 		super(name, id, maxHealth, 0, 0, width, height, imgUrl, 0, 0);
 	}
-
-	static float[] offsetXPos = new float[]{-280.0f, -160.0f, 150.0f, 250.0f};
-	static float[] offsetYPos = new float[]{100.0f, 300.0f, 300.0f, 100.0f};
 
 	public static float calcXPos(int index) {
 		return AbstractDungeon.player.drawX + offsetXPos[index] * Settings.xScale;
@@ -71,6 +62,11 @@ public abstract class AbstractCopycatMinion extends AbstractFriendlyMonster {
 
 	public static float calcYPos(int index) {
 		return AbstractDungeon.floorY + offsetYPos[index] * Settings.yScale;
+	}
+
+	@Override
+	public Texture[] getAttackIntents() {
+		return attackIntentTextures[index];
 	}
 
 	public void setIndex(int index) {

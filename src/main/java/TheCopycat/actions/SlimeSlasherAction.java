@@ -36,6 +36,21 @@ public class SlimeSlasherAction extends AbstractGameAction {
 		this.actionType = ActionType.DAMAGE;
 	}
 
+	public static boolean isSlime(AbstractMonster m) {
+		return m instanceof ApologySlime ||
+			m instanceof SlimeBoss ||
+			m instanceof SpikeSlime_S ||
+			m instanceof SpikeSlime_M ||
+			m instanceof SpikeSlime_L ||
+			m instanceof AcidSlime_S ||
+			m instanceof AcidSlime_M ||
+			m instanceof AcidSlime_L;
+	}
+
+	public static boolean isAllySlime(AbstractMonster m) {
+		return m instanceof MirrorMinion && isSlime(((MirrorMinion) m).origMonster);
+	}
+
 	public void update() {
 		if (phase == 0) {
 			boolean playedMusic = false;
@@ -108,30 +123,17 @@ public class SlimeSlasherAction extends AbstractGameAction {
 		}
 	}
 
-	public static boolean isSlime(AbstractMonster m) {
-		return m instanceof ApologySlime ||
-				m instanceof SlimeBoss ||
-				m instanceof SpikeSlime_S ||
-				m instanceof SpikeSlime_M ||
-				m instanceof SpikeSlime_L ||
-				m instanceof AcidSlime_S ||
-				m instanceof AcidSlime_M ||
-				m instanceof AcidSlime_L;
-	}
-
-	public static boolean isAllySlime(AbstractMonster m) {
-		return m instanceof MirrorMinion && isSlime(((MirrorMinion) m).origMonster);
-	}
-
 	public void updateFatal() {
 		c.misc += fatalCount;
-		c.recalculateDamage();
 		AbstractCard masterCard = StSLib.getMasterDeckEquivalent(c);
 		if (!(masterCard instanceof SlimeSlasher)) {
 			masterCard = c;
+		} else {
+			masterCard.misc += fatalCount;
 		}
 		AbstractCard effectCard = masterCard.makeStatEquivalentCopy();
-		masterCard.misc += fatalCount;
+
+		c.recalculateDamage();
 
 		((SlimeSlasher) masterCard).recalculateDamage();
 		if (masterCard.baseDamage > effectCard.baseDamage) {
@@ -156,10 +158,10 @@ public class SlimeSlasherAction extends AbstractGameAction {
 				}
 			});
 			AbstractDungeon.topLevelEffects.add(new TextAboveCreatureEffect(
-					Settings.WIDTH / 2.0f,
-					Settings.HEIGHT / 2.0f - 120.0f * Settings.scale,
-					"+" + (masterCard.baseDamage - effectCard.baseDamage),
-					Color.LIME) {
+				Settings.WIDTH / 2.0f,
+				Settings.HEIGHT / 2.0f - 120.0f * Settings.scale,
+				"+" + (masterCard.baseDamage - effectCard.baseDamage),
+				Color.LIME) {
 				{
 					duration += 0.5f;
 				}

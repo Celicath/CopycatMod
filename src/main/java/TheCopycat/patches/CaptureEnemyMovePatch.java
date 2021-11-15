@@ -1,9 +1,9 @@
 package TheCopycat.patches;
 
-import TheCopycat.actions.SwindleAction;
 import TheCopycat.cards.monster.*;
 import TheCopycat.friendlyminions.AbstractCopycatMinion;
 import TheCopycat.utils.BetterFriendlyMinionsUtils;
+import TheCopycat.utils.MonsterCardMoveInfo;
 import TheCopycat.utils.Shader;
 import basemod.ReflectionHacks;
 import com.badlogic.gdx.Gdx;
@@ -22,6 +22,7 @@ import com.megacrit.cardcrawl.actions.IntentFlashAction;
 import com.megacrit.cardcrawl.actions.animations.AnimateSlowAttackAction;
 import com.megacrit.cardcrawl.actions.common.*;
 import com.megacrit.cardcrawl.actions.unique.GainBlockRandomMonsterAction;
+import com.megacrit.cardcrawl.actions.unique.SummonGremlinAction;
 import com.megacrit.cardcrawl.actions.unique.VampireDamageAction;
 import com.megacrit.cardcrawl.actions.utility.TextAboveCreatureAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -39,6 +40,8 @@ import com.megacrit.cardcrawl.monsters.city.*;
 import com.megacrit.cardcrawl.monsters.ending.CorruptHeart;
 import com.megacrit.cardcrawl.monsters.exordium.*;
 import com.megacrit.cardcrawl.powers.*;
+import com.megacrit.cardcrawl.stances.AbstractStance;
+import com.megacrit.cardcrawl.stances.NeutralStance;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
 import javassist.CtBehavior;
 import kobting.friendlyminions.helpers.MonsterHelper;
@@ -50,34 +53,11 @@ import java.util.HashMap;
 public class CaptureEnemyMovePatch {
 	public static HashMap<String, AbstractMonsterCard> generatedCards = new HashMap<>();
 	public static HashMap<AbstractMonster, AbstractMonsterCard> lastMoveCards = new HashMap<>();
-	static AbstractMonster curMonster = null;
-	static AbstractFriendlyMonster enemyTarget = null;
-	static AbstractMonsterCard curCard = null;
-	static int curMove = -1;
-	static String id;
-	static boolean suicide = false;
-	static boolean hasUniqueName = false;
-	static int magicMultiplier = 1;
-
-	// render
-	static OrthographicCamera camera;
 	public static SpriteBatch sb = new SpriteBatch();
 	public static int WIDTH = 500;
 	public static int HEIGHT = 380;
 	public static float CAMERA_WIDTH = 350 * Settings.scale;
 	public static float CAMERA_HEIGHT = 266 * Settings.scale;
-
-	static FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, WIDTH, HEIGHT, false);
-
-	static {
-		camera = new OrthographicCamera(WIDTH, HEIGHT);
-		camera.position.set(WIDTH / 2.0F, HEIGHT / 2.0F, 0.0F);
-		camera.update();
-		sb.setProjectionMatrix(camera.combined);
-		camera.viewportWidth = CAMERA_WIDTH;
-		camera.viewportHeight = CAMERA_HEIGHT;
-	}
-
 	public static HashMap<String, String> powerCodeMap = new HashMap<String, String>() {
 		{
 			put(StrengthPower.POWER_ID, "S");
@@ -96,21 +76,35 @@ public class CaptureEnemyMovePatch {
 			put(DrawReductionPower.POWER_ID, "H");
 		}
 	};
+	static AbstractMonster curMonster = null;
+	static AbstractFriendlyMonster enemyTarget = null;
+	static AbstractMonsterCard curCard = null;
+	static EnemyMoveInfo curMove = null;
+	static String id;
+	static boolean suicide = false;
+	static boolean hasUniqueName = false;
+	static int magicMultiplier = 1;
+	// render
+	static OrthographicCamera camera;
+	static FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, WIDTH, HEIGHT, false);
+
+	static {
+		camera = new OrthographicCamera(WIDTH, HEIGHT);
+		camera.position.set(WIDTH / 2.0F, HEIGHT / 2.0F, 0.0F);
+		camera.update();
+		sb.setProjectionMatrix(camera.combined);
+		camera.viewportWidth = CAMERA_WIDTH;
+		camera.viewportHeight = CAMERA_HEIGHT;
+	}
 
 	@SpirePatch2(clz = GameActionManager.class, method = "getNextAction")
 	public static class TakeTurnCapture {
 		@SpireInsertPatch(locator = BeforeTakeTurnLocator.class)
 		public static void Insert(AbstractMonster ___m) {
-			AbstractFriendlyMonster target = MonsterHelper.getTarget(___m);
-			if (target instanceof AbstractCopycatMinion) {
-				enemyTarget = target;
-				BetterFriendlyMinionsUtils.hijackActionQueue(target, BetterFriendlyMinionsUtils.HijackMode.FRIENDLY_MINION_DEFEND);
-			}
-
 			curMonster = ___m;
-			EnemyMoveInfo move = ReflectionHacks.getPrivate(___m, AbstractMonster.class, "move");
-			if (move == SwindleAction.scammedMove) {
-				BetterFriendlyMinionsUtils.hijackActionQueue(null, BetterFriendlyMinionsUtils.HijackMode.SWINDLE);
+			curMove = ReflectionHacks.getPrivate(___m, AbstractMonster.class, "move");
+			if (curMove instanceof MonsterCardMoveInfo) {
+				BetterFriendlyMinionsUtils.hijackActionQueue(null, BetterFriendlyMinionsUtils.HijackMode.MANIPULATE);
 				if (curMonster != null) {
 					BetterFriendlyMinionsUtils.origActions.add(new ShowMoveNameAction(curMonster));
 					BetterFriendlyMinionsUtils.origActions.add(new IntentFlashAction(curMonster));
@@ -118,56 +112,62 @@ public class CaptureEnemyMovePatch {
 				return;
 			}
 
-			curMove = move.nextMove;
-			id = ___m.id + "_" + curMove;
+			AbstractFriendlyMonster target = MonsterHelper.getTarget(___m);
+			if (target instanceof AbstractCopycatMinion) {
+				enemyTarget = target;
+				BetterFriendlyMinionsUtils.hijackActionQueue(target, BetterFriendlyMinionsUtils.HijackMode.FRIENDLY_MINION_DEFEND);
+			}
+
+			int moveId = curMove.nextMove;
+			id = ___m.id + "_" + curMove.nextMove;
 			suicide = false;
 
 			/* Special enemy moves */
-			if (___m instanceof GremlinWizard && curMove == 1) {
+			if (___m instanceof GremlinWizard && moveId == 1) {
 				curCard = new UltimateBlast();
-			} else if (___m instanceof GremlinWizard && curMove == 2) {
+			} else if (___m instanceof GremlinWizard && moveId == 2) {
 				curCard = new Charging();
-			} else if (___m instanceof GremlinNob && curMove == 3) {
+			} else if (___m instanceof GremlinNob && moveId == 3) {
 				curCard = new Enrage();
-			} else if (___m instanceof Byrd && curMove == 2) {
+			} else if (___m instanceof Byrd && moveId == 2) {
 				curCard = new Fly();
-			} else if (___m instanceof Healer && curMove == 2) {
+			} else if (___m instanceof Healer && moveId == 2) {
 				curCard = new AreaHeal();
-			} else if ((___m instanceof Looter || ___m instanceof Mugger) && curMove == 3) {
+			} else if ((___m instanceof Looter || ___m instanceof Mugger) && moveId == 3) {
 				curCard = new Escape();
-			} else if (___m instanceof Darkling && curMove == 5 || ___m instanceof AwakenedOne && curMove == 3) {
+			} else if (___m instanceof Darkling && moveId == 5 || ___m instanceof AwakenedOne && moveId == 3) {
 				curCard = new Reincarnate();
-			} else if (___m instanceof Chosen && curMove == 4) {
+			} else if (___m instanceof Chosen && moveId == 4) {
 				curCard = new Hex();
-			} else if (___m instanceof Snecko && curMove == 1) {
+			} else if (___m instanceof Snecko && moveId == 1) {
 				curCard = new PerplexingEye();
-			} else if (___m instanceof Maw && curMove == 5) {
+			} else if (___m instanceof Maw && moveId == 5) {
 				curCard = new Nom();
-			} else if (___m instanceof WrithingMass && curMove == 4) {
+			} else if (___m instanceof WrithingMass && moveId == 4) {
 				curCard = new Implant();
-			} else if (___m instanceof Transient && curMove == 1) {
+			} else if (___m instanceof Transient && moveId == 1) {
 				curCard = new FadingAttack();
-			} else if (___m instanceof BookOfStabbing && curMove == 1) {
+			} else if (___m instanceof BookOfStabbing && moveId == 1) {
 				if (AbstractDungeon.ascensionLevel < 18) {
 					curCard = new MultiStabbing();
 				} else {
 					curCard = new MultiStabbing2();
 				}
-			} else if (___m instanceof GiantHead && curMove == 2) {
+			} else if (___m instanceof GiantHead && moveId == 2) {
 				curCard = new ItIsTime();
-			} else if (___m instanceof Hexaghost && curMove == 1) {
+			} else if (___m instanceof Hexaghost && moveId == 1) {
 				curCard = new Divider();
-			} else if (___m instanceof Hexaghost && curMove == 6) {
+			} else if (___m instanceof Hexaghost && moveId == 6) {
 				curCard = new Inferno();
-			} else if (___m instanceof Champ && curMove == 7) {
+			} else if (___m instanceof Champ && moveId == 7) {
 				curCard = new ChampsAnger();
-			} else if (___m instanceof TimeEater && curMove == 5) {
+			} else if (___m instanceof TimeEater && moveId == 5) {
 				if (AbstractDungeon.ascensionLevel < 19) {
 					curCard = new Haste();
 				} else {
 					curCard = new Haste2();
 				}
-			} else if (___m instanceof CorruptHeart && curMove == 3) {
+			} else if (___m instanceof CorruptHeart && moveId == 3) {
 				curCard = new Debilitate();
 			} else {
 				/* DynamicCard */
@@ -183,11 +183,11 @@ public class CaptureEnemyMovePatch {
 				}
 				genCard.name = genCard.originalName;
 
-				genCard.baseDamage = move.baseDamage;
-				if (move.isMultiDamage) {
-					genCard.hits = move.multiplier;
+				genCard.baseDamage = curMove.baseDamage;
+				if (curMove.isMultiDamage) {
+					genCard.hits = curMove.multiplier;
 				}
-				if (move.baseDamage > 0 && ___m.hasPower(ThieveryPower.POWER_ID)) {
+				if (curMove.baseDamage > 0 && ___m.hasPower(ThieveryPower.POWER_ID)) {
 					genCard.stealGold = true;
 				}
 				curCard = genCard;
@@ -197,22 +197,46 @@ public class CaptureEnemyMovePatch {
 		@SpirePostfixPatch
 		public static void Postfix(GameActionManager __instance) {
 			BetterFriendlyMinionsUtils.HijackMode hijackMode = BetterFriendlyMinionsUtils.revertHijack();
-			if (hijackMode == BetterFriendlyMinionsUtils.HijackMode.FRIENDLY_MINION_DEFEND) {
-				// Minion target logic
-				ArrayList<AbstractGameAction> newActions = AbstractDungeon.actionManager.actions;
-				for (int i = 0; i < newActions.size(); i++) {
-					AbstractGameAction a = newActions.get(i);
-					if (a instanceof DamageAction) {
-						DamageInfo info = ReflectionHacks.getPrivate(a, DamageAction.class, "info");
-						info.applyPowers(curMonster, enemyTarget);
-						info.owner = curMonster;
-						a.source = curMonster;
-						a.target = enemyTarget;
-					} else if (a instanceof ApplyPowerAction) {
-						if (a.target instanceof AbstractPlayer) {
-							AbstractPower power = ReflectionHacks.getPrivate(a, ApplyPowerAction.class, "powerToApply");
+			if (hijackMode == BetterFriendlyMinionsUtils.HijackMode.MANIPULATE) {
 
-							if (power instanceof PoisonPower ||
+				// Manipulated intent logic
+				if (curMonster != null && curMove instanceof MonsterCardMoveInfo) {
+					ArrayList<AbstractGameAction> origActions = AbstractDungeon.actionManager.actions;
+					AbstractDungeon.actionManager.actions = BetterFriendlyMinionsUtils.origActions;
+
+					AbstractDungeon.actionManager.actions.add(new AnimateSlowAttackAction(curMonster));
+
+					AbstractCreature target = BetterFriendlyMinionsUtils.getTarget(curMonster);
+					curCard = ((MonsterCardMoveInfo) curMove).attachedCard;
+					curCard.monsterTurnApplyPowers(curMonster, target);
+					curCard.monsterTakeTurn(curMonster, target, false);
+
+					for (AbstractGameAction action : origActions) {
+						if (action instanceof RollMoveAction || action instanceof SetMoveAction) {
+							BetterFriendlyMinionsUtils.origActions.add(action);
+						}
+					}
+				}
+			} else {
+				if (hijackMode == BetterFriendlyMinionsUtils.HijackMode.FRIENDLY_MINION_DEFEND) {
+					// Minion target logic
+					ArrayList<AbstractGameAction> newActions = AbstractDungeon.actionManager.actions;
+					for (int i = 0; i < newActions.size(); i++) {
+						AbstractGameAction a = newActions.get(i);
+						if (a instanceof DamageAction) {
+							DamageInfo info = ReflectionHacks.getPrivate(a, DamageAction.class, "info");
+							AbstractStance tmp = AbstractDungeon.player.stance;
+							AbstractDungeon.player.stance = new NeutralStance();
+							info.applyPowers(curMonster, enemyTarget);
+							info.owner = curMonster;
+							a.source = curMonster;
+							a.target = enemyTarget;
+							AbstractDungeon.player.stance = tmp;
+						} else if (a instanceof ApplyPowerAction) {
+							if (a.target instanceof AbstractPlayer) {
+								AbstractPower power = ReflectionHacks.getPrivate(a, ApplyPowerAction.class, "powerToApply");
+
+								if (power instanceof PoisonPower ||
 									power instanceof WeakPower ||
 									power instanceof FrailPower ||
 									power instanceof VulnerablePower ||
@@ -222,189 +246,169 @@ public class CaptureEnemyMovePatch {
 									power instanceof GainStrengthPower ||
 									power instanceof LoseStrengthPower ||
 									power instanceof LoseDexterityPower
-							) {
-								power.owner = enemyTarget;
-								a.target = enemyTarget;
-							} else {
-								newActions.set(i, new TextAboveCreatureAction(enemyTarget, ApplyPowerAction.TEXT[1]));
+								) {
+									power.owner = enemyTarget;
+									a.target = enemyTarget;
+								} else {
+									newActions.set(i, new TextAboveCreatureAction(enemyTarget, ApplyPowerAction.TEXT[1]));
+								}
 							}
 						}
 					}
-				}
-				AbstractDungeon.actionManager.actions = BetterFriendlyMinionsUtils.origActions;
-				AbstractDungeon.actionManager.actions.addAll(newActions);
-			} else if (hijackMode == BetterFriendlyMinionsUtils.HijackMode.SWINDLE) {
-
-				// Swindle logic
-				if (curMonster != null) {
-					AbstractCreature target = BetterFriendlyMinionsUtils.getTarget(curMonster);
-					BetterFriendlyMinionsUtils.origActions.add(new AnimateSlowAttackAction(curMonster));
-					BetterFriendlyMinionsUtils.origActions.add(new DamageAction(
-							target, new DamageInfo(curMonster, SwindleAction.scammedMove.baseDamage) {
-						{
-							applyPowers(curMonster, target);
-						}
-					}, AbstractGameAction.AttackEffect.SLASH_HORIZONTAL));
-					BetterFriendlyMinionsUtils.origActions.add(new GainBlockAction(curMonster, 10));
-					for (AbstractGameAction action : AbstractDungeon.actionManager.actions) {
-						if (action instanceof RollMoveAction || action instanceof SetMoveAction) {
-							BetterFriendlyMinionsUtils.origActions.add(action);
-						}
-					}
-
 					AbstractDungeon.actionManager.actions = BetterFriendlyMinionsUtils.origActions;
+					AbstractDungeon.actionManager.actions.addAll(newActions);
+					lastMoveCards.put(curMonster, curCard);
 				}
-				curCard = new Scammed();
-			}
 
-			// Create monster card logic
-			if (curCard == null) return;
-			do {
-				if (curCard instanceof DynamicCard) {
-					DynamicCard genCard = (DynamicCard) curCard;
-					if (!genCard.isDraw && !genCard.stealGold && genCard.buffs.isEmpty()) {
-						if (genCard.debuffs.equals("E")) {
-							genCard.setMagicNumber(10);
-						} else if (genCard.debuffs.length() == 1) {
-							genCard.setMagicNumber(genCard.magicNumber * magicMultiplier);
+				// Create monster card logic
+				if (curCard == null) return;
+				do {
+					if (curCard instanceof DynamicCard) {
+						DynamicCard genCard = (DynamicCard) curCard;
+						if (!genCard.isDraw && !genCard.stealGold && genCard.buffs.isEmpty()) {
+							if (genCard.debuffs.equals("E")) {
+								genCard.setMagicNumber(10);
+							} else if (genCard.debuffs.length() == 1) {
+								genCard.setMagicNumber(genCard.magicNumber * magicMultiplier);
+							}
+						}
+						if (genCard.debuffs.indexOf('E') != -1 && genCard.debuffs.indexOf('S') != -1) {
+							genCard.debuffs = genCard.debuffs.replace("E", "");
+						}
+						genCard.setType();
+						genCard.calculateCost();
+						if (curMonster instanceof Champ && curMove.nextMove == 2) {
+							if (AbstractDungeon.ascensionLevel < 9) {
+								genCard.baseCost = genCard.cost = 2;
+							} else if (AbstractDungeon.ascensionLevel < 19) {
+								genCard.baseCost = genCard.cost = 3;
+							} else {
+								genCard.baseCost = genCard.cost = 4;
+							}
+						}
+						if (genCard.stealGold && genCard.baseMagicNumber <= 0) {
+							genCard.setMagicNumber(3 + genCard.baseCost * 2);
+						}
+						genCard.calculateMonsterCardID();
+						if (genCard.empty) {
+							break;
+						}
+						genCard.updateDescription();
+					} else if (curCard instanceof SummonMonsterCard) {
+						((SummonMonsterCard) curCard).calculateMonsterCardID();
+					} else {
+						if (!UnlockTracker.isCardSeen(curCard.cardID)) {
+							UnlockTracker.markCardAsSeen(curCard.cardID);
 						}
 					}
-					if (genCard.debuffs.indexOf('E') != -1 && genCard.debuffs.indexOf('S') != -1) {
-						genCard.debuffs = genCard.debuffs.replace("E", "");
-					}
-					genCard.setType();
-					genCard.calculateCost();
-					if (curMonster instanceof Champ && curMove == 2) {
-						if (AbstractDungeon.ascensionLevel < 9) {
-							genCard.baseCost = genCard.cost = 2;
-						} else if (AbstractDungeon.ascensionLevel < 19) {
-							genCard.baseCost = genCard.cost = 3;
-						} else {
-							genCard.baseCost = genCard.cost = 4;
-						}
-					}
-					if (genCard.stealGold && genCard.baseMagicNumber <= 0) {
-						genCard.setMagicNumber(2 + genCard.baseCost * 3);
-					}
-					genCard.calculateMonsterCardID();
-					if (genCard.empty) {
+					lastMoveCards.put(curMonster, curCard);
+					if (curCard instanceof Scammed) {
 						break;
 					}
-					genCard.updateDescription();
-				} else if (curCard instanceof SummonMonsterCard) {
-					((SummonMonsterCard) curCard).calculateMonsterCardID();
-				} else {
-					if (!UnlockTracker.isCardSeen(curCard.cardID)) {
-						UnlockTracker.markCardAsSeen(curCard.cardID);
-					}
-				}
-				lastMoveCards.put(curMonster, curCard);
-				if (curCard instanceof Scammed) {
-					break;
-				}
-				generatedCards.put(id, curCard);
+					generatedCards.put(id, curCard);
 
-				if (!curCard.loadTexture(id)) {
-					float scale = Math.min(1, curMonster.hb.width * 1.2f / CAMERA_WIDTH);
-					scale = Math.min(scale, curMonster.hb.width * 2.0f / CAMERA_HEIGHT);
-					scale = Math.max(scale, curMonster.hb.width / CAMERA_WIDTH);
-					scale = Math.max(scale, curMonster.hb.height / CAMERA_HEIGHT);
+					if (!curCard.loadTexture(id)) {
+						float scale = Math.min(1, curMonster.hb.width * 1.2f / CAMERA_WIDTH);
+						scale = Math.min(scale, curMonster.hb.width * 2.0f / CAMERA_HEIGHT);
+						scale = Math.max(scale, curMonster.hb.width / CAMERA_WIDTH);
+						scale = Math.max(scale, curMonster.hb.height / CAMERA_HEIGHT);
 
-					camera.viewportWidth = CAMERA_WIDTH * scale;
-					camera.viewportHeight = CAMERA_HEIGHT * scale;
-					camera.position.set(
+						camera.viewportWidth = CAMERA_WIDTH * scale;
+						camera.viewportHeight = CAMERA_HEIGHT * scale;
+						camera.position.set(
 							curMonster.hb.cX,
 							curMonster.hb.cY - curMonster.hb.height * 0.1f + Math.max((curMonster.hb.height - CAMERA_HEIGHT * scale * Settings.scale) / 2, 0),
 							0.0f);
-					camera.update();
+						camera.update();
 
-					Matrix4 sbMat = sb.getProjectionMatrix().cpy();
-					sb.setProjectionMatrix(camera.combined);
-					Matrix4 psbMat = CardCrawlGame.psb.getProjectionMatrix().cpy();
-					CardCrawlGame.psb.setProjectionMatrix(camera.combined);
+						Matrix4 sbMat = sb.getProjectionMatrix().cpy();
+						sb.setProjectionMatrix(camera.combined);
+						Matrix4 psbMat = CardCrawlGame.psb.getProjectionMatrix().cpy();
+						CardCrawlGame.psb.setProjectionMatrix(camera.combined);
 
-					fbo.begin();
-					Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-					Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-					Gdx.gl.glColorMask(true, true, true, true);
+						fbo.begin();
+						Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+						Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+						Gdx.gl.glColorMask(true, true, true, true);
 
-					sb.begin();
-					MonsterRenderPatch.RenderForMonsterCardPatch.shouldPatch = true;
-					curMonster.render(sb);
-					MonsterRenderPatch.RenderForMonsterCardPatch.shouldPatch = false;
-					sb.end();
+						sb.begin();
+						MonsterRenderPatch.RenderForMonsterCardPatch.shouldPatch = true;
+						curMonster.render(sb);
+						MonsterRenderPatch.RenderForMonsterCardPatch.shouldPatch = false;
+						sb.end();
 
-					CardCrawlGame.psb.setProjectionMatrix(psbMat);
-					sb.setProjectionMatrix(sbMat);
+						CardCrawlGame.psb.setProjectionMatrix(psbMat);
+						sb.setProjectionMatrix(sbMat);
 
-					Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, fbo.getWidth(), fbo.getHeight());
-					Texture texture = new Texture(pixmap);
-					pixmap.dispose();
-					fbo.end();
+						Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, fbo.getWidth(), fbo.getHeight());
+						Texture texture = new Texture(pixmap);
+						pixmap.dispose();
+						fbo.end();
 
-					fbo.begin();
-					sb.setShader(Shader.tintGradientShader);
-					switch (curMonster.intent) {
-						case ATTACK:
-							sb.setColor(1.0f, 0.0f, 0.0f, 1.0f);
-							break;
-						case BUFF:
-							sb.setColor(0.0f, 1.0f, 0.0f, 1.0f);
-							break;
-						case MAGIC:
-						case DEBUFF:
-						case STRONG_DEBUFF:
-							sb.setColor(0.3f, 1.0f, 0.6f, 1.0f);
-							break;
-						case DEFEND:
-							sb.setColor(0.0f, 0.0f, 1.0f, 1.0f);
-							break;
-						case SLEEP:
-						case ESCAPE:
-						case UNKNOWN:
-							sb.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-							break;
-						case ATTACK_BUFF:
-							sb.setColor(0.75f, 0.75f, 0.0f, 1.0f);
-							break;
-						case DEFEND_BUFF:
-							sb.setColor(0.0f, 0.75f, 0.75f, 1.0f);
-							break;
-						case ATTACK_DEBUFF:
-							sb.setColor(0.85f, 0.6f, 0.4f, 1.0f);
-							break;
-						case DEFEND_DEBUFF:
-							sb.setColor(0.2f, 0.6f, 0.95f, 1.0f);
-							break;
-						case ATTACK_DEFEND:
-							sb.setColor(0.75f, 0.0f, 0.75f, 1.0f);
-							break;
-						default:
-							switch (curCard.type) {
-								case ATTACK:
-									sb.setColor(1.0f, 0.0f, 0.0f, 1.0f);
-									break;
-								case POWER:
-									sb.setColor(0.0f, 1.0f, 0.0f, 1.0f);
-									break;
-								default:
-									sb.setColor(0.0f, 0.0f, 1.0f, 1.0f);
-							}
+						fbo.begin();
+						sb.setShader(Shader.tintGradientShader);
+						switch (curMonster.intent) {
+							case ATTACK:
+								sb.setColor(1.0f, 0.0f, 0.0f, 1.0f);
+								break;
+							case BUFF:
+								sb.setColor(0.0f, 1.0f, 0.0f, 1.0f);
+								break;
+							case MAGIC:
+							case DEBUFF:
+							case STRONG_DEBUFF:
+								sb.setColor(0.3f, 1.0f, 0.6f, 1.0f);
+								break;
+							case DEFEND:
+								sb.setColor(0.0f, 0.0f, 1.0f, 1.0f);
+								break;
+							case SLEEP:
+							case ESCAPE:
+							case UNKNOWN:
+								sb.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+								break;
+							case ATTACK_BUFF:
+								sb.setColor(0.75f, 0.75f, 0.0f, 1.0f);
+								break;
+							case DEFEND_BUFF:
+								sb.setColor(0.0f, 0.75f, 0.75f, 1.0f);
+								break;
+							case ATTACK_DEBUFF:
+								sb.setColor(0.85f, 0.6f, 0.4f, 1.0f);
+								break;
+							case DEFEND_DEBUFF:
+								sb.setColor(0.2f, 0.6f, 0.95f, 1.0f);
+								break;
+							case ATTACK_DEFEND:
+								sb.setColor(0.75f, 0.0f, 0.75f, 1.0f);
+								break;
+							default:
+								switch (curCard.type) {
+									case ATTACK:
+										sb.setColor(1.0f, 0.0f, 0.0f, 1.0f);
+										break;
+									case POWER:
+										sb.setColor(0.0f, 1.0f, 0.0f, 1.0f);
+										break;
+									default:
+										sb.setColor(0.0f, 0.0f, 1.0f, 1.0f);
+								}
+						}
+						sb.begin();
+						Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+						Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+						sb.draw(texture, 0, 0, WIDTH, HEIGHT);
+						sb.setShader(null);
+						sb.end();
+
+						pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, fbo.getWidth(), fbo.getHeight());
+						fbo.end();
+
+						AbstractMonsterCard.saveTexture(id, pixmap);
+						curCard.loadTexture(id);
 					}
-					sb.begin();
-					Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-					Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-					sb.draw(texture, 0, 0, WIDTH, HEIGHT);
-					sb.setShader(null);
-					sb.end();
-
-					pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, fbo.getWidth(), fbo.getHeight());
-					fbo.end();
-
-					AbstractMonsterCard.saveTexture(id, pixmap);
-					curCard.loadTexture(id);
-				}
-			} while (false);
+				} while (false);
+			}
 
 			curMonster = null;
 			curCard = null;
@@ -464,8 +468,8 @@ public class CaptureEnemyMovePatch {
 						}
 					}
 				} else if (action instanceof MakeTempCardInDiscardAction
-						|| action instanceof MakeTempCardInDrawPileAction
-						|| action instanceof MakeTempCardInDiscardAndDeckAction) {
+					|| action instanceof MakeTempCardInDrawPileAction
+					|| action instanceof MakeTempCardInDiscardAndDeckAction) {
 					AbstractCard c;
 					int numCards;
 					if (action instanceof MakeTempCardInDiscardAction) {
@@ -506,34 +510,47 @@ public class CaptureEnemyMovePatch {
 		}
 	}
 
+	public static void setSummonMonsterCard(AbstractMonster m) {
+		boolean setSummon = false;
+		SummonMonsterCard sCard = null;
+		if (curCard instanceof DynamicCard) {
+			sCard = new SummonMonsterCard();
+			sCard.setName(hasUniqueName ? curCard.originalName : null, m);
+			setSummon = true;
+			curCard = sCard;
+		} else if (curCard instanceof SummonMonsterCard) {
+			sCard = (SummonMonsterCard) curCard;
+			if (!sCard.summonID.equals(m.id)) {
+				setSummon = AbstractDungeon.miscRng.randomBoolean();
+			}
+		}
+		if (setSummon) {
+			if (m.id.equals(TorchHead.ID) || m.id.equals(BronzeOrb.ID) || m.id.equals(SpikeSlime_L.ID) || m.id.equals(AcidSlime_L.ID)) {
+				sCard.setSummon(m, 2, 16);
+			} else {
+				sCard.setSummon(m, 1, 10);
+			}
+		}
+		if (suicide) {
+			lastMoveCards.put(m, curCard);
+		}
+	}
+
 	@SpirePatch2(clz = SpawnMonsterAction.class, method = SpirePatch.CONSTRUCTOR, paramtypez = {AbstractMonster.class, boolean.class, int.class})
 	public static class SpawnMonsterCapture {
 		@SpirePostfixPatch
 		public static void Postfix(AbstractMonster m, boolean isMinion) {
-			if (curMonster == null || !isMinion && !suicide) return;
-			boolean setSummon = false;
-			SummonMonsterCard sCard = null;
-			if (curCard instanceof DynamicCard) {
-				sCard = new SummonMonsterCard();
-				sCard.setName(hasUniqueName ? curCard.originalName : null, m);
-				setSummon = true;
-				curCard = sCard;
-			} else if (curCard instanceof SummonMonsterCard) {
-				sCard = (SummonMonsterCard) curCard;
-				if (!sCard.summonID.equals(m.id)) {
-					setSummon = AbstractDungeon.miscRng.randomBoolean();
-				}
+			if (curMonster != null && (isMinion || suicide)) {
+				setSummonMonsterCard(m);
 			}
-			if (setSummon) {
-				if (m.id.equals(TorchHead.ID) || m.id.equals(BronzeOrb.ID) || m.id.equals(SpikeSlime_L.ID) || m.id.equals(AcidSlime_L.ID)) {
-					sCard.setSummon(m, 2, 16);
-				} else {
-					sCard.setSummon(m, 1, 10);
-				}
-			}
-			if (suicide) {
-				lastMoveCards.put(m, curCard);
-			}
+		}
+	}
+
+	@SpirePatch2(clz = SummonGremlinAction.class, method = SpirePatch.CONSTRUCTOR)
+	public static class SummonGremlinCapture {
+		@SpirePostfixPatch
+		public static void Postfix(AbstractMonster ___m) {
+			setSummonMonsterCard(___m);
 		}
 	}
 }

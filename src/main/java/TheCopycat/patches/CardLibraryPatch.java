@@ -15,7 +15,7 @@ public class CardLibraryPatch {
 		@SpirePostfixPatch
 		public static AbstractCard Postfix(AbstractCard __result) {
 			if (__result instanceof SlimeSlasher) {
-				((SlimeSlasher) __result).setDamageFromMisc();
+				((SlimeSlasher) __result).recalculateDamage();
 			}
 			return __result;
 		}

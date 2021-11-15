@@ -49,8 +49,10 @@ public class CopycatFlashTargetArrowEffect extends AbstractGameEffect {
 	}
 
 	public void render(SpriteBatch sb) {
-		CopycatTargetArrow.drawTargetArrow(
+		if (from != null && to != null) {
+			CopycatTargetArrow.drawTargetArrow(
 				sb, from.hb, to.hb, CopycatTargetArrow.CONTROL_HEIGHT * Settings.scale, arrowTime, alpha, color);
+		}
 	}
 
 	public void dispose() {

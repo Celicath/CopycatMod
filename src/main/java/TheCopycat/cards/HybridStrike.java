@@ -21,17 +21,17 @@ import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
 public class HybridStrike extends CustomCard implements DualImageCard {
+	public static final String DESCRIPTION = CardCrawlGame.languagePack.getCardStrings(PommelStrike.ID).DESCRIPTION;
+	public static final String UPGRADE_DESCRIPTION = CardCrawlGame.languagePack.getCardStrings(CutThroughFate.ID).DESCRIPTION;
 	private static final String RAW_ID = "HybridStrike";
-	private static final String RAW_ID2 = "HybridStrike2";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
+	private static final String RAW_ID2 = "HybridStrike2";
 	public static final String IMG_UPGRADE = CopycatModMain.GetCardPath(RAW_ID2);
 	public static final String IMG_UPGRADE_PORTRAIT = CopycatModMain.GetCardPath(RAW_ID2 + "_p");
 	private static final int COST = 1;
-	public static final String DESCRIPTION = CardCrawlGame.languagePack.getCardStrings(PommelStrike.ID).DESCRIPTION;
-	public static final String UPGRADE_DESCRIPTION = CardCrawlGame.languagePack.getCardStrings(CutThroughFate.ID).DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.COMMON;

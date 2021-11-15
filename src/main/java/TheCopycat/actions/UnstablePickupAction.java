@@ -25,19 +25,16 @@ public class UnstablePickupAction extends AbstractGameAction {
 	@Override
 	public void update() {
 		if (duration == startDuration) {
-			if (p.discardPile.size() <= 2) {
-				ArrayList<AbstractCard> cardsToMove = new ArrayList<>(p.discardPile.group);
-
-				doAction(cardsToMove, false);
+			if (p.discardPile.size() == 0) {
 				isDone = true;
 			} else {
-				AbstractDungeon.gridSelectScreen.open(p.discardPile, 2, TEXT[0], false);
+				AbstractDungeon.gridSelectScreen.open(p.discardPile, Math.min(2, p.discardPile.size()), TEXT[0], false);
 
 				tickDuration();
 			}
 		} else {
 			if (!AbstractDungeon.gridSelectScreen.selectedCards.isEmpty()) {
-				doAction(AbstractDungeon.gridSelectScreen.selectedCards, true);
+				doAction(AbstractDungeon.gridSelectScreen.selectedCards);
 
 				for (AbstractCard c : p.discardPile.group) {
 					c.target_y = 0.0F;
@@ -58,7 +55,7 @@ public class UnstablePickupAction extends AbstractGameAction {
 		}
 	}
 
-	void doAction(ArrayList<AbstractCard> list, boolean manaulSelect) {
+	void doAction(ArrayList<AbstractCard> list) {
 		boolean topdeck = list.size() >= 2 && AbstractDungeon.cardRandomRng.randomBoolean();
 
 		for (AbstractCard c : list) {
@@ -73,9 +70,7 @@ public class UnstablePickupAction extends AbstractGameAction {
 				}
 
 				c.lighten(false);
-				if (manaulSelect) {
-					c.unhover();
-				}
+				c.unhover();
 				c.applyPowers();
 			}
 			topdeck = !topdeck;

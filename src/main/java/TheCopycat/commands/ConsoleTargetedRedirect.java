@@ -15,7 +15,13 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import kobting.friendlyminions.monsters.AbstractFriendlyMonster;
 
 public class ConsoleTargetedRedirect implements RenderSubscriber, PostUpdateSubscriber {
-	private AbstractFriendlyMonster target;
+	private final AbstractFriendlyMonster target;
+	private AbstractMonster hoveredMonster;
+	private Vector2 controlPoint;
+	private float arrowScale;
+	private float arrowScaleTimer;
+	private final Vector2[] points = new Vector2[20];
+	private boolean isHidden;
 
 	public ConsoleTargetedRedirect(AbstractFriendlyMonster target) {
 		this.target = target;
@@ -26,13 +32,6 @@ public class ConsoleTargetedRedirect implements RenderSubscriber, PostUpdateSubs
 			this.points[i] = new Vector2();
 		}
 	}
-
-	private AbstractMonster hoveredMonster;
-	private Vector2 controlPoint;
-	private float arrowScale;
-	private float arrowScaleTimer;
-	private Vector2[] points = new Vector2[20];
-	private boolean isHidden;
 
 	private void close() {
 		isHidden = true;

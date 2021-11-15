@@ -43,7 +43,7 @@
     "NAMES": [
       "choose"
     ],
-    "DESCRIPTION": "This card activates whenever you choose from effects like Exhaust, Scry, card reward, etc. Does #rNOT activate if chosen randomly or automatically."
+    "DESCRIPTION": "You gain block when you choose this card from effects like Exhaust, Scry, discard, etc. Does #rNOT activate if chosen randomly or automatically."
   },
   {
     "PROPER_NAME": "Exclusive Mechanics",
@@ -54,11 +54,11 @@
     "DESCRIPTION": "Silent - Discard, Poison NL Defect - Channel/Evoke Orbs NL Watcher - Scry, Change Stance"
   },
   {
-    "PROPER_NAME": "Apology Slime",
+    "PROPER_NAME": "Pet Slime",
     "NAMES": [
-      "apology slime",
-      "apology_slime",
-      "apology",
+      "pet slime",
+      "pet_slime",
+      "pet",
       "slime"
     ],
     "DESCRIPTION": "Each turn, deals 3 damage to a random enemy."

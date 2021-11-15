@@ -19,15 +19,14 @@ import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 import com.megacrit.cardcrawl.vfx.ThoughtBubble;
 
 public class MindControlAction extends AbstractGameAction {
-	private boolean freeToPlayOnce;
-	private int magic;
-	private AbstractPlayer p;
-	private AbstractMonster targetMonster;
-	private int energyOnUse;
-
 	public float startX, startY;
 	public float targetX, targetY;
 	public float t;
+	private final boolean freeToPlayOnce;
+	private final int magic;
+	private final AbstractPlayer p;
+	private final AbstractMonster targetMonster;
+	private final int energyOnUse;
 
 	public MindControlAction(AbstractPlayer p, AbstractMonster m, int magic, boolean freeToPlayOnce, int energyOnUse) {
 		duration = startDuration = Settings.FAST_MODE ? 1.25f : 1.5f;
@@ -83,14 +82,26 @@ public class MindControlAction extends AbstractGameAction {
 				@Override
 				public void update() {
 					AbstractDungeon.getMonsters().monsters.remove(targetMonster);
-					if (AbstractDungeon.getMonsters().areMonstersBasicallyDead()) {
-						int hp = targetMonster.currentHealth;
 
-						targetMonster.currentHealth = 0;
-						targetMonster.damage(new DamageInfo(null, 0, DamageInfo.DamageType.HP_LOSS));
-						minion.endBattle = true;
-						targetMonster.currentHealth = hp;
-					}
+					boolean tmp = AbstractDungeon.getCurrRoom().cannotLose;
+					AbstractDungeon.getCurrRoom().cannotLose = false;
+
+					int hp = targetMonster.currentHealth;
+
+					targetMonster.currentHealth = 0;
+					targetMonster.damage(new DamageInfo(null, 0, DamageInfo.DamageType.HP_LOSS));
+					addToBot(new AbstractGameAction() {
+						@Override
+						public void update() {
+							if (AbstractDungeon.getMonsters().areMonstersBasicallyDead()) {
+								minion.endBattle = true;
+							} else {
+								AbstractDungeon.getCurrRoom().cannotLose = tmp;
+							}
+							targetMonster.currentHealth = hp;
+							isDone = true;
+						}
+					});
 					isDone = true;
 				}
 			});

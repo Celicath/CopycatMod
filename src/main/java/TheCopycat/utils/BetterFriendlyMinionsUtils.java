@@ -4,16 +4,17 @@ import TheCopycat.CopycatModMain;
 import TheCopycat.crossovers.DTModCrossover;
 import TheCopycat.friendlyminions.AbstractCopycatMinion;
 import TheCopycat.friendlyminions.MirrorMinion;
+import TheCopycat.friendlyminions.PetSlime;
 import TheCopycat.friendlyminions.SubstituteMinion;
 import TheCopycat.powers.DoubleTimePower;
 import TheCopycat.vfx.CopycatFlashTargetArrowEffect;
+import com.badlogic.gdx.graphics.Color;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.MonsterGroup;
-import com.megacrit.cardcrawl.monsters.exordium.ApologySlime;
 import com.megacrit.cardcrawl.random.Random;
 import kobting.friendlyminions.characters.AbstractPlayerWithMinions;
 import kobting.friendlyminions.enums.MonsterIntentEnum;
@@ -36,22 +37,13 @@ public class BetterFriendlyMinionsUtils {
 	public static float prevPlayercY;
 	public static Random prevAiRng = null;
 	public static ArrayList<AbstractGameAction> origActions;
-
-	public enum HijackMode {
-		NONE,
-		FRIENDLY_MINION_ATTACK,
-		FRIENDLY_MINION_DEFEND,
-		SWINDLE,
-	}
-
+	public static PetSlime dummy = new PetSlime(null);
 	static HijackMode hijackMode = HijackMode.NONE;
-
-	public static ApologySlime dummy = new ApologySlime();
 
 	public static MonsterGroup getMonsterGroup() {
 		return (AbstractDungeon.player instanceof AbstractPlayerWithMinions) ?
-				((AbstractPlayerWithMinions) AbstractDungeon.player).minions :
-				PlayerAddFieldsPatch.f_minions.get(AbstractDungeon.player);
+			((AbstractPlayerWithMinions) AbstractDungeon.player).minions :
+			PlayerAddFieldsPatch.f_minions.get(AbstractDungeon.player);
 	}
 
 	public static ArrayList<AbstractMonster> getMinionList() {
@@ -124,8 +116,10 @@ public class BetterFriendlyMinionsUtils {
 	public static HijackMode revertHijack() {
 		switch (hijackMode) {
 			case FRIENDLY_MINION_ATTACK:
-				AbstractDungeon.aiRng = prevAiRng;
-				prevAiRng = null;
+				if (prevAiRng != null) {
+					AbstractDungeon.aiRng = prevAiRng;
+					prevAiRng = null;
+				}
 				// fallthrough
 			case FRIENDLY_MINION_DEFEND:
 				AbstractDungeon.player.hb.x = prevPlayerhX;
@@ -195,7 +189,6 @@ public class BetterFriendlyMinionsUtils {
 		return result;
 	}
 
-
 	public static AbstractCreature getTarget(AbstractMonster m) {
 		AbstractCreature target = MonsterHelper.getTarget(m);
 		if (target == null) {
@@ -206,5 +199,13 @@ public class BetterFriendlyMinionsUtils {
 			}
 		}
 		return target;
+	}
+
+
+	public enum HijackMode {
+		NONE,
+		FRIENDLY_MINION_ATTACK,
+		FRIENDLY_MINION_DEFEND,
+		MANIPULATE,
 	}
 }

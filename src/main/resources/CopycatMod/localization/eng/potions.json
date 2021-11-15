@@ -1,2 +1,10 @@
 {
+  "CopycatMod:SlimePotion": {
+    "NAME": "Slime Potion",
+    "DESCRIPTIONS": [
+      "Summon #b",
+      " #yPet #ySlimes with #b",
+      " HP."
+    ]
+  }
 }

@@ -67,5 +67,11 @@
       " turn.",
       " turns."
     ]
+  },
+  "CopycatMod:MutantEchoPower": {
+    "NAME": "Echoing",
+    "DESCRIPTIONS": [
+      "Whenever you play a #yMonster #yCard [REMOVE_SPACE], it changes its intent to match the effect of the played card."
+    ]
   }
 }

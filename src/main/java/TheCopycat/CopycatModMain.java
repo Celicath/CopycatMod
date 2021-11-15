@@ -11,13 +11,18 @@ import TheCopycat.cards.temp.ChooseProtective;
 import TheCopycat.characters.Copycat;
 import TheCopycat.commands.RedirectCommand;
 import TheCopycat.friendlyminions.AbstractCopycatMinion;
+import TheCopycat.friendlyminions.Replica;
 import TheCopycat.friendlyminions.SubstituteMinion;
 import TheCopycat.patches.CaptureEnemyMovePatch;
 import TheCopycat.patches.CharacterEnum;
 import TheCopycat.patches.TargetAllyPatch;
+import TheCopycat.potions.SlimePotion;
 import TheCopycat.powers.VenomologyPower;
+import TheCopycat.relics.EnergyBag;
 import TheCopycat.relics.LuckyBag;
+import TheCopycat.relics.SummoningMirror;
 import TheCopycat.utils.BetterFriendlyMinionsUtils;
+import TheCopycat.utils.MonsterCardBottleManager;
 import TheCopycat.vfx.TextEffect;
 import basemod.AutoAdd;
 import basemod.BaseMod;
@@ -27,6 +32,7 @@ import basemod.interfaces.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.evacipated.cardcrawl.mod.stslib.Keyword;
 import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
@@ -49,63 +55,56 @@ import java.util.List;
 
 @SpireInitializer
 public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscriber, PostInitializeSubscriber,
-		EditCharactersSubscriber, EditCardsSubscriber, EditRelicsSubscriber,
-		PreStartGameSubscriber, OnStartBattleSubscriber, AddCustomModeModsSubscriber,
-		PostCreateStartingDeckSubscriber {
+	EditCharactersSubscriber, EditCardsSubscriber, EditRelicsSubscriber,
+	PreStartGameSubscriber, OnStartBattleSubscriber, AddCustomModeModsSubscriber,
+	PostCreateStartingDeckSubscriber {
 
+	public static final String MOD_ID = "CopycatMod";
+	public static final String BADGE_IMAGE = "Badge.png";
+	public static final Color COPYCAT_BLUE = CardHelper.getColor(0x8C, 0xAE, 0xE6);
+	public static final String THE_COPYCAT_SHOULDER_1 = "char/TheCopycat/shoulder.png";
+	public static final String THE_COPYCAT_SHOULDER_2 = "char/TheCopycat/shoulder2.png";
+	public static final String THE_COPYCAT_CORPSE = "char/TheCopycat/corpse.png";
 	private static final String MODNAME = "The Copycat";
 	private static final String AUTHOR = "Celicath";
 	private static final String DESCRIPTION = "Properly Unlocks everything.";
-
-	public static final String MOD_ID = "CopycatMod";
 	private static final String COPYCAT_MOD_ASSETS_FOLDER = MOD_ID + "/images";
-
-	public static final String BADGE_IMAGE = "Badge.png";
-
-	public static final Color COPYCAT_BLUE = CardHelper.getColor(0x8C, 0xAE, 0xE6);
-
 	// Card backgrounds
 	private static final String ATTACK_COPYCAT_BLUE = "512/bg_attack_copycat_blue.png";
 	private static final String POWER_COPYCAT_BLUE = "512/bg_power_copycat_blue.png";
 	private static final String SKILL_COPYCAT_BLUE = "512/bg_skill_copycat_blue.png";
 	private static final String ENERGY_ORB_COPYCAT_BLUE = "512/card_copycat_blue_orb.png";
 	private static final String CARD_ENERGY_ORB = "512/card_small_orb.png";
-
 	private static final String ATTACK_COPYCAT_BLUE_PORTRAIT = "1024/bg_attack_copycat_blue.png";
 	private static final String POWER_COPYCAT_BLUE_PORTRAIT = "1024/bg_power_copycat_blue.png";
 	private static final String SKILL_COPYCAT_BLUE_PORTRAIT = "1024/bg_skill_copycat_blue.png";
 	private static final String ENERGY_ORB_COPYCAT_BLUE_PORTRAIT = "1024/card_copycat_blue_orb.png";
-
 	// Character assets
 	private static final String THE_COPYCAT_BUTTON = "charSelect/CopycatButton.png";
 	private static final String THE_COPYCAT_PORTRAIT = "charSelect/CopycatPortraitBG.png";
-	public static final String THE_COPYCAT_SHOULDER_1 = "char/TheCopycat/shoulder.png";
-	public static final String THE_COPYCAT_SHOULDER_2 = "char/TheCopycat/shoulder2.png";
-	public static final String THE_COPYCAT_CORPSE = "char/TheCopycat/corpse.png";
-
 	// Crossovers
 	public static boolean isDragonTamerLoaded;
-
-	public static String makePath(String resource) {
-		return COPYCAT_MOD_ASSETS_FOLDER + "/" + resource;
-	}
 
 	public CopycatModMain() {
 		BaseMod.subscribe(this);
 
 		BaseMod.addColor(CharacterEnum.CardColorEnum.COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE,
-				COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, makePath(ATTACK_COPYCAT_BLUE),
-				makePath(SKILL_COPYCAT_BLUE), makePath(POWER_COPYCAT_BLUE),
-				makePath(ENERGY_ORB_COPYCAT_BLUE), makePath(ATTACK_COPYCAT_BLUE_PORTRAIT),
-				makePath(SKILL_COPYCAT_BLUE_PORTRAIT), makePath(POWER_COPYCAT_BLUE_PORTRAIT),
-				makePath(ENERGY_ORB_COPYCAT_BLUE_PORTRAIT), makePath(CARD_ENERGY_ORB));
+			COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, makePath(ATTACK_COPYCAT_BLUE),
+			makePath(SKILL_COPYCAT_BLUE), makePath(POWER_COPYCAT_BLUE),
+			makePath(ENERGY_ORB_COPYCAT_BLUE), makePath(ATTACK_COPYCAT_BLUE_PORTRAIT),
+			makePath(SKILL_COPYCAT_BLUE_PORTRAIT), makePath(POWER_COPYCAT_BLUE_PORTRAIT),
+			makePath(ENERGY_ORB_COPYCAT_BLUE_PORTRAIT), makePath(CARD_ENERGY_ORB));
 
 		BaseMod.addColor(CharacterEnum.CardColorEnum.COPYCAT_MONSTER, COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE,
-				COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, makePath(ATTACK_COPYCAT_BLUE),
-				makePath(SKILL_COPYCAT_BLUE), makePath(POWER_COPYCAT_BLUE),
-				makePath(ENERGY_ORB_COPYCAT_BLUE), makePath(ATTACK_COPYCAT_BLUE_PORTRAIT),
-				makePath(SKILL_COPYCAT_BLUE_PORTRAIT), makePath(POWER_COPYCAT_BLUE_PORTRAIT),
-				makePath(ENERGY_ORB_COPYCAT_BLUE_PORTRAIT), makePath(CARD_ENERGY_ORB));
+			COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, COPYCAT_BLUE, makePath(ATTACK_COPYCAT_BLUE),
+			makePath(SKILL_COPYCAT_BLUE), makePath(POWER_COPYCAT_BLUE),
+			makePath(ENERGY_ORB_COPYCAT_BLUE), makePath(ATTACK_COPYCAT_BLUE_PORTRAIT),
+			makePath(SKILL_COPYCAT_BLUE_PORTRAIT), makePath(POWER_COPYCAT_BLUE_PORTRAIT),
+			makePath(ENERGY_ORB_COPYCAT_BLUE_PORTRAIT), makePath(CARD_ENERGY_ORB));
+	}
+
+	public static String makePath(String resource) {
+		return COPYCAT_MOD_ASSETS_FOLDER + "/" + resource;
 	}
 
 	@SuppressWarnings("unused")
@@ -114,10 +113,79 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 		isDragonTamerLoaded = Loader.isModLoaded("DTMod");
 	}
 
+	public static String makeID(String idText) {
+		return MOD_ID + ":" + idText;
+	}
+
+	public static String makeLowerID(String idText) {
+		return (MOD_ID + ":" + idText).toLowerCase();
+	}
+
+	public static String GetCardPath(String id) {
+		return MOD_ID + "/images/cards/" + id + ".png";
+	}
+
+	public static String GetPowerPath(String id, int size) {
+		return MOD_ID + "/images/powers/" + id + "_" + size + ".png";
+	}
+
+	public static String GetPotionPath(String id, String part) {
+		return MOD_ID + "/images/potions/" + id + "/" + part + ".png";
+	}
+
+	public static String GetMinionPath(String id) {
+		return MOD_ID + "/images/char/Minions/" + id + ".png";
+	}
+
+	public static String GetRelicPath(String id) {
+		return MOD_ID + "/images/relics/" + id + ".png";
+	}
+
+	public static String GetBlightPath(String id) {
+		return MOD_ID + "/images/blights/" + id + ".png";
+	}
+
+	public static String GetBlightOutlinePath(String id) {
+		return MOD_ID + "/images/blights/outline/" + id + ".png";
+	}
+
+	public static String GetRelicOutlinePath(String id) {
+		return MOD_ID + "/images/relics/outline/" + id + ".png";
+	}
+
+	public static String GetEventPath(String id) {
+		return MOD_ID + "/images/events/" + id + ".png";
+	}
+
+	private static String GetLocString(String locCode, String name) {
+		return Gdx.files.internal(MOD_ID + "/localization/" + locCode + "/" + name + ".json").readString(
+			String.valueOf(StandardCharsets.UTF_8));
+	}
+
+	public static AbstractMonsterCard getEnemyLastMoveCard(AbstractMonster m) {
+		AbstractMonsterCard c = CaptureEnemyMovePatch.lastMoveCards.get(m);
+		if (c == null) {
+			return NoMove.preview;
+		} else {
+			return c;
+		}
+	}
+
+	public static void clearMonsterCards() {
+		CaptureEnemyMovePatch.generatedCards.clear();
+		CaptureEnemyMovePatch.lastMoveCards.clear();
+	}
+
+	public static boolean strengthThreshold() {
+		if (AbstractDungeon.player == null) return false;
+		AbstractPower pow = AbstractDungeon.player.getPower(StrengthPower.POWER_ID);
+		return pow != null && pow.amount >= 6;
+	}
+
 	@Override
 	public void receiveEditCharacters() {
 		BaseMod.addCharacter(new Copycat(Copycat.charStrings.NAMES[1], CharacterEnum.PlayerClassEnum.THE_COPYCAT),
-				makePath(THE_COPYCAT_BUTTON), makePath(THE_COPYCAT_PORTRAIT), CharacterEnum.PlayerClassEnum.THE_COPYCAT);
+			makePath(THE_COPYCAT_BUTTON), makePath(THE_COPYCAT_PORTRAIT), CharacterEnum.PlayerClassEnum.THE_COPYCAT);
 
 		receiveEditPotions();
 	}
@@ -137,25 +205,29 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 		AbstractMonsterCard.autoAddLibrary();
 
 		ConsoleCommand.addCommand("redirect", RedirectCommand.class);
+
+		BaseMod.addPotion(SlimePotion.class, Color.GREEN.cpy(), Color.CYAN.cpy(), Color.BLUE.cpy(), SlimePotion.POTION_ID, CharacterEnum.PlayerClassEnum.THE_COPYCAT);
 	}
 
 	@Override
 	public void receiveEditCards() {
 		new AutoAdd(MOD_ID)
-				.packageFilter(Mimic.class)
-				.notPackageFilter(AbstractMonsterCard.class)
-				.notPackageFilter(ChooseProtective.class)
-				.setDefaultSeen(false)
-				.cards();
+			.packageFilter(Mimic.class)
+			.notPackageFilter(AbstractMonsterCard.class)
+			.notPackageFilter(ChooseProtective.class)
+			.setDefaultSeen(false)
+			.cards();
 		new AutoAdd(MOD_ID)
-				.packageFilter(AbstractMonsterCard.class)
-				.setDefaultSeen(false)
-				.cards();
+			.packageFilter(AbstractMonsterCard.class)
+			.setDefaultSeen(false)
+			.cards();
 	}
 
 	@Override
 	public void receiveEditRelics() {
 		BaseMod.addRelicToCustomPool(new LuckyBag(), CharacterEnum.CardColorEnum.COPYCAT_BLUE);
+		BaseMod.addRelicToCustomPool(new SummoningMirror(), CharacterEnum.CardColorEnum.COPYCAT_BLUE);
+		BaseMod.addRelicToCustomPool(new EnergyBag(), CharacterEnum.CardColorEnum.COPYCAT_BLUE);
 	}
 
 	@Override
@@ -205,69 +277,11 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 		}
 	}
 
-	public static String makeID(String idText) {
-		return MOD_ID + ":" + idText;
-	}
-
-	public static String makeLowerID(String idText) {
-		return (MOD_ID + ":" + idText).toLowerCase();
-	}
-
-	public static String GetCardPath(String id) {
-		return MOD_ID + "/images/cards/" + id + ".png";
-	}
-
-	public static String GetPowerPath(String id, int size) {
-		return MOD_ID + "/images/powers/" + id + "_" + size + ".png";
-	}
-
-	public static String GetMinionPath(String id) {
-		return MOD_ID + "/images/char/Minions/" + id + ".png";
-	}
-
-	public static String GetRelicPath(String id) {
-		return MOD_ID + "/images/relics/" + id + ".png";
-	}
-
-	public static String GetBlightPath(String id) {
-		return MOD_ID + "/images/blights/" + id + ".png";
-	}
-
-	public static String GetBlightOutlinePath(String id) {
-		return MOD_ID + "/images/blights/outline/" + id + ".png";
-	}
-
-	public static String GetRelicOutlinePath(String id) {
-		return MOD_ID + "/images/relics/outline/" + id + ".png";
-	}
-
-	public static String GetEventPath(String id) {
-		return MOD_ID + "/images/events/" + id + ".png";
-	}
-
-	private static String GetLocString(String locCode, String name) {
-		return Gdx.files.internal(MOD_ID + "/localization/" + locCode + "/" + name + ".json").readString(
-				String.valueOf(StandardCharsets.UTF_8));
-	}
-
-	public static AbstractMonsterCard getEnemyLastMoveCard(AbstractMonster m) {
-		AbstractMonsterCard c = CaptureEnemyMovePatch.lastMoveCards.get(m);
-		if (c == null) {
-			return NoMove.preview;
-		} else {
-			return c;
-		}
-	}
-
-	public static void clearMonsterCards() {
-		CaptureEnemyMovePatch.generatedCards.clear();
-		CaptureEnemyMovePatch.lastMoveCards.clear();
-	}
-
 	@Override
 	public void receivePreStartGame() {
 		clearMonsterCards();
 		SubstituteMinion.instance = new SubstituteMinion();
+		MonsterCardBottleManager.instance = new MonsterCardBottleManager();
 	}
 
 	@Override
@@ -283,6 +297,7 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 		VenomologyActivateAction.poisonPowers.clear();
 		TargetAllyPatch.cardTargetMap.clear();
 		SubstituteMinion.instance.clearPowers();
+		Replica.resetRelics();
 	}
 
 	@Override
@@ -303,11 +318,5 @@ public class CopycatModMain implements EditStringsSubscriber, EditKeywordsSubscr
 				cardToUpgrade.upgrade();
 			}
 		}
-	}
-
-	public static boolean strengthThreshold() {
-		if (AbstractDungeon.player == null) return false;
-		AbstractPower pow = AbstractDungeon.player.getPower(StrengthPower.POWER_ID);
-		return pow != null && pow.amount >= 6;
 	}
 }

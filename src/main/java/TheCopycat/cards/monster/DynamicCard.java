@@ -4,6 +4,7 @@ import TheCopycat.CopycatModMain;
 import TheCopycat.actions.PCAGainGoldAction;
 import TheCopycat.actions.PCAVFXAction;
 import TheCopycat.utils.GameLogicUtils;
+import TheCopycat.utils.MonsterCardMoveInfo;
 import basemod.AutoAdd;
 import com.badlogic.gdx.graphics.Color;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
@@ -13,6 +14,10 @@ import com.megacrit.cardcrawl.actions.unique.VampireDamageAction;
 import com.megacrit.cardcrawl.actions.watcher.ChangeStanceAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
+import com.megacrit.cardcrawl.cards.status.Dazed;
+import com.megacrit.cardcrawl.cards.status.Slimed;
+import com.megacrit.cardcrawl.cards.status.VoidCard;
+import com.megacrit.cardcrawl.cards.status.Wound;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
@@ -36,16 +41,16 @@ public class DynamicCard extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	private static final int COST = -2;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String[] EXTENDED_DESCRIPTION = cardStrings.EXTENDED_DESCRIPTION;
+	private static final int COST = -2;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
 	private static final CardTarget TARGET = CardTarget.NONE;
 	public static String
-			blockDesc, damageDesc, multiDesc, drawDesc, buffPrefix, buffSuffix, debuffPrefix, debuffSuffix,
-			gainEDesc, enterCalmDesc, exhaustOtherDesc, discardDesc, vampireDesc, goldDesc, strengthDownDesc, exhaustDesc,
-			metallicizeDesc, shackleDesc;
+		blockDesc, damageDesc, multiDesc, drawDesc, buffPrefix, buffSuffix, debuffPrefix, debuffSuffix,
+		gainEDesc, enterCalmDesc, exhaustOtherDesc, discardDesc, vampireDesc, goldDesc, strengthDownDesc, exhaustDesc,
+		metallicizeDesc, shackleDesc;
 
 	/* parameters */
 	public int baseCost;
@@ -59,14 +64,16 @@ public class DynamicCard extends AbstractMonsterCard {
 	public boolean stealGold = false;
 	public String buffs = "";
 	public String debuffs = "";
-
-	/* automatic set fields */
-	boolean shouldUpgradeCost = false;
-	// public boolean exhaust;
-
 	public boolean initialized = false;
+	// public boolean exhaust;
 	public boolean invalid = false;
 	public boolean empty = false;
+	/* automatic set fields */
+	boolean shouldUpgradeCost = false;
+
+	public DynamicCard() {
+		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
+	}
 
 	public static void initializeDescriptionParts() {
 		blockDesc = CardCrawlGame.languagePack.getCardStrings("Defend_B").DESCRIPTION;
@@ -89,8 +96,39 @@ public class DynamicCard extends AbstractMonsterCard {
 		metallicizeDesc = EXTENDED_DESCRIPTION[9];
 	}
 
-	public DynamicCard() {
-		super(ID, NAME, COST, DESCRIPTION, TYPE, RARITY, TARGET);
+	public static AbstractPower getBuffPower(AbstractCreature c, char powChar, int amount) {
+		switch (powChar) {
+			case 'S':
+				return new StrengthPower(c, amount);
+			case 'D':
+				return new DexterityPower(c, amount);
+			case 'P':
+				return new PlatedArmorPower(c, amount);
+			case 'T':
+				return new ThornsPower(c, amount);
+			case 'R':
+				return new RitualPower(c, amount, true);
+			case 'M':
+				return new MetallicizePower(c, amount);
+			default:
+				return null;
+		}
+	}
+
+	public static AbstractPower getDebuffPower(AbstractCreature target, AbstractCreature source, char powChar, int amount) {
+		switch (powChar) {
+			case 'P':
+				return new PoisonPower(target, source, amount);
+			case 'V':
+				return new VulnerablePower(target, amount, false);
+			case 'W':
+				return new WeakPower(target, amount, false);
+			case 'S':
+				return new StrengthPower(target, -amount);
+			case 'E':  // should handle manually
+			default:
+				return null;
+		}
 	}
 
 	public void setType() {
@@ -238,11 +276,9 @@ public class DynamicCard extends AbstractMonsterCard {
 			rarityNum++;
 		}
 		if (stealGold) {
-			if (baseDamage >= 12) {
-				forceCost = 2;
-			}
-			exhaust = true;
+			forceCost = baseDamage >= 12 ? 2 : 1;
 			rarityNum++;
+			exhaust = true;
 		}
 		if (isDraw && baseDamage <= 0 && baseBlock <= 0 && buffs.isEmpty() && debuffs.isEmpty() && !gainEnergy && !enterCalm && !stealGold) {
 			if (baseMagicNumber <= 2) {
@@ -413,11 +449,12 @@ public class DynamicCard extends AbstractMonsterCard {
 			shouldUpgradeCost = true;
 		}
 		if (forceCost > baseCost) {
+			rarityNum -= (forceCost - baseCost);
 			baseCost = forceCost;
 		}
 		cost = costForTurn = baseCost;
 
-		if (rarityNum == 0) {
+		if (rarityNum <= 0) {
 			rarity = CardRarity.COMMON;
 		} else if (rarityNum == 1) {
 			rarity = CardRarity.UNCOMMON;
@@ -441,41 +478,6 @@ public class DynamicCard extends AbstractMonsterCard {
 		setModifiers(modifiers);
 		setType();
 		updateDescription();
-	}
-
-	public static AbstractPower getBuffPower(AbstractCreature c, char powChar, int amount) {
-		switch (powChar) {
-			case 'S':
-				return new StrengthPower(c, amount);
-			case 'D':
-				return new DexterityPower(c, amount);
-			case 'P':
-				return new PlatedArmorPower(c, amount);
-			case 'T':
-				return new ThornsPower(c, amount);
-			case 'R':
-				return new RitualPower(c, amount, true);
-			case 'M':
-				return new MetallicizePower(c, amount);
-			default:
-				return null;
-		}
-	}
-
-	public static AbstractPower getDebuffPower(AbstractCreature target, AbstractCreature source, char powChar, int amount) {
-		switch (powChar) {
-			case 'P':
-				return new PoisonPower(target, source, amount);
-			case 'V':
-				return new VulnerablePower(target, amount, false);
-			case 'W':
-				return new WeakPower(target, amount, false);
-			case 'S':
-				return new StrengthPower(target, -amount);
-			case 'E':  // should handle manually
-			default:
-				return null;
-		}
 	}
 
 	@Override
@@ -697,8 +699,10 @@ public class DynamicCard extends AbstractMonsterCard {
 				if (baseMagicNumber > 0) {
 					if (debuffs.equals("P")) {
 						upgradeMagicNumber(Math.max(baseCost + (exhaust ? 2 : 1), 2));
+					} else if (stealGold) {
+						upgradeMagicNumber(baseCost + 1);
 					} else {
-						upgradeMagicNumber(baseMagicNumber >= 4 ? 2 : 1);
+						upgradeMagicNumber(baseMagicNumber >= 5 ? 2 : 1);
 					}
 				}
 			}
@@ -733,14 +737,14 @@ public class DynamicCard extends AbstractMonsterCard {
 					shouldUpgrade = timesUpgraded > 0 ? timesUpgraded : 1;
 				}
 				setCard(tokens[1],
-						Integer.parseInt(tokens[2]),
-						Integer.parseInt(tokens[3]),
-						Integer.parseInt(tokens[4]),
-						Integer.parseInt(tokens[5]),
-						Integer.parseInt(tokens[6]),
-						tokens[7],
-						tokens[8],
-						tokens[9]);
+					Integer.parseInt(tokens[2]),
+					Integer.parseInt(tokens[3]),
+					Integer.parseInt(tokens[4]),
+					Integer.parseInt(tokens[5]),
+					Integer.parseInt(tokens[6]),
+					tokens[7],
+					tokens[8],
+					tokens[9]);
 				for (int i = 0; i < shouldUpgrade; i++) {
 					upgrade();
 				}
@@ -748,6 +752,138 @@ public class DynamicCard extends AbstractMonsterCard {
 				e.printStackTrace();
 				invalid = true;
 			}
+		}
+	}
+
+	@Override
+	public MonsterCardMoveInfo createMoveInfo(boolean isAlly) {
+		AbstractMonster.Intent intent = AbstractMonster.Intent.UNKNOWN;
+		if (baseDamage > 0) {
+			if (baseBlock > 0) {
+				intent = AbstractMonster.Intent.ATTACK_DEFEND;
+			} else if (!debuffs.isEmpty()) {
+				intent = AbstractMonster.Intent.ATTACK_DEBUFF;
+			} else if (!buffs.isEmpty()) {
+				intent = AbstractMonster.Intent.ATTACK_BUFF;
+			} else {
+				intent = AbstractMonster.Intent.ATTACK;
+			}
+		} else if (baseBlock > 0) {
+			if (!debuffs.isEmpty()) {
+				intent = AbstractMonster.Intent.DEFEND_BUFF;
+			} else if (!buffs.isEmpty()) {
+				intent = AbstractMonster.Intent.DEFEND_BUFF;
+			} else {
+				intent = AbstractMonster.Intent.DEFEND;
+			}
+		} else if (!debuffs.isEmpty()) {
+			intent = baseCost >= 2 ? AbstractMonster.Intent.STRONG_DEBUFF : AbstractMonster.Intent.DEBUFF;
+		} else if (buffs.isEmpty()) {
+			intent = AbstractMonster.Intent.BUFF;
+		}
+		return new MonsterCardMoveInfo(intent, baseDamage, hits, isMultiDamage, this);
+	}
+
+	@Override
+	public void monsterTakeTurn(AbstractMonster user, AbstractCreature target, boolean isAlly) {
+		if (!initialized || invalid || empty) {
+			return;
+		}
+		if (baseBlock > 0 && isAlly) {
+			addToBot(new GainBlockAction(user, user, block));
+		}
+		if (type == CardType.ATTACK) {
+			AbstractGameAction.AttackEffect effect;
+			switch (baseCost) {
+				case 0:
+				case 1:
+					effect = AbstractGameAction.AttackEffect.SLASH_DIAGONAL;
+					break;
+				case 2:
+					effect = AbstractGameAction.AttackEffect.BLUNT_LIGHT;
+					break;
+				default:
+					effect = AbstractGameAction.AttackEffect.BLUNT_HEAVY;
+					break;
+			}
+			if (isVampire) {
+				effect = AbstractGameAction.AttackEffect.NONE;
+				addToBot(new VFXAction(new BiteEffect(target.hb.cX, target.hb.cY, Color.GOLD.cpy()), 0.0F));
+			} else if (baseCost >= 3 && hits <= 1) {
+				addToBot(new VFXAction(new WeightyImpactEffect(target.hb.cX, target.hb.cY)));
+			}
+			for (int i = 0; i < Math.max(hits, 1); i++) {
+				if (isVampire) {
+					addToBot(new VampireDamageAction(target, new DamageInfo(user, damage, damageTypeForTurn), effect));
+				} else {
+					if (stealGold && !isAlly) {
+						addToBot(new DamageAction(target, new DamageInfo(user, damage, damageTypeForTurn), magicNumber));
+					} else {
+						addToBot(new DamageAction(target, new DamageInfo(user, damage, damageTypeForTurn), effect));
+					}
+				}
+			}
+		}
+		if (baseBlock > 0 && !isAlly) {
+			addToBot(new GainBlockAction(user, user, block));
+		}
+		if (stealGold && isAlly) {
+			addToBot(new PCAGainGoldAction(magicNumber));
+			if (target != null) {
+				for (int i = 0; i < magicNumber; i++) {
+					addToBot(new PCAVFXAction(new GainPennyEffect(user, target.hb.cX, target.hb.cY, user.hb.cX, user.hb.cY, true), 0.0F));
+				}
+			} else {
+				addToBot(new PCAVFXAction(new RainingGoldEffect(magicNumber * 2, true), 0.0F));
+			}
+		}
+
+		int statusAmount = 1;
+		if (isDraw && !isAlly) {
+			if (enterCalm || exhaustOther || isDiscard) {
+				statusAmount = magicNumber;
+			} else {
+				addToBot(new MakeTempCardInDiscardAction(new Dazed(), magicNumber));
+			}
+		}
+
+		for (int i = 0, len = buffs.length(); i < len; i++) {
+			AbstractPower pow = getBuffPower(user, buffs.charAt(i), magicNumber);
+			if (pow != null) {
+				addToBot(new ApplyPowerAction(user, user, pow));
+			}
+		}
+
+		if (enterCalm) {
+			addToBot(new MakeTempCardInDrawPileAction(new VoidCard(), statusAmount, true, true));
+		}
+
+		for (int i = 0, len = debuffs.length(); i < len; i++) {
+			AbstractPower pow;
+			if (debuffs.charAt(i) == 'P' && !isAlly) {
+				pow = new FrailPower(target, debuffs.length() == 1 ? Math.max(magicNumber / 2, 1) : magicNumber, true);
+			} else {
+				pow = getDebuffPower(target, user, debuffs.charAt(i), magicNumber);
+			}
+			if (pow != null) {
+				addToBot(new ApplyPowerAction(target, user, pow));
+			} else if (debuffs.charAt(i) == 'E') {
+				if (isAlly) {
+					addToBot(new ApplyPowerAction(target, user, new StrengthPower(target, -magicNumber), -magicNumber));
+					if (target != null && !target.hasPower(ArtifactPower.POWER_ID)) {
+						addToBot(new ApplyPowerAction(target, user, new GainStrengthPower(target, magicNumber), magicNumber));
+					}
+				} else {
+					addToBot(new ApplyPowerAction(target, user, new EntanglePower(target)));
+				}
+			}
+		}
+
+		if (exhaustOther) {
+			addToBot(new MakeTempCardInDiscardAction(new Slimed(), magicNumber));
+		}
+		if (isDiscard) {
+			addToBot(new MakeTempCardInDiscardAction(new Wound(), magicNumber));
 		}
 	}
 

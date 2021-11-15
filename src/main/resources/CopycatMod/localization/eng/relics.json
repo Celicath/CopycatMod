@@ -3,12 +3,26 @@
     "NAME": "Lucky Bag",
     "FLAVOR": "What will you get from this bag?",
     "DESCRIPTIONS": [
-      "When you play the first card in combat, gain a #yBonus based on its type.",
+      "After you play the first card in combat, gain a #yBonus based on its type.",
       "Bonus",
-      "Attack: Gain 2 #yStrength.",
-      "Skill: Gain 3 #yPlated #yArmor.",
+      "Attack: Gain #b2 #yStrength.",
+      "Skill: Gain #b4 #yPlated #yArmor.",
       "Power: Gain [E] [E] .",
-      "Other: Gain 3 Max HP."
+      "Other: Gain #b4 Max HP."
+    ]
+  },
+  "CopycatMod:EnergyBag": {
+    "NAME": "Energy Bag",
+    "FLAVOR": "ENERGY IS WIN",
+    "DESCRIPTIONS": [
+      "Replaces #bLucky #bBag. NL Gain [E] at the start of your turn."
+    ]
+  },
+  "CopycatMod:SummoningMirror": {
+    "NAME": "Summoning Mirror",
+    "FLAVOR": "This scary reflector can copy and summon all your other stuff!",
+    "DESCRIPTIONS": [
+      "At the start of combat, summon a Replica with HP equal to the number of Relics. Replica copies a random Relic and gives the same effect while alive."
     ]
   }
 }

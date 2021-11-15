@@ -1,9 +1,11 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.utils.MonsterCardMoveInfo;
 import com.megacrit.cardcrawl.actions.common.GainEnergyAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
@@ -13,16 +15,14 @@ public class NoMove extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 0;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
 	private static final CardTarget TARGET = CardTarget.NONE;
-
 	private static final int POWER = 1;
 	private static final int UPGRADE_BONUS = 1;
-
 	public static NoMove preview = new NoMove();
 	public static NoMove previewPlus = new NoMove() {
 		{
@@ -54,5 +54,15 @@ public class NoMove extends AbstractMonsterCard {
 			rawDescription = cardStrings.UPGRADE_DESCRIPTION;
 			initializeDescription();
 		}
+	}
+
+	@Override
+	public MonsterCardMoveInfo createMoveInfo(boolean isAlly) {
+		return new MonsterCardMoveInfo(AbstractMonster.Intent.UNKNOWN, this);
+	}
+
+	@Override
+	public void monsterTakeTurn(AbstractMonster owner, AbstractCreature target, boolean isAlly) {
+		// do nothing
 	}
 }

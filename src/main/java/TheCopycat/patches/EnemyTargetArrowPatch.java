@@ -14,11 +14,10 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.MonsterGroup;
 
 public class EnemyTargetArrowPatch {
+	private static final float alphaSpeed = 3.0f;
 	private static float arrowTime = 0.0f;
 	private static float alpha = 0.0f;
 	private static AbstractMonster hoveredMonster = null;
-
-	private static final float alphaSpeed = 3.0f;
 
 	@SpirePatch(clz = MonsterGroup.class, method = "render")
 	public static class MonsterGroupRenderPatch {
@@ -62,8 +61,8 @@ public class EnemyTargetArrowPatch {
 					AbstractCreature target = BetterFriendlyMinionsUtils.getTarget(hoveredMonster);
 					if (target instanceof AbstractCopycatMinion) {
 						CopycatTargetArrow.drawTargetArrow(
-								sb, hoveredMonster.hb, target.hb, CopycatTargetArrow.CONTROL_HEIGHT * Settings.scale, arrowTime, alpha - 0.1f,
-								AbstractCopycatMinion.arrowColors[((AbstractCopycatMinion) target).index]);
+							sb, hoveredMonster.hb, target.hb, CopycatTargetArrow.CONTROL_HEIGHT * Settings.scale, arrowTime, alpha - 0.1f,
+							AbstractCopycatMinion.arrowColors[((AbstractCopycatMinion) target).index]);
 					}
 				}
 				arrowTime += Gdx.graphics.getDeltaTime();

@@ -36,9 +36,9 @@ public class CardRewardPatch {
 			for (AbstractBlight b : AbstractDungeon.player.blights) {
 				if (b instanceof Spiredex) {
 					List<AbstractMonsterCard> monsterCards = CaptureEnemyMovePatch.generatedCards.values().stream().filter(
-							c -> c.rarity == AbstractCard.CardRarity.COMMON ||
-									c.rarity == AbstractCard.CardRarity.UNCOMMON ||
-									c.rarity == AbstractCard.CardRarity.RARE).collect(Collectors.toList());
+						c -> c.rarity == AbstractCard.CardRarity.COMMON ||
+							c.rarity == AbstractCard.CardRarity.UNCOMMON ||
+							c.rarity == AbstractCard.CardRarity.RARE).collect(Collectors.toList());
 					((Spiredex) b).replaceCardRewards(monsterCards, __result, ___cardUpgradedChance);
 				}
 			}

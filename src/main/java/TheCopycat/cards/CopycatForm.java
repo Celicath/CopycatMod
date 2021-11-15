@@ -17,16 +17,16 @@ public class CopycatForm extends CustomCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 3;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.POWER;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.RARE;
 	private static final CardTarget TARGET = CardTarget.SELF;
 
-	private static final int POWER = 3;
-	private static final int UPGRADE_BONUS = 1;
+	private static final int POWER = 4;
+	private static final int UPGRADE_BONUS = 2;
 
 	public CopycatForm() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);

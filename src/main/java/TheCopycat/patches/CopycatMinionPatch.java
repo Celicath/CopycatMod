@@ -18,6 +18,8 @@ import com.megacrit.cardcrawl.actions.IntentFlashAction;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
 import com.megacrit.cardcrawl.actions.common.ShowMoveNameAction;
+import com.megacrit.cardcrawl.actions.utility.UseCardAction;
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.AbstractCreature;
@@ -28,7 +30,9 @@ import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.localization.UIStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.MonsterGroup;
+import com.megacrit.cardcrawl.powers.AbstractPower;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import com.megacrit.cardcrawl.vfx.combat.FlashIntentEffect;
 import javassist.CtBehavior;
 import kobting.friendlyminions.characters.AbstractPlayerWithMinions;
 import kobting.friendlyminions.enums.MonsterIntentEnum;
@@ -48,8 +52,8 @@ public class CopycatMinionPatch {
 	public static float noChangeMagicNumber = -320.0f;
 	static float tempChance = noChangeMagicNumber;
 
-	private static UIStrings uiStrings = CardCrawlGame.languagePack.getUIString(CopycatModMain.makeID("MonsterIntent"));
-	private static String[] TEXT = uiStrings == null ? AbstractMonster.TEXT : uiStrings.TEXT;
+	private static final UIStrings uiStrings = CardCrawlGame.languagePack.getUIString(CopycatModMain.makeID("MonsterIntent"));
+	private static final String[] TEXT = uiStrings == null ? AbstractMonster.TEXT : uiStrings.TEXT;
 
 	public static float calcMinionTargetChance() {
 		if (AbstractDungeon.player != null && AbstractDungeon.player.stance.ID.equals(ProtectiveStance.STANCE_ID)) {
@@ -77,26 +81,62 @@ public class CopycatMinionPatch {
 						AbstractDungeon.actionManager.addToBottom(new AbstractGameAction() {
 							@Override
 							public void update() {
-								AbstractMonster intentMonster = m instanceof MirrorMinion ? ((MirrorMinion) m).origMonster : m;
 								AbstractMonster target = AbstractDungeon.getMonsters().getRandomMonster(null, true, BetterFriendlyMinionsUtils.minionAiRng);
 
 								for (int i = 0; i < ((AbstractCopycatMinion) m).getMoveCount(); i++) {
 									((AbstractCopycatMinion) m).doMove(target);
 								}
-								if (intentMonster.intent != AbstractMonster.Intent.NONE) {
-									AbstractDungeon.actionManager.addToTop(new IntentFlashAction(intentMonster));
-									AbstractDungeon.actionManager.addToTop(new ShowMoveNameAction(intentMonster) {
-										@Override
-										public void update() {
-											intentMonster.isDying = false;
-											super.update();
-											intentMonster.isDying = true;
+
+								if (m instanceof MirrorMinion) {
+									AbstractMonster intentMonster = ((MirrorMinion) m).origMonster;
+									if (intentMonster.intent != AbstractMonster.Intent.NONE) {
+										AbstractDungeon.actionManager.addToTop(new IntentFlashAction(m) {
+											@Override
+											public void update() {
+												if (duration == startDuration) {
+													AbstractDungeon.effectList.add(new FlashIntentEffect(ReflectionHacks.getPrivate(intentMonster, AbstractMonster.class, "intentImg"), m));
+													intentMonster.intentAlphaTarget = 0.0F;
+												}
+
+												tickDuration();
+											}
+										});
+										AbstractDungeon.actionManager.addToTop(new AbstractGameAction() {
+											@Override
+											public void update() {
+												isDone = true;
+											}
+										});
+										AbstractDungeon.actionManager.addToTop(new ShowMoveNameAction(intentMonster) {
+											@Override
+											public void update() {
+												intentMonster.isDying = false;
+												super.update();
+												intentMonster.isDying = true;
+											}
+										});
+										if (GameLogicUtils.checkIntent(intentMonster, 1) || GameLogicUtils.checkIntent(intentMonster, 3)) {
+											AbstractDungeon.actionManager.addToTop(new VFXAction(new CopycatFlashTargetArrowEffect(m, target, 0.7f), 0.05f));
 										}
-									});
-									if (GameLogicUtils.checkIntent(intentMonster, 1) || GameLogicUtils.checkIntent(intentMonster, 3)) {
-										AbstractDungeon.actionManager.addToTop(new VFXAction(new CopycatFlashTargetArrowEffect(m, target, 0.7f), 0.05f));
+									}
+								} else {
+									if (m.intent != AbstractMonster.Intent.NONE) {
+										AbstractDungeon.actionManager.addToTop(new IntentFlashAction(m));
+										AbstractDungeon.actionManager.addToTop(new ShowMoveNameAction(m));
+										if (GameLogicUtils.checkIntent(m, 1) || GameLogicUtils.checkIntent(m, 3)) {
+											AbstractDungeon.actionManager.addToTop(new VFXAction(new CopycatFlashTargetArrowEffect(m, target, 0.7f), 0.05f));
+										}
 									}
 								}
+								isDone = true;
+							}
+						});
+						AbstractDungeon.actionManager.addToBottom(new AbstractGameAction() {
+							@Override
+							public void update() {
+								m.powers.forEach((power) -> {
+									power.atEndOfTurn(true);
+								});
 								isDone = true;
 							}
 						});
@@ -186,6 +226,42 @@ public class CopycatMinionPatch {
 				if (m instanceof AbstractCopycatMinion) {
 					m.applyPowers();
 				}
+			}
+		}
+	}
+
+	@SpirePatch2(clz = UseCardAction.class, method = SpirePatch.CONSTRUCTOR, paramtypez = {AbstractCard.class, AbstractCreature.class})
+	public static class OnUseCardPatch {
+		@SpirePostfixPatch
+		public static void Postfix(UseCardAction __instance, AbstractCard card) {
+			for (AbstractMonster m : BetterFriendlyMinionsUtils.getMinionList()) {
+				if (m instanceof AbstractCopycatMinion) {
+					for (AbstractPower p : m.powers) {
+						p.onUseCard(card, __instance);
+					}
+				}
+			}
+		}
+	}
+
+	@SpirePatch2(clz = UseCardAction.class, method = "update")
+	public static class AfterUseCardPatch {
+		@SpireInsertPatch(locator = AfterUseCardPatchLocator.class)
+		public static void Insert(UseCardAction __instance, AbstractCard ___targetCard) {
+			for (AbstractMonster m : BetterFriendlyMinionsUtils.getMinionList()) {
+				if (m instanceof AbstractCopycatMinion) {
+					for (AbstractPower p : m.powers) {
+						p.onAfterUseCard(___targetCard, __instance);
+					}
+				}
+			}
+		}
+
+		public static class AfterUseCardPatchLocator extends SpireInsertLocator {
+			@Override
+			public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
+				Matcher finalMatcher = new Matcher.FieldAccessMatcher(AbstractCard.class, "freeToPlayOnce");
+				return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
 			}
 		}
 	}

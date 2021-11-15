@@ -17,15 +17,13 @@ import java.util.function.Consumer;
 
 public class ModFixedButton implements IUIElement {
 	private static final float FIXED_X_EXTEND = 12.0f;
-
-	private Consumer<ModFixedButton> click;
+	private final Consumer<ModFixedButton> click;
+	private final Texture texture;
+	private final float x;
+	private final float y;
+	private final float w;
 	public Hitbox hb;
-	private Texture texture;
-	private float x;
-	private float y;
-	private float w;
 	public float h;
-
 	public ModPanel parent;
 
 	public ModFixedButton(float xPos, float yPos, ModPanel p, Consumer<ModFixedButton> c) {

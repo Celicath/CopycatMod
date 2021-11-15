@@ -25,15 +25,15 @@ import com.megacrit.cardcrawl.vfx.combat.SearingBlowEffect;
 
 public class SeesawBlow extends CustomCard implements DualImageCard {
 	private static final String RAW_ID = "SeesawBlow";
-	private static final String RAW_ID2 = "SeesawBlow2";
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
+	private static final String RAW_ID2 = "SeesawBlow2";
 	public static final String IMG_UPGRADE = CopycatModMain.GetCardPath(RAW_ID2);
 	public static final String IMG_UPGRADE_PORTRAIT = CopycatModMain.GetCardPath(RAW_ID2 + "_p");
 	private static final int COST = 1;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.COMMON;

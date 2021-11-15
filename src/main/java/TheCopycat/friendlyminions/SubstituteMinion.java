@@ -16,12 +16,9 @@ public class SubstituteMinion extends AbstractCopycatMinion implements CustomSav
 
 	private static final float WIDTH = 160;
 	private static final float HEIGHT = 160;
-
+	public static SubstituteMinion instance;
 	static float offsetXPos = -135.0f;
 	static float offsetYPos = 50.0f;
-
-	public static SubstituteMinion instance;
-
 	public boolean isFront;
 
 	public SubstituteMinion() {

@@ -26,9 +26,9 @@ public class HallucinationPower extends AbstractPower {
 
 	public void updateDescription() {
 		if (amount == 1) {
-			description = powerStrings.DESCRIPTIONS[0] + amount + powerStrings.DESCRIPTIONS[1];
+			description = DESCRIPTIONS[0] + amount + DESCRIPTIONS[1];
 		} else {
-			description = powerStrings.DESCRIPTIONS[0] + amount + powerStrings.DESCRIPTIONS[2];
+			description = DESCRIPTIONS[0] + amount + DESCRIPTIONS[2];
 		}
 	}
 

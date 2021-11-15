@@ -20,9 +20,9 @@ public class MirrorMove extends CustomCard implements HoverMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 1;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.SKILL;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.COMMON;
@@ -38,21 +38,22 @@ public class MirrorMove extends CustomCard implements HoverMonsterCard {
 
 	@Override
 	public void use(AbstractPlayer p, AbstractMonster m) {
+		AbstractCard origCard = CopycatModMain.getEnemyLastMoveCard(m);
+		AbstractCard c = origCard.makeStatEquivalentCopy();
+		c.calculateCardDamage(m);
+		c.current_x = origCard.current_x;
+		c.current_y = origCard.current_y;
+		c.target_x = (float) Settings.WIDTH / 2.0F + 200.0F * Settings.xScale;
+		c.target_y = (float) Settings.HEIGHT / 2.0F;
+		c.targetAngle = 0.0F;
+		c.drawScale = 0.75F;
+		c.targetDrawScale = 0.75F;
+		p.limbo.addToBottom(c);
 		addToBot(new AbstractGameAction() {
 			@Override
 			public void update() {
-				AbstractCard c = CopycatModMain.getEnemyLastMoveCard(m).makeCopy();
-				c.calculateCardDamage(m);
-				p.limbo.group.add(c);
-				c.current_x = CopycatModMain.getEnemyLastMoveCard(m).current_x;
-				c.current_y = CopycatModMain.getEnemyLastMoveCard(m).current_y;
-				c.target_x = (float) Settings.WIDTH / 2.0F + 200.0F * Settings.xScale;
-				c.target_y = (float) Settings.HEIGHT / 2.0F;
-				c.targetAngle = 0.0F;
-				c.drawScale = 0.75F;
-				c.targetDrawScale = 0.75F;
-				c.lighten(false);
 				c.purgeOnUse = true;
+
 				addToTop(new NewQueueCardAction(c, m, false, true));
 				addToTop(new UnlimboAction(c));
 				addToTop(new WaitAction(Settings.FAST_MODE ? Settings.ACTION_DUR_FASTER : Settings.ACTION_DUR_MED));

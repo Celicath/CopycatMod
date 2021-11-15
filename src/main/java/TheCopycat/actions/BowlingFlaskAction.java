@@ -14,8 +14,8 @@ public class BowlingFlaskAction extends AbstractGameAction {
 	private static final float DURATION = 0.01F;
 	private static final float POST_ATTACK_WAIT_DUR = 0.1F;
 	private int numTimes;
-	private int amount;
-	private AbstractCreature effectFrom;
+	private final int amount;
+	private final AbstractCreature effectFrom;
 
 	public BowlingFlaskAction(AbstractCreature target, int amount, int numTimes, AbstractCreature effectFrom) {
 		this.target = target;

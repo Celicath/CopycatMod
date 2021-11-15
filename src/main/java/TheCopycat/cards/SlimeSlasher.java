@@ -16,24 +16,50 @@ public class SlimeSlasher extends CustomCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 1;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
 	private static final CardColor COLOR = CharacterEnum.CardColorEnum.COPYCAT_BLUE;
 	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.ALL_ENEMY;
 
 	private static final int POWER = 8;
-	private static final int UPGRADE_BONUS = 4;
-	public static final int FATAL_BONUS_PER = 2;
+	private static final int FATAL_BONUS_PER = 2;
 
 	public SlimeSlasher() {
 		super(ID, NAME, IMG, COST, DESCRIPTION, TYPE, COLOR, RARITY, TARGET);
 
 		baseDamage = POWER;
-		misc = baseDamage * FATAL_BONUS_PER;
+		misc = 0;
+		baseMagicNumber = magicNumber = FATAL_BONUS_PER;
 		isMultiDamage = true;
+	}
+
+	public static SlimeSlasher createFromMetricID(String id) {
+		int upgradeCount = 0;
+		int index = id.lastIndexOf('+');
+		if (index != -1) {
+			try {
+				upgradeCount = Integer.parseInt(id.substring(index + 1));
+				id = id.substring(0, index);
+			} catch (NumberFormatException ignore) {
+			}
+		}
+
+		String[] tokens = id.split(GameLogicUtils.metricIdSeparator, -1);
+
+		if (tokens[0].equals(ID)) {
+			SlimeSlasher s = new SlimeSlasher();
+			for (int i = 0; i < upgradeCount; i++) {
+				s.upgrade();
+			}
+			s.misc = Integer.parseInt(tokens[1]);
+			s.recalculateDamage();
+			return s;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -50,13 +76,17 @@ public class SlimeSlasher extends CustomCard {
 	public void upgrade() {
 		if (!upgraded) {
 			upgradeName();
-			upgradeDamage(UPGRADE_BONUS);
-			misc += UPGRADE_BONUS * FATAL_BONUS_PER;
+			upgradeMagicNumber(-1);
+			if (misc > 0) {
+				upgradedDamage = true;
+			}
+			rawDescription = cardStrings.UPGRADE_DESCRIPTION;
+			recalculateDamage();
 		}
 	}
 
 	public void recalculateDamage() {
-		baseDamage = misc / FATAL_BONUS_PER;
+		baseDamage = POWER + misc / Math.max(magicNumber, 1);
 		initializeDescription();
 	}
 
@@ -79,35 +109,5 @@ public class SlimeSlasher extends CustomCard {
 		}
 
 		return id;
-	}
-
-	public static SlimeSlasher createFromMetricID(String id) {
-		int upgradeCount = 0;
-		int index = id.lastIndexOf('+');
-		if (index != -1) {
-			try {
-				upgradeCount = Integer.parseInt(id.substring(index + 1));
-				id = id.substring(0, index);
-			} catch (NumberFormatException ignore) {
-			}
-		}
-
-		String[] tokens = id.split(GameLogicUtils.metricIdSeparator, -1);
-
-		if (tokens[0].equals(ID)) {
-			SlimeSlasher s = new SlimeSlasher();
-			for (int i = 0; i < upgradeCount; i++) {
-				s.upgrade();
-			}
-			s.misc = Integer.parseInt(tokens[1]);
-			s.setDamageFromMisc();
-			return s;
-		} else {
-			return null;
-		}
-	}
-
-	public void setDamageFromMisc() {
-		baseDamage = misc / SlimeSlasher.FATAL_BONUS_PER;
 	}
 }

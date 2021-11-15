@@ -12,12 +12,10 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.Hitbox;
 
 public class CopycatTargetArrow {
+	public static final float CONTROL_HEIGHT = 200.0f;
 	public static ShapeRenderer renderer = new ShapeRenderer();
-
 	public static Color pink = new Color(1.0f, 0.7f, 0.8f, 0.5f);
 	public static Color white = new Color(1.0f, 1.0f, 1.0f, 0.9f);
-
-	public static final float CONTROL_HEIGHT = 200.0f;
 
 	public static Color getColor(float t, float timer, Color color, float alpha) {
 		float x = Math.abs((timer * 1.5f + 0.4f) % 2f - 0.5f - t) / 0.08f;
@@ -28,10 +26,10 @@ public class CopycatTargetArrow {
 		} else {
 			x = 1 - (1 - x) * (1 - x);
 			return new Color(
-					MathUtils.lerp(white.r, color.r, x),
-					MathUtils.lerp(white.g, color.g, x),
-					MathUtils.lerp(white.b, color.b, x),
-					MathUtils.lerp(white.a, color.a, x) * alpha);
+				MathUtils.lerp(white.r, color.r, x),
+				MathUtils.lerp(white.g, color.g, x),
+				MathUtils.lerp(white.b, color.b, x),
+				MathUtils.lerp(white.a, color.a, x) * alpha);
 		}
 	}
 
@@ -80,18 +78,18 @@ public class CopycatTargetArrow {
 
 			if (i == 0) {
 				renderer.triangle(
-						v1.x - n1.x, v1.y - n1.y, v2.x - tmp.x, v2.y - tmp.y, v2.x, v2.y,
-						c1, c2, c2);
+					v1.x - n1.x, v1.y - n1.y, v2.x - tmp.x, v2.y - tmp.y, v2.x, v2.y,
+					c1, c2, c2);
 				renderer.triangle(
-						v1.x + n1.x, v1.y + n1.y, v2.x, v2.y, v2.x + tmp.x, v2.y + tmp.y,
-						c1, c2, c2);
+					v1.x + n1.x, v1.y + n1.y, v2.x, v2.y, v2.x + tmp.x, v2.y + tmp.y,
+					c1, c2, c2);
 			} else {
 				renderer.triangle(
-						v1.x - n1.x, v1.y - n1.y, v2.x - tmp.x, v2.y - tmp.y, v1.x + n1.x, v1.y + n1.y,
-						c1, c2, c1);
+					v1.x - n1.x, v1.y - n1.y, v2.x - tmp.x, v2.y - tmp.y, v1.x + n1.x, v1.y + n1.y,
+					c1, c2, c1);
 				renderer.triangle(
-						v2.x - tmp.x, v2.y - tmp.y, v2.x + tmp.x, v2.y + tmp.y, v1.x + n1.x, v1.y + n1.y,
-						c2, c2, c1);
+					v2.x - tmp.x, v2.y - tmp.y, v2.x + tmp.x, v2.y + tmp.y, v1.x + n1.x, v1.y + n1.y,
+					c2, c2, c1);
 			}
 			c1.set(c2);
 			n1.set(tmp);
@@ -99,8 +97,8 @@ public class CopycatTargetArrow {
 		}
 
 		renderer.triangle(
-				v2.x - n1.x, v2.y - n1.y, end.x, end.y, v2.x + n1.x, v2.y + n1.y,
-				c1, getColor(1.0f, timer, color, alpha), c1);
+			v2.x - n1.x, v2.y - n1.y, end.x, end.y, v2.x + n1.x, v2.y + n1.y,
+			c1, getColor(1.0f, timer, color, alpha), c1);
 
 		renderer.end();
 		if (blendDisabled) {

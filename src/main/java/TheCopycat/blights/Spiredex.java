@@ -13,6 +13,8 @@ import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.localization.BlightStrings;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
+import com.megacrit.cardcrawl.rooms.MonsterRoomBoss;
+import com.megacrit.cardcrawl.rooms.MonsterRoomElite;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +59,8 @@ public class Spiredex extends AbstractBlight implements CustomSavable<ArrayList<
 		tips.clear();
 		tips.add(new PowerTip(name, description));
 		tips.add(new PowerTip(
-				BaseMod.getKeywordTitle(CopycatModMain.makeLowerID("monster_card")),
-				BaseMod.getKeywordDescription(CopycatModMain.makeLowerID("monster_card"))));
+			BaseMod.getKeywordTitle(CopycatModMain.makeLowerID("monster_card")),
+			BaseMod.getKeywordDescription(CopycatModMain.makeLowerID("monster_card"))));
 		initializeTips();
 	}
 
@@ -70,13 +72,19 @@ public class Spiredex extends AbstractBlight implements CustomSavable<ArrayList<
 				}
 
 				AbstractCard c;
-				int ratio;
+				int rerollRatio;
 				int index;
 				do {
 					index = Spiredex.monsterCardRng.random(monsterCards.size() - 1);
 					c = monsterCards.get(index);
-					ratio = c.rarity == AbstractCard.CardRarity.COMMON ? 0 : c.rarity == AbstractCard.CardRarity.UNCOMMON ? 3 : c.rarity == AbstractCard.CardRarity.RARE ? 4 : 6;
-				} while (Spiredex.monsterCardRng.random(5) < ratio);
+					if (AbstractDungeon.getCurrRoom() instanceof MonsterRoomBoss) {
+						rerollRatio = c.rarity == AbstractCard.CardRarity.COMMON ? 4 : c.rarity == AbstractCard.CardRarity.UNCOMMON ? 3 : c.rarity == AbstractCard.CardRarity.RARE ? 0 : 6;
+					} else if (AbstractDungeon.getCurrRoom() instanceof MonsterRoomElite) {
+						rerollRatio = 0;
+					} else {
+						rerollRatio = c.rarity == AbstractCard.CardRarity.COMMON ? 0 : c.rarity == AbstractCard.CardRarity.UNCOMMON ? 3 : c.rarity == AbstractCard.CardRarity.RARE ? 4 : 6;
+					}
+				} while (Spiredex.monsterCardRng.random(5) < rerollRatio);
 
 				monsterCards.remove(index);
 				c.resetAttributes();

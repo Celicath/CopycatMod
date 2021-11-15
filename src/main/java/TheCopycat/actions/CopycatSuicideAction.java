@@ -4,7 +4,7 @@ import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
 public class CopycatSuicideAction extends AbstractGameAction {
-	private AbstractMonster m;
+	private final AbstractMonster m;
 
 	public CopycatSuicideAction(AbstractMonster target) {
 		this.duration = 0.0F;

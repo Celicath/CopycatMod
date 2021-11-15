@@ -1,9 +1,10 @@
 package TheCopycat.actions;
 
 import TheCopycat.friendlyminions.AbstractCopycatMinion;
-import TheCopycat.friendlyminions.CopycatApologySlime;
 import TheCopycat.friendlyminions.MirrorMinion;
+import TheCopycat.friendlyminions.PetSlime;
 import TheCopycat.utils.BetterFriendlyMinionsUtils;
+import com.badlogic.gdx.graphics.Color;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.utility.WaitAction;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -14,7 +15,7 @@ import com.megacrit.cardcrawl.vfx.combat.FlashAtkImgEffect;
 import com.megacrit.cardcrawl.vfx.combat.FlyingOrbEffect;
 
 public class FleshToSlimeAction extends AbstractGameAction {
-	private DamageInfo info;
+	private final DamageInfo info;
 
 	public FleshToSlimeAction(AbstractCreature target, DamageInfo info, AttackEffect effect) {
 		this.info = info;
@@ -43,7 +44,7 @@ public class FleshToSlimeAction extends AbstractGameAction {
 		if (isDone) {
 			target.damage(info);
 			if (target.lastDamageTaken > 0) {
-				CopycatApologySlime slime = new CopycatApologySlime();
+				PetSlime slime = new PetSlime(null);
 				addToBot(new SummonCopycatMinionAction(new MirrorMinion(slime.name, slime, target.lastDamageTaken)));
 				addToTop(new WaitAction(0.1F));
 			}

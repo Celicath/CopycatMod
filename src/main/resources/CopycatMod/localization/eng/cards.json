@@ -110,7 +110,7 @@
       "Summon: ",
       "copycatmod:Summon a ",
       " with !M! HP. NL Exhaust.",
-      "This Minion is a clone of an enemy. At the end of your turn, it will perform moves of the original monster."
+      "This Minion is a clone of an enemy. At the end of your turn, it will use the same moves as the original monster."
     ]
   },
   "CopycatMod:AreaHeal": {
@@ -208,8 +208,8 @@
     "NAME": "Heavy Slam",
     "DESCRIPTION": "Deal !D! damage. NL Enter copycatmod:Protective."
   },
-  "CopycatMod:ToxicMinds": {
-    "NAME": "Toxic Minds",
+  "CopycatMod:Contrast": {
+    "NAME": "Contrast",
     "DESCRIPTION": "Apply !M! Poison. NL Enter Calm."
   },
   "CopycatMod:SkewerBlade": {
@@ -243,15 +243,11 @@
   },
   "CopycatMod:GlowingCard": {
     "NAME": "Glowing Card",
-    "DESCRIPTION": "Unplayable. NL Whenever you copycatmod:Choose this card, gain !M! Block if it is in combat or heal !M! HP if not.",
-    "EXTENDED_DESCRIPTION": [
-      "I can't play this card."
-    ]
+    "DESCRIPTION": "Gain !B! Block. NL Whenever you copycatmod:Choose this card, gain !M! Block."
   },
   "CopycatMod:StanceChange": {
     "NAME": "Stance Change",
-    "DESCRIPTION": "Enter Calm, Wrath or copycatmod:Protective. NL Exhaust.",
-    "UPGRADE_DESCRIPTION": "Enter Calm, Wrath or copycatmod:Protective."
+    "DESCRIPTION": "Enter Calm, Wrath or copycatmod:Protective."
   },
   "CopycatMod:Protective": {
     "NAME": "Protective",
@@ -272,11 +268,11 @@
   },
   "CopycatMod:PhantomSlime": {
     "NAME": "Phantom Slime",
-    "DESCRIPTION": "copycatmod:Summon an copycatmod:Apology copycatmod:Slime with !M! HP. NL It dies after 2 turns. NL Exhaust."
+    "DESCRIPTION": "copycatmod:Summon a copycatmod:Pet copycatmod:Slime with 6 HP. NL It dies after !M! turns. NL Exhaust."
   },
   "CopycatMod:FleshToSlime": {
     "NAME": "Flesh to Slime",
-    "DESCRIPTION": "Deal !D! damage. NL copycatmod:Summon an copycatmod:Apology copycatmod:Slime with HP equal to unblocked damage. NL Exhaust."
+    "DESCRIPTION": "Deal !D! damage. NL copycatmod:Summon a copycatmod:Pet copycatmod:Slime with HP equal to unblocked damage. NL Exhaust."
   },
   "CopycatMod:Magnet": {
     "NAME": "Magnet",
@@ -292,9 +288,12 @@
       " Monster Cards)."
     ]
   },
-  "CopycatMod:BowlingFlask": {
-    "NAME": "Bowling Flask",
-    "DESCRIPTION": "Apply !M! Poison for each enemy in combat."
+  "CopycatMod:ToxicStab": {
+    "NAME": "Toxic Stab",
+    "DESCRIPTION": "Deal !D! damage. NL Apply !M! Poison. NL If the enemy already has Poison, damage and Poison amount are swapped.",
+    "EXTENDED_DESCRIPTION": [
+      "Apply !D! Poison. NL Deal !M! damage."
+    ]
   },
   "CopycatMod:Analysis": {
     "NAME": "Analysis",
@@ -338,7 +337,8 @@
   },
   "CopycatMod:SlimeSlasher": {
     "NAME": "Slime Slasher",
-    "DESCRIPTION": "Deal !D! damage to ALL enemies and Slimes. NL Deals 1 additional damage for every 2 Slimes killed with this."
+    "DESCRIPTION": "Deal !D! damage to ALL enemies and Slimes. NL Deals 1 additional damage for every 2 Slimes killed with this.",
+    "UPGRADE_DESCRIPTION": "Deal !D! damage to ALL enemies and Slimes. NL Deals 1 additional damage for every Slimes killed with this."
   },
   "CopycatMod:Scammed": {
     "NAME": "Scammed!",
@@ -349,12 +349,20 @@
     "DESCRIPTION": "Deal !D! damage. NL If the enemy intends to attack, apply !M! Vulnerable.",
     "UPGRADE_DESCRIPTION": "Deal !D! damage. NL If the enemy intends to attack, apply !M! Weak."
   },
-  "CopycatMod:HybridMovement": {
-    "NAME": "Hybrid Movement",
+  "CopycatMod:HybridDefense": {
+    "NAME": "Hybrid Defense",
     "DESCRIPTION": "(Copies description from Leap and Third Eye)"
   },
   "CopycatMod:BadSlice": {
     "NAME": "Bad Slice",
     "DESCRIPTION": "Deal !D! damage. NL Discard 1 card."
+  },
+  "CopycatMod:Lecture": {
+    "NAME": "Lecture",
+    "DESCRIPTION": "Play a copycatmod:Monster copycatmod:Card from your hand. NL Change enemy's intent to it. NL Exhaust."
+  },
+  "CopycatMod:MutantSlime": {
+    "NAME": "Mutant Slime",
+    "DESCRIPTION": "Summon a copycatmod:Pet copycatmod:Slime with !M! HP, who changes their intent to the copycatmod:Monster copycatmod:Card you play. NL Exhaust."
   }
 }

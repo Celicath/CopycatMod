@@ -57,13 +57,13 @@ public class LuckyBag extends CustomRelic {
 					addToBot(new ApplyPowerAction(AbstractDungeon.player, AbstractDungeon.player, new StrengthPower(AbstractDungeon.player, 2), 2));
 					break;
 				case SKILL:
-					addToBot(new ApplyPowerAction(AbstractDungeon.player, AbstractDungeon.player, new PlatedArmorPower(AbstractDungeon.player, 3), 3));
+					addToBot(new ApplyPowerAction(AbstractDungeon.player, AbstractDungeon.player, new PlatedArmorPower(AbstractDungeon.player, 4), 4));
 					break;
 				case POWER:
 					addToBot(new GainEnergyAction(2));
 					break;
 				default:
-					AbstractDungeon.player.increaseMaxHp(3, true);
+					AbstractDungeon.player.increaseMaxHp(4, true);
 					break;
 			}
 			usedUp = true;

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>CopycatMod</groupId>
     <artifactId>CopycatMod</artifactId>
-    <version>0.1.2</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
 	
     <name>TheCopycat</name>
@@ -72,7 +72,7 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy file="target/CopycatMod.jar" tofile="D:\Steam\steamapps\common\SlayTheSpire\mods\CopycatMod.jar"/>
+                                <copy file="target/CopycatMod.jar" tofile="C:\Program Files (x86)\Steam\steamapps\common\SlayTheSpire\mods\CopycatMod.jar"/>
                             </target>
                         </configuration>
                         <goals>

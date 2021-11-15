@@ -56,15 +56,17 @@ public class TutorialPatch {
 
 				if (!seenTutorial) {
 					if (!__instance.cards.isEmpty()) {
-						AbstractCard card = __instance.cards.get(0);
+						AbstractCard card = null;
 						for (AbstractCard c : __instance.cards) {
 							if (c instanceof AbstractMonsterCard) {
 								card = c;
 								break;
 							}
 						}
-						AbstractDungeon.ftue = new FtueTip(LABEL[0], TEXT[0], Settings.WIDTH / 2.0F - 500.0F * Settings.scale, Settings.HEIGHT / 2.0F, card);
-						saveTutorialConfig(true);
+						if (card != null) {
+							AbstractDungeon.ftue = new FtueTip(LABEL[0], TEXT[0], Settings.WIDTH / 2.0F - 500.0F * Settings.scale, Settings.HEIGHT / 2.0F, card);
+							saveTutorialConfig(true);
+						}
 					}
 				}
 			}

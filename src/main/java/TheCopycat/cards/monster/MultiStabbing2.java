@@ -1,6 +1,7 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.utils.MonsterCardMoveInfo;
 import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.GameActionManager;
@@ -9,6 +10,7 @@ import com.megacrit.cardcrawl.actions.utility.SFXAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
@@ -19,8 +21,8 @@ public class MultiStabbing2 extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
-	private static final int COST = 2;
 	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
+	private static final int COST = 2;
 	private static final CardType TYPE = CardType.ATTACK;
 	private static final CardRarity RARITY = CardRarity.UNCOMMON;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
@@ -74,6 +76,19 @@ public class MultiStabbing2 extends AbstractMonsterCard {
 		if (!upgraded) {
 			upgradeName();
 			upgradeDamage(UPGRADE_BONUS);
+		}
+	}
+
+	@Override
+	public MonsterCardMoveInfo createMoveInfo(boolean isAlly) {
+		return new MonsterCardMoveInfo(AbstractMonster.Intent.ATTACK, baseDamage, magicNumber, true, this);
+	}
+
+	@Override
+	public void monsterTakeTurn(AbstractMonster owner, AbstractCreature target, boolean isAlly) {
+		for (int i = 0; i < magicNumber; i++) {
+			addToBot(new SFXAction("MONSTER_BOOK_STAB_" + MathUtils.random(0, 3)));
+			addToBot(new DamageAction(target, new DamageInfo(owner, damage, damageTypeForTurn), AbstractGameAction.AttackEffect.SLASH_VERTICAL, false, true));
 		}
 	}
 }

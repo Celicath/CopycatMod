@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MetronomeAction extends AbstractGameAction {
-	private boolean retrieveCard = false;
-	private boolean upgraded;
 	public static HashMap<AbstractCard.CardRarity, CardGroup> metronomeCardGroupMap = null;
+	private boolean retrieveCard = false;
+	private final boolean upgraded;
 
 	public MetronomeAction(boolean upgraded) {
 		this.actionType = ActionType.CARD_MANIPULATION;
@@ -75,22 +75,22 @@ public class MetronomeAction extends AbstractGameAction {
 			for (Map.Entry<String, AbstractCard> entry : CardLibrary.cards.entrySet()) {
 				AbstractCard c = entry.getValue();
 				if (c.type != AbstractCard.CardType.CURSE && c.type != AbstractCard.CardType.STATUS &&
-						(!UnlockTracker.isCardLocked(entry.getKey()) || Settings.treatEverythingAsUnlocked()) &&
-						(c.color == AbstractCard.CardColor.RED ||
-								c.color == AbstractCard.CardColor.GREEN ||
-								c.color == AbstractCard.CardColor.BLUE ||
-								c.color == AbstractCard.CardColor.PURPLE ||
-								c.color == AbstractCard.CardColor.COLORLESS ||
-								c.color == CharacterEnum.CardColorEnum.COPYCAT_BLUE) &&
-						!c.hasTag(AbstractCard.CardTags.HEALING) &&
-						!(c instanceof Armaments ||
-								c instanceof DualWield ||
-								c instanceof Exhume ||
-								c instanceof Nightmare ||
-								c instanceof HandOfGreed ||
-								c instanceof Apotheosis ||
-								c instanceof Reflex ||
-								c instanceof Tactician)
+					(!UnlockTracker.isCardLocked(entry.getKey()) || Settings.treatEverythingAsUnlocked()) &&
+					(c.color == AbstractCard.CardColor.RED ||
+						c.color == AbstractCard.CardColor.GREEN ||
+						c.color == AbstractCard.CardColor.BLUE ||
+						c.color == AbstractCard.CardColor.PURPLE ||
+						c.color == AbstractCard.CardColor.COLORLESS ||
+						c.color == CharacterEnum.CardColorEnum.COPYCAT_BLUE) &&
+					!c.hasTag(AbstractCard.CardTags.HEALING) &&
+					!(c instanceof Armaments ||
+						c instanceof DualWield ||
+						c instanceof Exhume ||
+						c instanceof Nightmare ||
+						c instanceof HandOfGreed ||
+						c instanceof Apotheosis ||
+						c instanceof Reflex ||
+						c instanceof Tactician)
 				) {
 					switch (c.rarity) {
 						case COMMON:

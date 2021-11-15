@@ -12,13 +12,13 @@ import com.megacrit.cardcrawl.relics.ChemicalX;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 
 public class SkewerBladeAction extends AbstractGameAction {
-	private boolean freeToPlayOnce;
-	private int damage;
-	private AbstractPlayer p;
-	private AbstractMonster m;
-	private DamageInfo.DamageType damageTypeForTurn;
-	private int energyOnUse;
 	SkewerBlade c;
+	private final boolean freeToPlayOnce;
+	private final int damage;
+	private final AbstractPlayer p;
+	private final AbstractMonster m;
+	private final DamageInfo.DamageType damageTypeForTurn;
+	private final int energyOnUse;
 
 	public SkewerBladeAction(SkewerBlade c, AbstractPlayer p, AbstractMonster m, int damage, DamageInfo.DamageType damageTypeForTurn, boolean freeToPlayOnce, int energyOnUse) {
 		this.c = c;

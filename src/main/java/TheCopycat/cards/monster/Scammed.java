@@ -1,12 +1,14 @@
 package TheCopycat.cards.monster;
 
 import TheCopycat.CopycatModMain;
+import TheCopycat.utils.MonsterCardMoveInfo;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
 import com.megacrit.cardcrawl.actions.common.GainBlockAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
@@ -16,9 +18,9 @@ public class Scammed extends AbstractMonsterCard {
 	public static final String ID = CopycatModMain.makeID(RAW_ID);
 	private static final CardStrings cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
 	public static final String NAME = cardStrings.NAME;
+	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	public static final String IMG = CopycatModMain.GetCardPath(RAW_ID);
 	private static final int COST = 0;
-	public static final String DESCRIPTION = cardStrings.DESCRIPTION;
 	private static final CardType TYPE = CardType.ATTACK;
 	private static final CardRarity RARITY = CardRarity.SPECIAL;
 	private static final CardTarget TARGET = CardTarget.ENEMY;
@@ -51,5 +53,16 @@ public class Scammed extends AbstractMonsterCard {
 			upgradeDamage(UPGRADE_BONUS);
 			upgradeBlock(UPGRADE_BONUS);
 		}
+	}
+
+	@Override
+	public MonsterCardMoveInfo createMoveInfo(boolean isAlly) {
+		return new MonsterCardMoveInfo(AbstractMonster.Intent.ATTACK_DEFEND, baseDamage, 0, false, this);
+	}
+
+	@Override
+	public void monsterTakeTurn(AbstractMonster owner, AbstractCreature target, boolean isAlly) {
+		addToBot(new DamageAction(target, new DamageInfo(owner, damage, damageTypeForTurn), AbstractGameAction.AttackEffect.SLASH_HORIZONTAL));
+		addToBot(new GainBlockAction(owner, owner, block));
 	}
 }

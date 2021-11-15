@@ -19,12 +19,11 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 public class HoverMonsterPatch {
 	@SpirePatch(clz = AbstractPlayer.class, method = "renderHand")
 	public static class HoverPatch {
+		private static final int DAMAGE_BG_WIDTH = 160;
+		private static final int DAMAGE_BG_HEIGHT = 60;
 		public static AbstractCard prevHoveredCard = null;
 		public static AbstractMonster prevHoveredMonster = null;
 		private static Texture damageBgTexture = null;
-
-		private static final int DAMAGE_BG_WIDTH = 160;
-		private static final int DAMAGE_BG_HEIGHT = 60;
 
 		@SpirePostfixPatch
 		public static void Postfix(AbstractPlayer __instance, SpriteBatch sb, AbstractMonster ___hoveredMonster) {
@@ -55,26 +54,26 @@ public class HoverMonsterPatch {
 							damageBgTexture = ImageMaster.loadImage(CopycatModMain.makePath("ui/DamageBG.png"));
 						}
 						sb.draw(
-								damageBgTexture,
-								c.hb.cX - DAMAGE_BG_WIDTH / 2.0f,
-								c.hb.cY - DAMAGE_BG_HEIGHT / 2.0f,
-								DAMAGE_BG_WIDTH / 2.0f,
-								DAMAGE_BG_HEIGHT / 2.0f,
-								DAMAGE_BG_WIDTH,
-								DAMAGE_BG_HEIGHT,
-								Settings.scale, Settings.scale, 0.0F, 0, 0, DAMAGE_BG_WIDTH, DAMAGE_BG_HEIGHT, false, false);
+							damageBgTexture,
+							c.hb.cX - DAMAGE_BG_WIDTH / 2.0f,
+							c.hb.cY - DAMAGE_BG_HEIGHT / 2.0f,
+							DAMAGE_BG_WIDTH / 2.0f,
+							DAMAGE_BG_HEIGHT / 2.0f,
+							DAMAGE_BG_WIDTH,
+							DAMAGE_BG_HEIGHT,
+							Settings.scale, Settings.scale, 0.0F, 0, 0, DAMAGE_BG_WIDTH, DAMAGE_BG_HEIGHT, false, false);
 
 						FontHelper.renderFontCentered(
-								sb,
-								FontHelper.panelNameFont,
-								BeatUp.EXTENDED_DESCRIPTION[2] + (
-										damage > bu.baseDamage ? "[#7fff00]" + damage + "[]" :
-												damage < bu.baseDamage ? "[#ff6563]" + damage + "[]" :
-														Integer.toString(damage)
-								) + BeatUp.EXTENDED_DESCRIPTION[3],
-								c.hb.cX,
-								c.hb.cY,
-								Color.WHITE.cpy());
+							sb,
+							FontHelper.panelNameFont,
+							BeatUp.EXTENDED_DESCRIPTION[2] + (
+								damage > bu.baseDamage ? "[#7fff00]" + damage + "[]" :
+									damage < bu.baseDamage ? "[#ff6563]" + damage + "[]" :
+										Integer.toString(damage)
+							) + BeatUp.EXTENDED_DESCRIPTION[3],
+							c.hb.cX,
+							c.hb.cY,
+							Color.WHITE.cpy());
 					});
 				}
 			}
